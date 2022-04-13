@@ -57,11 +57,10 @@ void uart_echo(void *args);
 
 void freertos_main(void *args)
 {
-    gCliTaskHandle = xTaskCreateStatic( cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj );
+    gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
 
     vTaskDelete(NULL);
 }
-
 
 int main()
 {
@@ -70,13 +69,13 @@ int main()
     Board_init();
 
     /* This task is created at highest priority, it should create more tasks and then delete itself */
-    gMainTaskHandle = xTaskCreateStatic( freertos_main, /* Pointer to the function that implements the task. */
-                                  "freertos_main", /* Text name for the task.  This is to facilitate debugging only. */
-                                  MAIN_TASK_SIZE,  /* Stack depth in units of StackType_t typically uint32_t on 32b CPUs */
-                                  NULL,            /* We are not using the task parameter. */
-                                  MAIN_TASK_PRI,   /* task priority, 0 is lowest priority, configMAX_PRIORITIES-1 is highest */
-                                  gMainTaskStack,  /* pointer to stack base */
-                                  &gMainTaskObj ); /* pointer to statically allocated task object memory */
+    gMainTaskHandle = xTaskCreateStatic(freertos_main,   /* Pointer to the function that implements the task. */
+                                        "freertos_main", /* Text name for the task.  This is to facilitate debugging only. */
+                                        MAIN_TASK_SIZE,  /* Stack depth in units of StackType_t typically uint32_t on 32b CPUs */
+                                        NULL,            /* We are not using the task parameter. */
+                                        MAIN_TASK_PRI,   /* task priority, 0 is lowest priority, configMAX_PRIORITIES-1 is highest */
+                                        gMainTaskStack,  /* pointer to stack base */
+                                        &gMainTaskObj); /* pointer to statically allocated task object memory */
     configASSERT(gMainTaskHandle != NULL);
 
     /* Start the scheduler to start the tasks executing. */
