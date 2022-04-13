@@ -36,20 +36,28 @@
 #include "ti_board_config.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "combination.h"
 
 #define MAIN_TASK_PRI  (configMAX_PRIORITIES-1)
+#define CLI_TASK_PRI   (configMAX_PRIORITIES-1)
 
 #define MAIN_TASK_SIZE (16384U/sizeof(configSTACK_DEPTH_TYPE))
+#define CLI_TASK_SIZE  (16384U/sizeof(configSTACK_DEPTH_TYPE))
+
 StackType_t gMainTaskStack[MAIN_TASK_SIZE] __attribute__((aligned(32)));
+StackType_t gCliTaskStack[CLI_TASK_SIZE] __attribute__((aligned(32)));
 
 StaticTask_t gMainTaskObj;
-TaskHandle_t gMainTask;
+StaticTask_t gCliTaskObj;
+
+TaskHandle_t gMainTaskHandle;
+TaskHandle_t gCliTaskHandle;
 
 void uart_echo(void *args);
 
 void freertos_main(void *args)
 {
-    uart_echo(NULL);
+    gCliTaskHandle = xTaskCreateStatic( cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj );
 
     vTaskDelete(NULL);
 }
@@ -62,14 +70,14 @@ int main()
     Board_init();
 
     /* This task is created at highest priority, it should create more tasks and then delete itself */
-    gMainTask = xTaskCreateStatic( freertos_main,   /* Pointer to the function that implements the task. */
+    gMainTaskHandle = xTaskCreateStatic( freertos_main, /* Pointer to the function that implements the task. */
                                   "freertos_main", /* Text name for the task.  This is to facilitate debugging only. */
                                   MAIN_TASK_SIZE,  /* Stack depth in units of StackType_t typically uint32_t on 32b CPUs */
                                   NULL,            /* We are not using the task parameter. */
                                   MAIN_TASK_PRI,   /* task priority, 0 is lowest priority, configMAX_PRIORITIES-1 is highest */
                                   gMainTaskStack,  /* pointer to stack base */
                                   &gMainTaskObj ); /* pointer to statically allocated task object memory */
-    configASSERT(gMainTask != NULL);
+    configASSERT(gMainTaskHandle != NULL);
 
     /* Start the scheduler to start the tasks executing. */
     vTaskStartScheduler();

@@ -3,3 +3,5 @@
 .ccsproject
 .cproject
 .project
+*.launch
+*.rprc

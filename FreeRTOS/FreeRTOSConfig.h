@@ -165,4 +165,6 @@ uint32_t uiPortGetRunTimeCounterValue();
 #define INCLUDE_xTimerPendFunctionCall  (1)
 #define INCLUDE_xTaskGetIdleTaskHandle  (1)
 
+#define configCOMMAND_INT_MAX_OUTPUT_SIZE 100
+
 #endif /* TI_FREERTOS_CONFIG_H */
