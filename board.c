@@ -33,14 +33,9 @@
 #include <stdint.h>
 
 #define TMP100_SOC_ADDR         0x4A
-#define TMP100_POWER_SEC_ADDR   0x4B
 
 uint8_t Board_getSocTemperatureSensorAddr(void)
 {
     return (TMP100_SOC_ADDR);
 }
 
-uint8_t Board_getPowerSecTemperatureSensorAddr(void)
-{
-    return (TMP100_POWER_SEC_ADDR);
-}
