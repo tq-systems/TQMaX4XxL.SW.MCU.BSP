@@ -5,10 +5,11 @@
  *      Author: schneiderj
  */
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "i2c_temperature_cmd.h"
 
-void i2c_temperature_main(void *args);
+float i2cGetTemperature(void *args);
 
 /* The definition of the "i2ctemp" command. */
 const CLI_Command_Definition_t i2cTempCommandDef =
@@ -21,7 +22,7 @@ const CLI_Command_Definition_t i2cTempCommandDef =
 
 BaseType_t i2cTempCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
-    i2c_temperature_main(NULL);
+    sprintf(pcWriteBuffer, "Temperature sensor: %.2f deg C\r\n", i2cGetTemperature(NULL));
 
     return pdFALSE;
 }

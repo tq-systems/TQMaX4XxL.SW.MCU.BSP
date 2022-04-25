@@ -40,18 +40,17 @@
 #define TMP10X_RESULT_REG       (0x0000U)
 
 extern uint8_t Board_getSocTemperatureSensorAddr(void);
-extern uint8_t Board_getPowerSecTemperatureSensorAddr(void);
 
-void i2c_temperature_main(void *arg0)
+float i2cGetTemperature(void *args)
 {
-    uint16_t        sample;
-    int16_t         temperature;
-    uint8_t         txBuffer[1];
-    uint8_t         rxBuffer[2];
-    int32_t         status;
-    uint8_t         deviceAddress;
-    I2C_Handle      i2cHandle;
-    I2C_Transaction i2cTransaction;
+    float           result         = 0.0;
+    int16_t         temperature    = 0;
+    uint8_t         txBuffer[1]    = {0};
+    uint8_t         rxBuffer[2]    = {0};
+    int32_t         status         = 0;
+    uint8_t         deviceAddress  = 0;
+    I2C_Handle      i2cHandle      = NULL;
+    I2C_Transaction i2cTransaction = {0};
 
     Drivers_i2cOpen();
     Board_driversOpen();
@@ -88,38 +87,34 @@ void i2c_temperature_main(void *arg0)
             i2cTransaction.readCount = 2;
             i2cTransaction.slaveAddress = deviceAddress;
 
-            /* Take 20 samples and print them out onto the console */
-            for(sample = 0; sample < 20; sample++)
+            /* clear RX buffer every time we read, to make sure it does not have stale data */
+            rxBuffer[0] = rxBuffer[1] = 0;
+            status = I2C_transfer(i2cHandle, &i2cTransaction);
+            if(status == SystemP_SUCCESS)
             {
-                /* clear RX buffer every time we read, to make sure it does not have stale data */
-                rxBuffer[0] = rxBuffer[1] = 0;
-                status = I2C_transfer(i2cHandle, &i2cTransaction);
-                if(status == SystemP_SUCCESS)
+                /* Create 16 bit temperature */
+                temperature = ((uint16_t)rxBuffer[0] << 8) | (rxBuffer[1]);
+                /*
+                 * 4 LSBs of temperature are 0 according to datasheet
+                 * since temperature is stored in 12 bits. Therefore,
+                 * right shift by 4 places
+                 */
+                temperature = temperature >> 4;
+                /*
+                 * If the 12th bit of temperature is set '1' (equivalent to 8th bit of the first byte read),
+                 * then we have a 2's complement negative value which needs to be sign extended
+                 */
+                if(rxBuffer[0] & 0x80)
                 {
-                    /* Create 16 bit temperature */
-                    temperature = ((uint16_t)rxBuffer[0] << 8) | (rxBuffer[1]);
-                    /*
-                     * 4 LSBs of temperature are 0 according to datasheet
-                     * since temperature is stored in 12 bits. Therefore,
-                     * right shift by 4 places
-                     */
-                    temperature = temperature >> 4;
-                    /*
-                     * If the 12th bit of temperature is set '1' (equivalent to 8th bit of the first byte read),
-                     * then we have a 2's complement negative value which needs to be sign extended
-                     */
-                    if(rxBuffer[0] & 0x80)
-                    {
-                        temperature |= 0xF000;
-                    }
-                    /* Of the 12 bits of temperature, 4 LSBs are for decimal point according to datasheet so divide by 16 */
-                    DebugP_log("[I2C] Sample %u: %f (celcius)\r\n", sample, temperature/16.0);
+                    temperature |= 0xF000;
                 }
-                else
-                {
-                    DebugP_logError("[I2C] Sample %u read failed\r\n", sample);
-                    break;
-                }
+                /* Of the 12 bits of temperature, 4 LSBs are for decimal point according to datasheet so divide by 16 */
+                result = temperature / 16.0;
+                DebugP_log("[I2C] %f (celcius)\r\n", result);
+            }
+            else
+            {
+                DebugP_logError("[I2C] read failed\r\n");
             }
         }
     }
@@ -136,5 +131,5 @@ void i2c_temperature_main(void *arg0)
     Board_driversClose();
     Drivers_i2cClose();
 
-    return;
+    return result;
 }
