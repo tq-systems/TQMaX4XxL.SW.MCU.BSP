@@ -36,6 +36,7 @@ i2c1.$name       = "CONFIG_I2C0";
 i2c1.I2C.$assign = "I2C0";
 
 uart1.$name            = "CONFIG_USART0";
+uart1.intrEnable       = "DISABLE";
 uart1.UART.$assign     = "USART0";
 uart1.UART.RXD.$assign = "ball.D15";
 uart1.UART.TXD.$assign = "ball.C16";
