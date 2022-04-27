@@ -52,9 +52,8 @@ uint8_t uartReceiveBuffer[APP_UART_RECEIVE_BUFSIZE];
 void cliTask( void *pvParameters )
 {
     /* The buffers and welcome message are declared static to keep them off the stack. */
-    static char welcomeMessage[]                     = "FreeRTOS command server.\r\n"
-                                                       "Type help to view a list of registered commands.\r\n"
-                                                       "configure your terminal to only send line feed (LF) on transmit\r\n";
+    static char welcomeMessage[]                     = "TQMaX4XxL MCU-BSP.\r\n\r\n"
+                                                       "Type help to view a list of registered commands.\r\n\r\n";
     static char      outputString[MAX_OUTPUT_LENGTH] = {0};
     static char      inputString[MAX_INPUT_LENGTH]   = {0};
     char             rxedChar                        = 0;
