@@ -10,6 +10,7 @@
  */
 const gpio       = scripting.addModule("/drivers/gpio/gpio", {}, false);
 const gpio1      = gpio.addInstance();
+const gpio2      = gpio.addInstance();
 const i2c        = scripting.addModule("/drivers/i2c/i2c", {}, false);
 const i2c1       = i2c.addInstance();
 const uart       = scripting.addModule("/drivers/uart/uart", {}, false);
@@ -26,11 +27,16 @@ const mpu_armv76 = mpu_armv7.addInstance();
 /**
  * Write custom configuration values to the imported modules.
  */
-gpio1.$name                    = "GPIO_LED";
 gpio1.pinDir                   = "OUTPUT";
 gpio1.useMcuDomainPeripherals  = true;
+gpio1.$name                    = "GPIO_USER_LED_1";
 gpio1.MCU_GPIO.$assign         = "MCU_GPIO0";
 gpio1.MCU_GPIO.gpioPin.$assign = "ball.C7";
+
+gpio2.$name                    = "GPIO_USER_LED_2";
+gpio2.pinDir                   = "OUTPUT";
+gpio2.useMcuDomainPeripherals  = true;
+gpio2.MCU_GPIO.gpioPin.$assign = "ball.C8";
 
 i2c1.$name       = "CONFIG_I2C0";
 i2c1.I2C.$assign = "I2C0";
@@ -75,5 +81,6 @@ mpu_armv76.size     = 31;
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
-i2c1.I2C.SCL.$suggestSolution = "ball.A18";
-i2c1.I2C.SDA.$suggestSolution = "ball.B18";
+gpio2.MCU_GPIO.$suggestSolution = "MCU_GPIO0";
+i2c1.I2C.SCL.$suggestSolution   = "ball.A18";
+i2c1.I2C.SDA.$suggestSolution   = "ball.B18";

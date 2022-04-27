@@ -46,25 +46,25 @@
 
 void gpio_led_blink_main(void *args)
 {
-    uint32_t    loopcnt = 5, delaySec = 1;
-    uint32_t    gpioBaseAddr, pinNum;
-
-    /* Open drivers to open the UART driver for console */
+    uint32_t loopcnt      = 5;
+    uint32_t delayUsec    = 500000;
+    uint32_t gpioBaseAddr = 0;
+    uint32_t pinNum       = 0;
 
     DebugP_log("GPIO LED Blink Test Started ...\r\n");
-    DebugP_log("LED will Blink for %d seconds ...\r\n", (loopcnt * delaySec * 2));
+    DebugP_log("LED will Blink for %d seconds ...\r\n", (loopcnt * delayUsec / 1000000 * 2));
 
     /* Get address after translation translate */
-    gpioBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(GPIO_LED_BASE_ADDR);
-    pinNum       = GPIO_LED_PIN;
+    gpioBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(GPIO_USER_LED_1_BASE_ADDR);
+    pinNum       = GPIO_USER_LED_1_PIN;
 
-    GPIO_setDirMode(gpioBaseAddr, pinNum, GPIO_LED_DIR);
+    GPIO_setDirMode(gpioBaseAddr, pinNum, GPIO_USER_LED_1_DIR);
     while(loopcnt > 0)
     {
         GPIO_pinWriteHigh(gpioBaseAddr, pinNum);
-        ClockP_sleep(delaySec);
+        ClockP_usleep(delayUsec);
         GPIO_pinWriteLow(gpioBaseAddr, pinNum);
-        ClockP_sleep(delaySec);
+        ClockP_usleep(delayUsec);
 
         loopcnt--;
     }
