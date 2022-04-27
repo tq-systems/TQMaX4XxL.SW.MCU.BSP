@@ -36,7 +36,7 @@
 #include "ti_board_config.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "combination.h"
+#include "CLI_task.h"
 
 #define MAIN_TASK_PRI  (configMAX_PRIORITIES-1)
 #define CLI_TASK_PRI   (configMAX_PRIORITIES-1)
