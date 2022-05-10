@@ -5,6 +5,7 @@
  *      Author: schneiderj
  */
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "gpio_led_blink_cmd.h"
 
@@ -22,6 +23,8 @@ const CLI_Command_Definition_t ledBlinkCommandDef =
 BaseType_t ledBlinkCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
     gpio_led_blink_main(NULL);
+
+    sprintf(pcWriteBuffer, "Command executed successfully\r\n");
 
     return pdFALSE;
 }
