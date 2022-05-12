@@ -3,6 +3,7 @@
  *
  *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  *  Author Jeremias Schneider
+ *  Author Michael Bernhardt
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
@@ -49,24 +50,37 @@
 
 void gpio_led_blink_main(void *args)
 {
-    uint32_t loopcnt      = 5;
-    uint32_t delayUsec    = 500000;
-    uint32_t gpioBaseAddr = 0;
-    uint32_t pinNum       = 0;
+    enum
+    {
+        USER_LED_1,
+        USER_LED_2,
+        USER_LED_MAX
+    };
+
+    uint32_t loopcnt                    = 5;
+    uint32_t delayUsec                  = 500000;
+    uint32_t gpioBaseAddr[USER_LED_MAX] = {0};
+    uint32_t pinNum[USER_LED_MAX]       = {0};
 
     DebugP_log("GPIO LED Blink Test Started ...\r\n");
     DebugP_log("LED will Blink for %d seconds ...\r\n", (loopcnt * delayUsec / 1000000 * 2));
 
     /* Get address after translation translate */
-    gpioBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(GPIO_USER_LED_1_BASE_ADDR);
-    pinNum       = GPIO_USER_LED_1_PIN;
+    gpioBaseAddr[USER_LED_1] = (uint32_t) AddrTranslateP_getLocalAddr(GPIO_USER_LED_1_BASE_ADDR);
+    pinNum[USER_LED_1]       = GPIO_USER_LED_1_PIN;
+    GPIO_setDirMode(gpioBaseAddr[USER_LED_1], pinNum[USER_LED_1], GPIO_USER_LED_1_DIR);
 
-    GPIO_setDirMode(gpioBaseAddr, pinNum, GPIO_USER_LED_1_DIR);
+    gpioBaseAddr[USER_LED_2] = (uint32_t) AddrTranslateP_getLocalAddr(GPIO_USER_LED_2_BASE_ADDR);
+    pinNum[USER_LED_2]       = GPIO_USER_LED_2_PIN;
+    GPIO_setDirMode(gpioBaseAddr[USER_LED_2], pinNum[USER_LED_2], GPIO_USER_LED_2_DIR);
+
     while(loopcnt > 0)
     {
-        GPIO_pinWriteHigh(gpioBaseAddr, pinNum);
+        GPIO_pinWriteHigh(gpioBaseAddr[USER_LED_1], pinNum[USER_LED_1]);
+        GPIO_pinWriteHigh(gpioBaseAddr[USER_LED_2], pinNum[USER_LED_2]);
         ClockP_usleep(delayUsec);
-        GPIO_pinWriteLow(gpioBaseAddr, pinNum);
+        GPIO_pinWriteLow(gpioBaseAddr[USER_LED_1], pinNum[USER_LED_1]);
+        GPIO_pinWriteLow(gpioBaseAddr[USER_LED_2], pinNum[USER_LED_2]);
         ClockP_usleep(delayUsec);
 
         loopcnt--;
