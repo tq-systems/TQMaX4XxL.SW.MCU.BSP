@@ -1,6 +1,6 @@
-/** SPDX-License-Identifier: BSD-3-Clause
- *
- * @file gpio_led_blink_cmd.c
+/* SPDX-License-Identifier: BSD-3-Clause */
+/*
+ * @file i2c_temperature_cmd.c
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Jeremias Schneider
  *
@@ -58,7 +58,7 @@ const CLI_Command_Definition_t i2cTempCommandDef =
  * forward declarations
  ******************************************************************************/
 
-
+extern float i2cGetTemperature(void *args);
 
 /*******************************************************************************
  * local static functions

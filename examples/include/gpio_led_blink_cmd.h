@@ -1,5 +1,5 @@
-/** SPDX-License-Identifier: BSD-3-Clause
- *
+/* SPDX-License-Identifier: BSD-3-Clause */
+/*
  * @file gpio_led_blink_cmd.h
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Jeremias Schneider
@@ -45,7 +45,6 @@
  * prototypes
  ******************************************************************************/
 
-void gpio_led_blink_main(void *args);
 BaseType_t ledBlinkCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString);
 
 /*******************************************************************************

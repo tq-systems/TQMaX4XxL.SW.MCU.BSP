@@ -1,5 +1,5 @@
-/** SPDX-License-Identifier: BSD-3-Clause
- *
+/* SPDX-License-Identifier: BSD-3-Clause */
+/*
  * @file i2c_temperature_cmd.h
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Jeremias Schneider
@@ -44,7 +44,6 @@
  * prototypes
  ******************************************************************************/
 
-float i2cGetTemperature(void *args);
 BaseType_t i2cTempCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString);
 
 /*******************************************************************************

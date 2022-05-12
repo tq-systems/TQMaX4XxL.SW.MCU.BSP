@@ -2,7 +2,7 @@
  *  Copyright (C) 2021 Texas Instruments Incorporated
  *
  *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
- *  author Jeremias Schneider
+ *  Author Jeremias Schneider
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
