@@ -1,19 +1,57 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * gpio_led_blink_cmd.h
+ * @file i2c_temperature_cmd.h
+ * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @author Jeremias Schneider
  *
- *  Created on: 14.04.2022
- *      Author: schneiderj
+ * @date 2022-04-14
+ *
+ * -----------------------------------------------------------------------------
+ * @brief This file contains the declaration of the I2C temperature command.
+ *
  */
 
 #ifndef I2C_TEMPERATURE_CMD_H_
 #define I2C_TEMPERATURE_CMD_H_
 
+/*******************************************************************************
+ * includes
+ ******************************************************************************/
+
 #include "portmacro.h"
 #include "projdefs.h"
 #include "FreeRTOS_CLI.h"
 
-extern const CLI_Command_Definition_t i2cTempCommandDef;
+/*******************************************************************************
+ * defines
+ ******************************************************************************/
+
+
+
+/*******************************************************************************
+ * macros
+ ******************************************************************************/
+
+
+
+/*******************************************************************************
+ * typedefs
+ ******************************************************************************/
+
+
+
+/*******************************************************************************
+ * prototypes
+ ******************************************************************************/
 
 BaseType_t i2cTempCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString);
+
+/*******************************************************************************
+ * global extern data
+ ******************************************************************************/
+
+extern const CLI_Command_Definition_t i2cTempCommandDef;
+
+/******************************************************************************/
 
 #endif /* I2C_TEMPERATURE_CMD_H_ */
