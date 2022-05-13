@@ -43,6 +43,7 @@
 #include "gpio_led_blink_cmd.h"
 #include "i2c_temperature_cmd.h"
 #include "i2c_scan_cmd.h"
+#include "i2c_rtc_cmd.h"
 
 #define APP_UART_RECEIVE_BUFSIZE (1)
 #define MAX_INPUT_LENGTH         (50)
@@ -75,6 +76,7 @@ void cliTask( void *pvParameters )
     FreeRTOS_CLIRegisterCommand(&ledBlinkCommandDef);
     FreeRTOS_CLIRegisterCommand(&i2cTempCommandDef);
     FreeRTOS_CLIRegisterCommand(&i2cBusScanCommandDef);
+    FreeRTOS_CLIRegisterCommand(&i2cRtcCommandDef);
 
     while(1)
     {
