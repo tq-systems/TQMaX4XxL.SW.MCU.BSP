@@ -110,7 +110,7 @@ static bool i2c_busScan(uint8_t i2cAddress)
  * @param pcWriteBuffer cli output string buffer
  * @param xWriteBufferLen length of the cli output string
  * @param pcCommandString cli command input string
- * @return pdFALSE = output is the end of the output, pdTRUE = output is not the end of the output
+ * @return pdFALSE = i2c scan is complete, pdTRUE = i2c scan is not complete
  */
 BaseType_t i2cBusScanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
