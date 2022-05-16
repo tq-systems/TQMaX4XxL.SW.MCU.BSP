@@ -50,7 +50,6 @@
 
 void gpio_led_blink_main(void *args)
 {
-
     bool error            = false;
     uint32_t loopcnt      = 5;
     uint32_t delayUsec    = 500000;
