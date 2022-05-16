@@ -37,11 +37,11 @@
  * local macros
  ******************************************************************************/
 
-/* The definition of the "i2ctemp" command. */
+/* The definition of the "i2cBusScan" command. */
 const CLI_Command_Definition_t i2cBusScanCommandDef =
 {
     "i2cBusScan",
-    "\r\ni2cBusScan:\r\n Scans the I2C bus from address 0x0 until 0xFF \r\n\r\n",
+    "\r\ni2cBusScan:\r\n Scans the I2C bus from address 0x03 until 0x77 \r\n\r\n",
     i2cBusScanCommand,
     0
 };
@@ -70,10 +70,10 @@ static bool i2c_busScan(uint8_t i2cAddress);
  ******************************************************************************/
 
 /**
- * @brief This function scans an i2c address and returns whether there is a member on the address.
+ * @brief This function scans an i2c address and returns whether there is a device on the address.
  *
  * @param i2cAddress address to be scanned
- * @return true = member found, false = no member found
+ * @return true = device found, false = no device found
  */
 static bool i2c_busScan(uint8_t i2cAddress)
 {
@@ -110,7 +110,7 @@ static bool i2c_busScan(uint8_t i2cAddress)
  * @param pcWriteBuffer cli output string buffer
  * @param xWriteBufferLen length of the cli output string
  * @param pcCommandString cli command input string
- * @return success
+ * @return pdFALSE = output is the end of the output, pdTRUE = output is not the end of the output
  */
 BaseType_t i2cBusScanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
