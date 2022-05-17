@@ -3,6 +3,7 @@
  *
  *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  *  Author Jeremias Schneider
+ *  Author Michael Bernhardt
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
@@ -49,6 +50,7 @@
 
 void gpio_led_blink_main(void *args)
 {
+    bool error            = false;
     uint32_t loopcnt      = 5;
     uint32_t delayUsec    = 500000;
     uint32_t gpioBaseAddr = 0;
@@ -58,11 +60,24 @@ void gpio_led_blink_main(void *args)
     DebugP_log("LED will Blink for %d seconds ...\r\n", (loopcnt * delayUsec / 1000000 * 2));
 
     /* Get address after translation translate */
-    gpioBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(GPIO_USER_LED_1_BASE_ADDR);
-    pinNum       = GPIO_USER_LED_1_PIN;
+    if (*(uint8_t*)args == '1')
+    {
+        gpioBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(GPIO_USER_LED_1_BASE_ADDR);
+        pinNum       = GPIO_USER_LED_1_PIN;
+        GPIO_setDirMode(gpioBaseAddr, pinNum, GPIO_USER_LED_1_DIR);
+    }
+    else if (*(uint8_t*)args == '2')
+    {
+        gpioBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(GPIO_USER_LED_2_BASE_ADDR);
+        pinNum       = GPIO_USER_LED_2_PIN;
+        GPIO_setDirMode(gpioBaseAddr, pinNum, GPIO_USER_LED_2_DIR);
+    }
+    else
+    {
+        error = true;
+    }
 
-    GPIO_setDirMode(gpioBaseAddr, pinNum, GPIO_USER_LED_1_DIR);
-    while(loopcnt > 0)
+    while((error == false) && (loopcnt > 0))
     {
         GPIO_pinWriteHigh(gpioBaseAddr, pinNum);
         ClockP_usleep(delayUsec);

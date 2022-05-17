@@ -38,9 +38,9 @@
 const CLI_Command_Definition_t ledBlinkCommandDef =
 {
     "ledblink",
-    "\r\nledblink:\r\n Lets the LED blink a fixed number of times\r\n\r\n",
+    "\r\nledblink [LED]:\r\n Lets the LED blink a fixed number of times, use 1 or 2 for user LED 1 or 2.\r\n\r\n",
     ledBlinkCommand,
-    0
+    1
 };
 
 /*******************************************************************************
@@ -80,9 +80,18 @@ extern void gpio_led_blink_main(void *args);
  */
 BaseType_t ledBlinkCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
-    gpio_led_blink_main(NULL);
+    BaseType_t xParameter1StringLength = 0;
+    const char* pcParameter1 = FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameter1StringLength);
 
-    sprintf(pcWriteBuffer, "Command executed successfully\r\n");
+    if ((*pcParameter1 == '1') || (*pcParameter1 == '2'))
+    {
+        gpio_led_blink_main((char*)pcParameter1);
+        sprintf(pcWriteBuffer, "Command executed successfully\r\n");
+    }
+    else
+    {
+        sprintf(pcWriteBuffer, "Wrong input parameter\r\n");
+    }
 
     return pdFALSE;
 }
