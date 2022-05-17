@@ -96,8 +96,8 @@ typedef enum
  * forward declarations
  ******************************************************************************/
 
-static void i2cGetRtcTime(rtcTime_t* p_time);
-static void i2cWriteRtcTime(rtcTime_t* time, rtcOption_t option);
+static bool i2cGetRtcTime(rtcTime_t* p_time);
+static bool i2cWriteRtcTime(rtcTime_t* time, rtcOption_t option);
 static uint8_t decToBcd(uint8_t decVal);
 static bool inputParamToSettingParam(rtcTime_t* p_time, rtcOption_t* p_rtcOption, const char *pcCommandString);
 
@@ -203,9 +203,11 @@ static bool inputParamToSettingParam(rtcTime_t* p_time, rtcOption_t* p_rtcOption
  * @brief This function gets the current RTC time and date.
  *
  * @param p_time pointer to rtcTime struct
+ * @return true = success, false = failure
  */
-static void i2cGetRtcTime(rtcTime_t* p_time)
+static bool i2cGetRtcTime(rtcTime_t* p_time)
 {
+    bool retVal                                = false;
     uint8_t         rxBuffer[MAX_BUFFER_SIZE]  = {0};
     uint8_t         txBuffer[1]                = {0};
     int32_t         status                     = 0;
@@ -250,11 +252,14 @@ static void i2cGetRtcTime(rtcTime_t* p_time)
             p_time->day   = ((((rxBuffer[3] & 0x3F) >> 4) * 10) + (rxBuffer[3] & 0x0F));
             p_time->month = ((((rxBuffer[5] & 0x3F) >> 4) * 10) + (rxBuffer[5] & 0x0F));
             p_time->year  = ((((rxBuffer[6] & 0x3F) >> 4) * 10) + (rxBuffer[6] & 0x0F));
+            retVal        = true;
         }
     }
 
     Board_driversClose();
     Drivers_i2cClose();
+
+    return retVal;
 }
 
 /**
@@ -262,9 +267,14 @@ static void i2cGetRtcTime(rtcTime_t* p_time)
  *
  * @param p_time pointer to rtcTimer struct
  * @param option Option whether the date or the time should be set.
+ * @return true = success, false = failure
  */
-static void i2cWriteRtcTime(rtcTime_t* p_time, rtcOption_t option)
+static bool i2cWriteRtcTime(rtcTime_t* p_time, rtcOption_t option)
 {
+    const uint8_t WRITE_TIME_WRITE_CONT = 4;
+    const uint8_t WRITE_DATE_WRITE_CONT = 5;
+
+    bool retVal                    = false;
     uint8_t         txBuffer[5]    = {0};
     uint8_t         rxBuffer[1]    = {0};
     int32_t         status         = I2C_STS_SUCCESS;
@@ -290,7 +300,7 @@ static void i2cWriteRtcTime(rtcTime_t* p_time, rtcOption_t option)
 
     if (option == TIME)
     {
-        i2cTransaction.writeCount = 4;
+        i2cTransaction.writeCount = WRITE_TIME_WRITE_CONT;
         txBuffer[0]               = RTC_REG_SECOND;
         txBuffer[1]               = decToBcd(p_time->sec);
         txBuffer[2]               = decToBcd(p_time->min);
@@ -298,7 +308,7 @@ static void i2cWriteRtcTime(rtcTime_t* p_time, rtcOption_t option)
     }
     else if (option == DATE)
     {
-        i2cTransaction.writeCount = 5;
+        i2cTransaction.writeCount = WRITE_DATE_WRITE_CONT;
         txBuffer[0]               = RTC_REG_DAY;
         txBuffer[1]               = decToBcd(p_time->day);
         txBuffer[3]               = decToBcd(p_time->month);
@@ -310,9 +320,15 @@ static void i2cWriteRtcTime(rtcTime_t* p_time, rtcOption_t option)
     {
         DebugP_log("[I2C] RTC write error %d.\r\n", status);
     }
+    else
+    {
+        retVal = true;
+    }
 
     Board_driversClose();
     Drivers_i2cClose();
+
+    return retVal;
 }
 
 /*******************************************************************************
@@ -350,8 +366,14 @@ BaseType_t i2cRtcCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const c
     {
         if (inputParamToSettingParam(&time, &rtcOption, pcCommandString) == true)
         {
-            i2cWriteRtcTime(&time, rtcOption);
-            sprintf(pcWriteBuffer, "RTC successfully set \r\n");
+            if(i2cWriteRtcTime(&time, rtcOption) == true)
+            {
+                sprintf(pcWriteBuffer, "RTC successfully set \r\n");
+            }
+            else
+            {
+                sprintf(pcWriteBuffer, "RTC write failure \r\n");
+            }
         }
         else
         {
@@ -360,8 +382,14 @@ BaseType_t i2cRtcCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const c
     }
     else if (*pcParameter1 == 'r')
     {
-        i2cGetRtcTime(&time);
-        sprintf(pcWriteBuffer, "Date: %02u.%.02u.%.02u Time: %02u:%02u:%02u\r\n", time.day, time.month, time.year, time.h, time.min, time.sec);
+        if (i2cGetRtcTime(&time) == true)
+        {
+            sprintf(pcWriteBuffer, "Date: %02u.%.02u.%.02u Time: %02u:%02u:%02u\r\n", time.day, time.month, time.year, time.h, time.min, time.sec);
+        }
+        else
+        {
+            sprintf(pcWriteBuffer, "RTC read failure \r\n");
+        }
     }
     else
     {
