@@ -216,8 +216,9 @@ static bool i2cGetRtcTime(rtcTime_t* p_time)
 
     Drivers_i2cOpen();
     Board_driversOpen();
+    i2cHandle = I2C_getHandle(CONFIG_I2C0);
 
-    i2cHandle = gI2cHandle[CONFIG_I2C0];
+//    i2cHandle = gI2cHandle[CONFIG_I2C0];
 
     DebugP_log("[I2C] Read RTC data.\r\n");
 

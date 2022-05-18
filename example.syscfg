@@ -8,6 +8,9 @@
 /**
  * Import the modules used in this configuration.
  */
+const eeprom     = scripting.addModule("/board/eeprom/eeprom", {}, false);
+const eeprom1    = eeprom.addInstance();
+const eeprom2    = eeprom.addInstance();
 const gpio       = scripting.addModule("/drivers/gpio/gpio", {}, false);
 const gpio1      = gpio.addInstance();
 const gpio2      = gpio.addInstance();
@@ -29,6 +32,11 @@ const mpu_armv76 = mpu_armv7.addInstance();
 /**
  * Write custom configuration values to the imported modules.
  */
+eeprom1.$name      = "CUST_EEPROM";
+eeprom1.i2cAddress = 0x54;
+
+eeprom2.$name = "TQ_EEPROM";
+
 gpio1.pinDir                   = "OUTPUT";
 gpio1.useMcuDomainPeripherals  = true;
 gpio1.$name                    = "GPIO_USER_LED_1";
@@ -40,8 +48,10 @@ gpio2.pinDir                   = "OUTPUT";
 gpio2.useMcuDomainPeripherals  = true;
 gpio2.MCU_GPIO.gpioPin.$assign = "ball.C8";
 
-i2c1.$name       = "CONFIG_I2C0";
-i2c1.I2C.$assign = "I2C0";
+eeprom2.peripheralDriver = i2c1;
+i2c1.$name               = "CONFIG_I2C0";
+eeprom1.peripheralDriver = i2c1;
+i2c1.I2C.$assign         = "I2C0";
 
 ospi1.$name        = "CONFIG_OSPI0";
 ospi1.xferLines    = "QUAD";
