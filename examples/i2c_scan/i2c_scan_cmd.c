@@ -40,8 +40,8 @@
 /* The definition of the "i2cBusScan" command. */
 const CLI_Command_Definition_t i2cBusScanCommandDef =
 {
-    "i2cBusScan",
-    "\r\ni2cBusScan:\r\n Scans the I2C bus from address 0x03 until 0x77 \r\n\r\n",
+    "i2cbusscan",
+    "\r\ni2cbusscan:\r\n Scans the I2C bus from address 0x03 until 0x77 \r\n\r\n",
     i2cBusScanCommand,
     0
 };

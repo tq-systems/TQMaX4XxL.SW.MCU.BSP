@@ -43,7 +43,7 @@
 #define MAX_INPUT_PARAM      (5U)
 #define PARAM_INPUT_ACCESS   (0U)
 #define PARAM_INPUT_OPTION   (1U)
-#define PARAM_INPUT_HOUER    (2U)
+#define PARAM_INPUT_HOUR     (2U)
 #define PARAM_INPUT_MIN      (3U)
 #define PARAM_INPUT_SEC      (4U)
 #define PARAM_INPUT_DAY      (2U)
@@ -152,8 +152,8 @@ static bool inputParamToSettingParam(rtcTime_t* p_time, rtcOption_t* p_rtcOption
     {
         *p_rtcOption = TIME;
 
-        p_time->h = strtoul(pcParameter[PARAM_INPUT_HOUER], &pNextNumber, DECIMAL_BASE);
-        if ((p_time->h > 23) || (pcParameter[PARAM_INPUT_HOUER] == pNextNumber))
+        p_time->h = strtoul(pcParameter[PARAM_INPUT_HOUR], &pNextNumber, DECIMAL_BASE);
+        if ((p_time->h > 23) || (pcParameter[PARAM_INPUT_HOUR] == pNextNumber))
         {
             success = false;
         }
@@ -207,7 +207,7 @@ static bool inputParamToSettingParam(rtcTime_t* p_time, rtcOption_t* p_rtcOption
  */
 static bool i2cGetRtcTime(rtcTime_t* p_time)
 {
-    bool retVal                                = false;
+    bool            retVal                     = false;
     uint8_t         rxBuffer[MAX_BUFFER_SIZE]  = {0};
     uint8_t         txBuffer[1]                = {0};
     int32_t         status                     = 0;
@@ -237,7 +237,7 @@ static bool i2cGetRtcTime(rtcTime_t* p_time)
     if(status == I2C_STS_SUCCESS)
     {
         /* read the results */
-        i2cTransaction.readCount    = sizeof(rxBuffer);
+        i2cTransaction.readCount = sizeof(rxBuffer);
 
         /* clear RX buffer every p_time we read, to make sure it does not have stale data */
         memset(rxBuffer, 0, sizeof(rxBuffer));
@@ -341,7 +341,7 @@ static bool i2cWriteRtcTime(rtcTime_t* p_time, rtcOption_t option)
  * @param pcWriteBuffer cli output string buffer
  * @param xWriteBufferLen length of the cli output string
  * @param pcCommandString cli command input string
- * @return success
+ * @return pdFALSE = command is finished
  */
 BaseType_t i2cRtcCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
