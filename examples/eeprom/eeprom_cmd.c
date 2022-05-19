@@ -112,6 +112,55 @@ static bool eepromRead(eeprom_t* eepromData)
     return success;
 }
 
+#define TQ_EEPROM_ADD    0x50
+#define CUST_EEPROM_ADD  0x54
+
+static bool eepromRead1(eeprom_t* eepromData)
+{
+    bool success = false;
+    int32_t         status                     = 0;
+    I2C_Handle      i2cHandle                  = NULL;
+    I2C_Transaction i2cTransaction             = {0};
+    uint8_t         rxBuffer[10]  = {0};
+    uint8_t         txBuffer[2]                = {0};
+
+    DebugP_log("[I2C] Read EEPROM instance: %d.\r\n", eepromData->instance);
+
+    if ((eepromData->instance == TQ_EEPROM) || (eepromData->instance == CUST_EEPROM))
+    {
+        Drivers_i2cOpen();
+        Board_driversOpen();
+        i2cHandle = I2C_getHandle(CONFIG_I2C0);
+
+        /* Set default transaction parameters */
+        I2C_Transaction_init(&i2cTransaction);
+
+        /* Override with required transaction parameters */
+        i2cTransaction.writeBuf     = txBuffer;
+        i2cTransaction.writeCount   = 2;
+        i2cTransaction.readBuf      = rxBuffer;
+        i2cTransaction.readCount    = 4;
+        i2cTransaction.slaveAddress = TQ_EEPROM_ADD;
+
+        status = I2C_transfer(i2cHandle, &i2cTransaction);
+
+        if (status != SystemP_SUCCESS)
+        {
+            DebugP_logError("[EEPROM] Read failed for instance %d !!!\r\n", eepromData->instance);
+        }
+        else
+        {
+            DebugP_log("[EEPROM] Read failed for instance %d %d %d %d !!!\r\n", rxBuffer[0], rxBuffer[1], rxBuffer[2], rxBuffer[3]);
+            success = true;
+        }
+
+        Board_driversClose();
+        Drivers_i2cClose();
+    }
+
+    return success;
+}
+
 /*******************************************************************************
  * global functions
  ******************************************************************************/
@@ -144,7 +193,7 @@ BaseType_t eepromCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const c
         err = true;
     }
 
-    if ((err != true) && (eepromRead(&eepromData) == true))
+    if ((err != true) && (eepromRead1(&eepromData) == true))
     {
         sprintf(pcWriteBuffer, "EEPROM data 0x%02X\r\n",eepromData.data);
     }
