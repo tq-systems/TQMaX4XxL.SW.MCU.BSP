@@ -94,8 +94,12 @@
         <file path="examples/gpio_led_blink/gpio_led_blink_cmd.c"   targetDirectory="examples/gpio_led_blink"  action="copy"></file>
         <file path="examples/i2c_temperature/i2c_temperature.c"     targetDirectory="examples/i2c_temperature" action="copy"></file>
         <file path="examples/i2c_temperature/i2c_temperature_cmd.c" targetDirectory="examples/i2c_temperature" action="copy"></file>
+        <file path="examples/i2c_temperature/i2c_scan_cmd.c"        targetDirectory="examples/i2c_scan"        action="copy"></file>
+        <file path="examples/i2c_temperature/i2c_rtc_cmd.c"         targetDirectory="examples/i2c_rtc"         action="copy"></file>
         <file path="examples/include/gpio_led_blink_cmd.h"          targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/i2c_temperature_cmd.h"         targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/i2c_scan_cmd.h"                targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/i2c_rtc_cmd.h"                 targetDirectory="examples/include"         action="copy"></file>
 
         <file path="FreeRTOS/FreeRTOSConfig.h"   targetDirectory="FreeRTOS"       action="copy"></file>
         <file path="FreeRTOS/CLI/CLI_task.c"     targetDirectory="FreeRTOS/CLI"   action="copy"></file>
