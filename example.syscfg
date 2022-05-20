@@ -15,6 +15,8 @@ const i2c        = scripting.addModule("/drivers/i2c/i2c", {}, false);
 const i2c1       = i2c.addInstance();
 const ospi       = scripting.addModule("/drivers/ospi/ospi", {}, false);
 const ospi1      = ospi.addInstance();
+const mmcsd      = scripting.addModule("/drivers/mmcsd/mmcsd", {}, false);
+const mmcsd1     = mmcsd.addInstance();
 const uart       = scripting.addModule("/drivers/uart/uart", {}, false);
 const uart1      = uart.addInstance();
 const debug_log  = scripting.addModule("/kernel/dpl/debug_log");
@@ -46,6 +48,9 @@ i2c1.I2C.$assign = "I2C0";
 ospi1.$name        = "CONFIG_OSPI0";
 ospi1.xferLines    = "QUAD";
 ospi1.inputClkFreq = 83333333;
+mmcsd1.$name        = "CONFIG_MMCSD0";
+mmcsd1.inputClkFreq = 25000000;
+
 
 uart1.$name            = "CONFIG_USART0";
 uart1.intrEnable       = "DISABLE";
@@ -91,6 +96,7 @@ gpio2.MCU_GPIO.$suggestSolution  = "MCU_GPIO0";
 i2c1.I2C.SCL.$suggestSolution    = "ball.A18";
 i2c1.I2C.SDA.$suggestSolution    = "ball.B18";
 ospi1.OSPI.$suggestSolution      = "OSPI0";
+mmcsd1.MMC0.$suggestSolution    = "MMC0";
 ospi1.OSPI.CLK.$suggestSolution  = "ball.N20";
 ospi1.OSPI.CSn0.$suggestSolution = "ball.L19";
 ospi1.OSPI.D3.$suggestSolution   = "ball.M21";

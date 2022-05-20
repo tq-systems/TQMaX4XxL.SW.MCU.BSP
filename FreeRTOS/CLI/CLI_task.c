@@ -30,6 +30,7 @@
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <emmc_cmd.h>
 #include <string.h>
 #include <kernel/dpl/DebugP.h>
 #include "ti_drivers_config.h"
@@ -79,6 +80,7 @@ void cliTask( void *pvParameters )
     FreeRTOS_CLIRegisterCommand(&i2cTempCommandDef);
     FreeRTOS_CLIRegisterCommand(&i2cBusScanCommandDef);
     FreeRTOS_CLIRegisterCommand(&i2cRtcCommandDef);
+    FreeRTOS_CLIRegisterCommand(&emmcCommandDef);
     FreeRTOS_CLIRegisterCommand(&qspiNorFlashCommandDef);
     FreeRTOS_CLIRegisterCommand(&eepromCommandDef);
 
