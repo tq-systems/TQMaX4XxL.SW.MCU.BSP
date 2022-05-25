@@ -12,9 +12,8 @@
  * In case of any license issues please contact license@tq-group.com.
  *
  * -----------------------------------------------------------------------------
- * @brief <TODO short description of the file (only one line)>
+ * @brief This file contains the implementation of the qspi flash commands.
  *
- * <TODO Detailed description of the file>
  */
 
 /*******************************************************************************
@@ -115,123 +114,20 @@ const CLI_Command_Definition_t qspiNorFlashCommandDef =
  * forward declarations
  ******************************************************************************/
 
-
+static void writeFlash(char* pcWriteBuffer);
+static void readStatusReg(char* pcWriteBuffer);
+static void readFlash(char* pcWriteBuffer);
+static void eraseflash(char* pcWriteBuffer);
 
 /*******************************************************************************
  * local static functions
  ******************************************************************************/
 
-//static bool writeFlash(void)
-//{
-//    int32_t status = SystemP_SUCCESS;
-//    bool success   = false;
-//    OSPI_Handle qspiHanlde = {0};
-//    uint8_t buf[10]        = {0};
-//    OSPI_Transaction transaction = {0};
-//
-//    OSPI_Transaction_init(&transaction);
-//
-//    transaction.count      = 1;
-//    transaction.addrOffset = 0;
-//    transaction.buf        = buf;
-//    transaction.transferTimeout = 50;
-//
-//    buf[0] = CMD_WRDI;
-//
-//    /* Open OSPI Driver, among others */
-//    Drivers_ospiOpen();
-//
-//    /* Open Flash drivers with OSPI instance as input */
-//    status = Board_driversOpen();
-//
-//    qspiHanlde = OSPI_getHandle(CONFIG_OSPI0);
-//
-//    status = OSPI_writeDirect(qspiHanlde, &transaction);
-////    status = OSPI_norFlashWrite(qspiHanlde, 0, buf, 1);
-//
-//    if (status == SystemP_SUCCESS)
-//    {
-//        buf[0] = CMD_PP;
-//        status = OSPI_writeDirect(qspiHanlde, &transaction);
-//    }
-//
-//    if (status == SystemP_SUCCESS)
-//    {
-//        transaction.count = 4;
-//        buf[0] = 0x0;
-//        buf[1] = 0x0;
-//        buf[2] = 0x0;
-//        buf[3] = 0x1;
-//        status = OSPI_writeDirect(qspiHanlde, &transaction);
-//    }
-//
-//    if (status == SystemP_SUCCESS)
-//    {
-//        transaction.count = 1;
-//        buf[0] = 0xAA;
-//        status = OSPI_writeDirect(qspiHanlde, &transaction);
-//    }
-//
-//    Board_driversClose();
-//    Drivers_ospiClose();
-//
-//    if (status == SystemP_SUCCESS)
-//    {
-////        DebugP_log("[QSPI] Read data %d %d %d %d %d.\r\n", buf[0], buf[1], buf[2], buf[3] , buf[4]);
-//    }
-//    else
-//    {
-//        DebugP_log("[QSPI] Error %d.\r\n", status);
-//    }
-//
-//    return success;
-//}
-
-//static bool writeFlash(void)
-//{
-//    bool success   = false;
-//    int32_t status = SystemP_SUCCESS;
-//    OSPI_Handle qspiHanlde = {0};
-//    uint8_t buf[10]        = {0};
-//
-//    /* Open OSPI Driver, among others */
-//    Drivers_ospiOpen();
-//
-//    /* Open Flash drivers with OSPI instance as input */
-//    status = Board_driversOpen();
-//
-//    qspiHanlde = OSPI_getHandle(CONFIG_OSPI0);
-//
-//    for (uint8_t i = 0; i < sizeof(buf); i++)
-//    {
-//        buf[i] = i;
-//    }
-//
-//    status = OSPI_norFlashWrite(qspiHanlde, 2, buf, 4);
-//
-//    if (status == SystemP_SUCCESS)
-//    {
-//        DebugP_log("[QSPI] Data write %02X %02X %02X %02X %02X.\r\n", buf[0], buf[1], buf[2], buf[3] , buf[4]);
-//    }
-//    else
-//    {
-//        DebugP_log("[QSPI] Error write flash: %d.\r\n", status);
-//    }
-//
-//    Board_driversClose();
-//    Drivers_ospiClose();
-//
-//    return success;
-//}
-
-static bool writeFlash(void)
+static void statusTestFlash(char* pcWriteBuffer)
 {
-    bool success   = false;
     int32_t status = SystemP_SUCCESS;
-    OSPI_Handle qspiHanlde = {0};
-    uint8_t buf[10]        = {0};
+    OSPI_Handle qspiHandle = {0};
     OSPI_WriteCmdParams wrParams = {0};
-    OSPI_Transaction transaction = {0};
 
     /* Open OSPI Driver, among others */
     Drivers_ospiOpen();
@@ -239,7 +135,38 @@ static bool writeFlash(void)
     /* Open Flash drivers with OSPI instance as input */
     status = Board_driversOpen();
 
-    qspiHanlde = OSPI_getHandle(CONFIG_OSPI0);
+    qspiHandle = OSPI_getHandle(CONFIG_OSPI0);
+
+    OSPI_WriteCmdParams_init(&wrParams);
+
+    wrParams.cmd = CMD_WREN;
+    status = OSPI_writeCmd(qspiHandle, &wrParams);
+
+    Board_driversClose();
+    Drivers_ospiClose();
+
+    sprintf(pcWriteBuffer, "set write bit enable.\r\n");
+}
+
+/**
+ * @brief This function write data to the flash address 0
+ *
+ * @param pcWriteBuffer FreeRTOS write buffer
+ */
+static void writeFlash(char* pcWriteBuffer)
+{
+    int32_t status               = SystemP_SUCCESS;
+    OSPI_Handle qspiHandle       = {0};
+    uint8_t buf[5]              = {0};
+    OSPI_WriteCmdParams wrParams = {0};
+
+    /* Open OSPI Driver, among others */
+    Drivers_ospiOpen();
+
+    /* Open Flash drivers with OSPI instance as input */
+    status = Board_driversOpen();
+
+    qspiHandle = OSPI_getHandle(CONFIG_OSPI0);
 
     for (uint8_t i = 0; i < sizeof(buf); i++)
     {
@@ -249,54 +176,54 @@ static bool writeFlash(void)
     OSPI_WriteCmdParams_init(&wrParams);
 
     wrParams.cmd = CMD_WREN;
-    status = OSPI_writeCmd(qspiHanlde, &wrParams);
-
-    if( status == SystemP_SUCCESS)
-    {
-        wrParams.cmdAddr = 0;
-        wrParams.cmd = CMD_PP;
-        status = OSPI_writeCmd(qspiHanlde, &wrParams);
-    }
+    status = OSPI_writeCmd(qspiHandle, &wrParams);
 
     if (status == SystemP_SUCCESS)
     {
-        status = OSPI_norFlashWaitReady(qspiHanlde, OSPI_NOR_WRR_WRITE_TIMEOUT);
+        status = OSPI_norFlashWaitReady(qspiHandle, OSPI_NOR_WRR_WRITE_TIMEOUT);
+    }
 
-        if (status == SystemP_SUCCESS)
-        {
-            OSPI_Transaction_init(&transaction);
-            transaction.addrOffset = 0x0;
-            transaction.buf = buf;
-            transaction.count = 5;
-            status = OSPI_writeDirect(qspiHanlde, &transaction);
-        }
+    if( status == SystemP_SUCCESS)
+    {
+        wrParams.cmdAddr      = 0;
+        wrParams.cmd          = CMD_PP;
+        wrParams.cmdAddr      = 0;
+        wrParams.numAddrBytes = 3;
+        wrParams.txDataBuf    = buf;
+        wrParams.txDataLen    = 5;
+        status = OSPI_writeCmd(qspiHandle, &wrParams);
     }
 
     if(status == SystemP_SUCCESS)
     {
-        status = OSPI_norFlashWaitReady(qspiHanlde, OSPI_NOR_PAGE_PROG_TIMEOUT);
+        status = OSPI_norFlashWaitReady(qspiHandle, OSPI_NOR_PAGE_PROG_TIMEOUT);
     }
 
     if (status == SystemP_SUCCESS)
     {
+        sprintf(pcWriteBuffer, "Data write %02X %02X %02X %02X %02X.\r\n", buf[0], buf[1], buf[2], buf[3] , buf[4]);
         DebugP_log("[QSPI] Data write %02X %02X %02X %02X %02X.\r\n", buf[0], buf[1], buf[2], buf[3] , buf[4]);
     }
     else
     {
+        sprintf(pcWriteBuffer, "Error write flash: %d.\r\n", status);
         DebugP_log("[QSPI] Error write flash: %d.\r\n", status);
     }
 
     Board_driversClose();
     Drivers_ospiClose();
-
-    return success;
 }
 
-static void readStatusReg(void)
+/**
+ * @brief This function read the NOR flash status register
+ *
+ * @param pcWriteBuffer FreeRTOS write buffer
+ */
+static void readStatusReg(char* pcWriteBuffer)
 {
-    OSPI_Handle qspiHanlde = {0};
-    int32_t status = SystemP_SUCCESS;
-    uint8_t readStatus = 0U;
+    OSPI_Handle qspiHandle      = {0};
+    int32_t status              = SystemP_SUCCESS;
+    uint8_t readStatus          = 0U;
     OSPI_ReadCmdParams rdParams = {0};
 
     /* Open OSPI Driver, among others */
@@ -305,21 +232,23 @@ static void readStatusReg(void)
     /* Open Flash drivers with OSPI instance as input */
     status = Board_driversOpen();
 
-    qspiHanlde = OSPI_getHandle(CONFIG_OSPI0);
+    qspiHandle = OSPI_getHandle(CONFIG_OSPI0);
 
     OSPI_ReadCmdParams_init(&rdParams);
     rdParams.cmd       = CMD_RDSR;
     rdParams.rxDataBuf = &readStatus;
     rdParams.rxDataLen = 1;
 
-    status = OSPI_readCmd(qspiHanlde, &rdParams);
+    status = OSPI_readCmd(qspiHandle, &rdParams);
 
     if (status == SystemP_SUCCESS)
     {
+        sprintf(pcWriteBuffer, "Status %02X.\r\n", readStatus);
         DebugP_log("[QSPI] Status %02X.\r\n", readStatus);
     }
     else
     {
+        sprintf(pcWriteBuffer, "Error %d.\r\n", status);
         DebugP_log("[QSPI] Error %d.\r\n", status);
     }
 
@@ -327,19 +256,25 @@ static void readStatusReg(void)
     Drivers_ospiClose();
 }
 
-static bool readFlash(void)
+/**
+ * @brief This function reads the 5 bytes from the NOR flash
+ *
+ * @param pcWriteBuffer FreeRTOS write buffer
+ */
+static void readFlash(char* pcWriteBuffer)
 {
-    int32_t status = SystemP_SUCCESS;
-    bool success   = false;
-    OSPI_Handle qspiHanlde = {0};
-    OSPI_WriteCmdParams wrParams = {0};
-    uint8_t buf[10]        = {0};
+    int32_t status               = SystemP_SUCCESS;
+    OSPI_Handle qspiHandle       = {0};
+    uint8_t buf[5]               = {0};
     OSPI_Transaction transaction = {0};
 
-    OSPI_WriteCmdParams_init(&wrParams);
+    /* Open OSPI Driver, among others */
+    Drivers_ospiOpen();
 
-    wrParams.cmd = CMD_READ;
-    status = OSPI_writeCmd(qspiHanlde, &wrParams);
+    /* Open Flash drivers with OSPI instance as input */
+    status = Board_driversOpen();
+
+    qspiHandle = OSPI_getHandle(CONFIG_OSPI0);
 
     OSPI_Transaction_init(&transaction);
 
@@ -348,18 +283,9 @@ static bool readFlash(void)
     transaction.buf        = buf;
     transaction.transferTimeout = 50;
 
-    /* Open OSPI Driver, among others */
-    Drivers_ospiOpen();
-
-    /* Open Flash drivers with OSPI instance as input */
-    status = Board_driversOpen();
-
-    qspiHanlde = OSPI_getHandle(CONFIG_OSPI0);
-//
     if (status == SystemP_SUCCESS)
     {
-//        status = OSPI_readDirect(qspiHanlde, &transaction);
-        status = OSPI_norFlashRead(qspiHanlde, transaction.addrOffset, buf, 5);
+        status = OSPI_norFlashRead(qspiHandle, transaction.addrOffset, transaction.buf, transaction.count);
     }
 
     Board_driversClose();
@@ -367,23 +293,25 @@ static bool readFlash(void)
 
     if (status == SystemP_SUCCESS)
     {
+        sprintf(pcWriteBuffer, "read flash:  %02X %02X %02X %02X %02X.\r\n", buf[0], buf[1], buf[2], buf[3] , buf[4]);
         DebugP_log("[QSPI] Read data %02X %02X %02X %02X %02X.\r\n", buf[0], buf[1], buf[2], buf[3] , buf[4]);
     }
     else
     {
+        sprintf(pcWriteBuffer, "[QSPI] Error %d.\r\n", status);
         DebugP_log("[QSPI] Error %d.\r\n", status);
     }
-
-    return success;
 }
 
-static bool eraseflash(void)
+/**
+ * @brief This function erases the first nor flas block
+ *
+ * @param pcWriteBuffer FreeRTOS write buffer
+ */
+static void eraseflash(char* pcWriteBuffer)
 {
-    bool success                 = false;
     int32_t status               = SystemP_SUCCESS;
-    OSPI_Handle qspiHanlde       = {0};
-    uint8_t buf[10]              = {0};
-    OSPI_WriteCmdParams wrParams = {0};
+    OSPI_Handle qspiHandle       = {0};
 
     /* Open OSPI Driver, among others */
     Drivers_ospiOpen();
@@ -391,30 +319,23 @@ static bool eraseflash(void)
     /* Open Flash drivers with OSPI instance as input */
     status = Board_driversOpen();
 
-    OSPI_WriteCmdParams_init(&wrParams);
+    qspiHandle = OSPI_getHandle(CONFIG_OSPI0);
 
-    wrParams.cmd          = CMD_BE;
-//    wrParams.cmdAddr      = 0;
-//    wrParams.numAddrBytes = numAddrBytes;
-    wrParams.txDataBuf    = buf;
-    wrParams.txDataLen    = 0;
+    status = OSPI_norFlashErase(qspiHandle, 0);
 
-
-//    status = OSPI_norFlashErase(qspiHanlde, 1);
-    status = OSPI_writeCmd(qspiHanlde, &wrParams);
     if (status == SystemP_SUCCESS)
     {
+        sprintf(pcWriteBuffer, "Flash erased.\r\n");
         DebugP_log("[QSPI] Flash erased.\r\n");
     }
     else
     {
+        sprintf(pcWriteBuffer, "Failure flash erase %d!!!\r\n", status);
         DebugP_log("[QSPI] Failure flash erase %d!!!\r\n", status);
     }
 
     Board_driversClose();
     Drivers_ospiClose();
-
-    return success;
 }
 
 /*******************************************************************************
@@ -430,23 +351,23 @@ BaseType_t qspiNorFlashCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, c
     switch (*pcParameter1)
     {
     case 'r':
-        readFlash();
-        sprintf(pcWriteBuffer, "read flash\r\n");
+        readFlash(pcWriteBuffer);
         break;
 
     case 'w':
-        writeFlash();
-        sprintf(pcWriteBuffer, "write flash\r\n");
+        writeFlash(pcWriteBuffer);
         break;
 
     case 'e':
-        eraseflash();
-        sprintf(pcWriteBuffer, "erase flash\r\n");
+        eraseflash(pcWriteBuffer);
         break;
 
     case 's':
-        readStatusReg();
-        sprintf(pcWriteBuffer, "read flash status\r\n");
+        readStatusReg(pcWriteBuffer);
+        break;
+
+    case 't':
+        statusTestFlash(pcWriteBuffer);
         break;
 
     default:
