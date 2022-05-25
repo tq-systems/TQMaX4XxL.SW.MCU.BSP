@@ -12,7 +12,7 @@
  * In case of any license issues please contact license@tq-group.com.
  *
  * -----------------------------------------------------------------------------
- * @brief This file contains the implementation of the qspi flash commands.
+ * @brief This file contains the implementation of the QSPI NOR flash commands.
  *
  */
 
@@ -104,6 +104,8 @@ const CLI_Command_Definition_t qspiNorFlashCommandDef =
 
 #define OSPI_NOR_WRR_WRITE_TIMEOUT  (600U * 1000U)
 #define OSPI_NOR_PAGE_PROG_TIMEOUT  (400U)
+#define OSPI_NOR_SR_WIP             (1U << 0U)
+
 /*******************************************************************************
  * local static data
  ******************************************************************************/
@@ -115,7 +117,7 @@ const CLI_Command_Definition_t qspiNorFlashCommandDef =
  ******************************************************************************/
 
 static void writeFlash(char* pcWriteBuffer);
-static void readStatusReg(char* pcWriteBuffer);
+static int32_t readStatusReg(uint8_t* p_norFlashStatus);
 static void readFlash(char* pcWriteBuffer);
 static void eraseflash(char* pcWriteBuffer);
 
@@ -149,6 +151,41 @@ static void statusTestFlash(char* pcWriteBuffer)
 }
 
 /**
+ * @brief This function wait until the NOR Flash is ready
+ *
+ * @param timeOut function time out
+ * @return SystemP_SUCCESS: successful, SystemP_FAILURE: failure
+ */
+int32_t norFlashWaitReady(uint32_t timeOut)
+{
+    int32_t status = SystemP_SUCCESS;
+    uint8_t qspiStatus = 0;
+
+    while((status != SystemP_SUCCESS) || timeOut > 0)
+    {
+        status = readStatusReg(&qspiStatus);
+
+        if((status == SystemP_SUCCESS) && ((qspiStatus & OSPI_NOR_SR_WIP) == 0))
+        {
+            break;
+        }
+
+        timeOut--;
+    }
+
+    if((qspiStatus & OSPI_NOR_SR_WIP)==0)
+    {
+        status = SystemP_SUCCESS;
+    }
+    else
+    {
+        status = SystemP_FAILURE;
+    }
+
+    return status;
+}
+
+/**
  * @brief This function write data to the flash address 0
  *
  * @param pcWriteBuffer FreeRTOS write buffer
@@ -157,7 +194,7 @@ static void writeFlash(char* pcWriteBuffer)
 {
     int32_t status               = SystemP_SUCCESS;
     OSPI_Handle qspiHandle       = {0};
-    uint8_t buf[5]              = {0};
+    uint8_t buf[5]               = {0};
     OSPI_WriteCmdParams wrParams = {0};
 
     /* Open OSPI Driver, among others */
@@ -180,7 +217,7 @@ static void writeFlash(char* pcWriteBuffer)
 
     if (status == SystemP_SUCCESS)
     {
-        status = OSPI_norFlashWaitReady(qspiHandle, OSPI_NOR_WRR_WRITE_TIMEOUT);
+        status = norFlashWaitReady(OSPI_NOR_WRR_WRITE_TIMEOUT);
     }
 
     if( status == SystemP_SUCCESS)
@@ -196,7 +233,7 @@ static void writeFlash(char* pcWriteBuffer)
 
     if(status == SystemP_SUCCESS)
     {
-        status = OSPI_norFlashWaitReady(qspiHandle, OSPI_NOR_PAGE_PROG_TIMEOUT);
+        status = norFlashWaitReady(OSPI_NOR_PAGE_PROG_TIMEOUT);
     }
 
     if (status == SystemP_SUCCESS)
@@ -217,13 +254,13 @@ static void writeFlash(char* pcWriteBuffer)
 /**
  * @brief This function read the NOR flash status register
  *
- * @param pcWriteBuffer FreeRTOS write buffer
+ * @param p_norFlashStatus Pointer to NOR flash status data
+ * @return QSPI API status
  */
-static void readStatusReg(char* pcWriteBuffer)
+static int32_t readStatusReg(uint8_t* p_norFlashStatus)
 {
-    OSPI_Handle qspiHandle      = {0};
     int32_t status              = SystemP_SUCCESS;
-    uint8_t readStatus          = 0U;
+    OSPI_Handle qspiHandle      = {0};
     OSPI_ReadCmdParams rdParams = {0};
 
     /* Open OSPI Driver, among others */
@@ -236,24 +273,24 @@ static void readStatusReg(char* pcWriteBuffer)
 
     OSPI_ReadCmdParams_init(&rdParams);
     rdParams.cmd       = CMD_RDSR;
-    rdParams.rxDataBuf = &readStatus;
+    rdParams.rxDataBuf = p_norFlashStatus;
     rdParams.rxDataLen = 1;
 
     status = OSPI_readCmd(qspiHandle, &rdParams);
 
     if (status == SystemP_SUCCESS)
     {
-        sprintf(pcWriteBuffer, "Status %02X.\r\n", readStatus);
-        DebugP_log("[QSPI] Status %02X.\r\n", readStatus);
+        DebugP_log("[QSPI] Status %02X.\r\n", p_norFlashStatus);
     }
     else
     {
-        sprintf(pcWriteBuffer, "Error %d.\r\n", status);
         DebugP_log("[QSPI] Error %d.\r\n", status);
     }
 
     Board_driversClose();
     Drivers_ospiClose();
+
+    return status;
 }
 
 /**
@@ -346,6 +383,7 @@ BaseType_t qspiNorFlashCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, c
 {
     BaseType_t retVal = pdFALSE;
     BaseType_t xParameter1StringLength = 0;
+    uint8_t flashStatus = 0;
     const char* pcParameter1 = FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameter1StringLength);
 
     switch (*pcParameter1)
@@ -363,7 +401,8 @@ BaseType_t qspiNorFlashCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, c
         break;
 
     case 's':
-        readStatusReg(pcWriteBuffer);
+        readStatusReg(&flashStatus);
+        sprintf(pcWriteBuffer, "Status 0x%02X\r\n", flashStatus);
         break;
 
     case 't':
