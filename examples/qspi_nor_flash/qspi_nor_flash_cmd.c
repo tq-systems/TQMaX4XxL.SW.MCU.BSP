@@ -47,7 +47,7 @@
 const CLI_Command_Definition_t qspiNorFlashCommandDef =
 {
     "qspiflash",
-    "\r\nqspiflash:\r\n Read, write in NOR flash \r\n\r\n",
+    "\r\nqspiflash:\r\n NOR flash access\r\n r - read data, w - write data, e - erase flash, s - read status register\r\n\r\n",
     qspiNorFlashCommand,
     1
 };
@@ -124,31 +124,6 @@ static void eraseflash(char* pcWriteBuffer);
 /*******************************************************************************
  * local static functions
  ******************************************************************************/
-
-static void statusTestFlash(char* pcWriteBuffer)
-{
-    int32_t status = SystemP_SUCCESS;
-    OSPI_Handle qspiHandle = {0};
-    OSPI_WriteCmdParams wrParams = {0};
-
-    /* Open OSPI Driver, among others */
-    Drivers_ospiOpen();
-
-    /* Open Flash drivers with OSPI instance as input */
-    status = Board_driversOpen();
-
-    qspiHandle = OSPI_getHandle(CONFIG_OSPI0);
-
-    OSPI_WriteCmdParams_init(&wrParams);
-
-    wrParams.cmd = CMD_WREN;
-    status = OSPI_writeCmd(qspiHandle, &wrParams);
-
-    Board_driversClose();
-    Drivers_ospiClose();
-
-    sprintf(pcWriteBuffer, "set write bit enable.\r\n");
-}
 
 /**
  * @brief This function wait until the NOR Flash is ready
@@ -403,10 +378,6 @@ BaseType_t qspiNorFlashCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, c
     case 's':
         readStatusReg(&flashStatus);
         sprintf(pcWriteBuffer, "Status 0x%02X\r\n", flashStatus);
-        break;
-
-    case 't':
-        statusTestFlash(pcWriteBuffer);
         break;
 
     default:
