@@ -280,7 +280,7 @@ static int32_t readStatusReg(uint8_t* p_norFlashStatus)
 
     if (status == SystemP_SUCCESS)
     {
-        DebugP_log("[QSPI] Status %02X.\r\n", p_norFlashStatus);
+        DebugP_log("[QSPI] Status 0x%02X.\r\n", *p_norFlashStatus);
     }
     else
     {
