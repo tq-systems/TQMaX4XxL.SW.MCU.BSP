@@ -46,6 +46,8 @@
 #define TQ_EEPROM_ADD      (0x50)
 #define CUST_EEPROM_ADD    (0x54)
 
+#define MAX_DATA           (1U)
+
 /*******************************************************************************
  * local macros
  ******************************************************************************/
@@ -57,9 +59,9 @@ const CLI_Command_Definition_t eepromCommandDef =
     "\r\neeprom [I2c]:\r\n Read or write the EEPROM.\r\n"
     " usage: usage: eeprom [i] [o] [a] [d]\r\n"
     " i - instance: 0 - TQ_EEPROM_ADD, 1 - CUST_EEPROM_ADD\r\n"
-    " o - offset\r\n"
+    " o - offset in hex\r\n"
     " a - access: w - write, r -read\r\n"
-    " d - data\r\n\r\n",
+    " d - data in hex\r\n\r\n",
     eepromCommand,
     -1
 };
@@ -101,15 +103,15 @@ static bool eepromWrite(eeprom_t* eepromData);
  */
 static bool eepromRead(eeprom_t* p_eepromData)
 {
-    bool success = false;
-    int32_t         status          = 0;
-    I2C_Handle      i2cHandle       = NULL;
-    I2C_Transaction i2cTransaction  = {0};
-    uint8_t         txBuffer[2]     = {0};
+    bool            success        = false;
+    int32_t         status         = 0;
+    I2C_Handle      i2cHandle      = NULL;
+    I2C_Transaction i2cTransaction = {0};
+    uint8_t         txBuffer[2]    = {0};
 
     DebugP_log("[I2C] Read EEPROM instance: %d.\r\n", p_eepromData->instance);
 
-    if (p_eepromData->instance < sizeof(eepromInstance))
+    if ((p_eepromData->instance < sizeof(eepromInstance)) && (p_eepromData->data != NULL))
     {
         txBuffer[0U] = (p_eepromData->offset & 0xFF00U) >> 8U;
         txBuffer[1U] = (p_eepromData->offset & 0x00FFU);
@@ -125,7 +127,7 @@ static bool eepromRead(eeprom_t* p_eepromData)
         i2cTransaction.writeBuf     = txBuffer;
         i2cTransaction.writeCount   = sizeof(txBuffer);
         i2cTransaction.readBuf      = p_eepromData->data;
-        i2cTransaction.readCount    = 1;
+        i2cTransaction.readCount    = p_eepromData->length;
         i2cTransaction.slaveAddress = eepromInstance[p_eepromData->instance];
 
         status = I2C_transfer(i2cHandle, &i2cTransaction);
@@ -156,14 +158,14 @@ static bool eepromRead(eeprom_t* p_eepromData)
  */
 static bool eepromWrite(eeprom_t* p_eepromData)
 {
-    bool success                                 = false;
-    int32_t status                               = 0;
+    bool            success                      = false;
+    int32_t         status                       = 0;
     I2C_Handle      i2cHandle                    = NULL;
     I2C_Transaction i2cTransaction               = {0};
     uint8_t         txBuffer[EEPROM_WR_BUF_SIZE] = {0};
 
 
-    if (p_eepromData->instance < sizeof(eepromInstance))
+    if ((p_eepromData->instance < sizeof(eepromInstance)) && (p_eepromData->data != NULL))
     {
         txBuffer[0U] = (p_eepromData->offset & 0xFF00U) >> 8U;
         txBuffer[1U] = (p_eepromData->offset & 0x00FFU);
@@ -223,11 +225,11 @@ BaseType_t eepromCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const c
     bool err                          = false;
     char* pNextNumber                 = NULL;
     BaseType_t xParameterStringLength = 0;
-    uint8_t buf                       = 0;
+    uint8_t dataBuf                   = 0;
 
     /* default EEPROM data setting */
-    eepromData.data   = &buf;
-    eepromData.length = 1;
+    eepromData.data   = &dataBuf;
+    eepromData.length = MAX_DATA;
 
     char* pcParameter[MAX_INPUT_PARAM]  = {NULL};
 
