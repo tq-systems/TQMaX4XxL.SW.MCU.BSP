@@ -2,15 +2,12 @@
  * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
  * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
  * @cliArgs --device "AM64x_beta" --package "ALV" --part "Default" --context "r5fss0-0" --product "MCU_PLUS_SDK_AM64x@08.02.00"
- * @versions {"tool":"1.11.0+2225"}
+ * @versions {"tool":"1.12.1+2446"}
  */
 
 /**
  * Import the modules used in this configuration.
  */
-const eeprom     = scripting.addModule("/board/eeprom/eeprom", {}, false);
-const eeprom1    = eeprom.addInstance();
-const eeprom2    = eeprom.addInstance();
 const gpio       = scripting.addModule("/drivers/gpio/gpio", {}, false);
 const gpio1      = gpio.addInstance();
 const gpio2      = gpio.addInstance();
@@ -32,11 +29,6 @@ const mpu_armv76 = mpu_armv7.addInstance();
 /**
  * Write custom configuration values to the imported modules.
  */
-eeprom1.$name      = "CUST_EEPROM";
-eeprom1.i2cAddress = 0x54;
-
-eeprom2.$name = "TQ_EEPROM";
-
 gpio1.pinDir                   = "OUTPUT";
 gpio1.useMcuDomainPeripherals  = true;
 gpio1.$name                    = "GPIO_USER_LED_1";
@@ -48,10 +40,8 @@ gpio2.pinDir                   = "OUTPUT";
 gpio2.useMcuDomainPeripherals  = true;
 gpio2.MCU_GPIO.gpioPin.$assign = "ball.C8";
 
-eeprom2.peripheralDriver = i2c1;
-i2c1.$name               = "CONFIG_I2C0";
-eeprom1.peripheralDriver = i2c1;
-i2c1.I2C.$assign         = "I2C0";
+i2c1.$name       = "CONFIG_I2C0";
+i2c1.I2C.$assign = "I2C0";
 
 ospi1.$name        = "CONFIG_OSPI0";
 ospi1.xferLines    = "QUAD";
@@ -102,8 +92,8 @@ i2c1.I2C.SCL.$suggestSolution    = "ball.A18";
 i2c1.I2C.SDA.$suggestSolution    = "ball.B18";
 ospi1.OSPI.$suggestSolution      = "OSPI0";
 ospi1.OSPI.CLK.$suggestSolution  = "ball.N20";
-ospi1.OSPI.D1.$suggestSolution   = "ball.M18";
-ospi1.OSPI.D0.$suggestSolution   = "ball.M19";
+ospi1.OSPI.CSn0.$suggestSolution = "ball.L19";
 ospi1.OSPI.D3.$suggestSolution   = "ball.M21";
 ospi1.OSPI.D2.$suggestSolution   = "ball.M20";
-ospi1.OSPI.CSn0.$suggestSolution = "ball.L19";
+ospi1.OSPI.D1.$suggestSolution   = "ball.M18";
+ospi1.OSPI.D0.$suggestSolution   = "ball.M19";

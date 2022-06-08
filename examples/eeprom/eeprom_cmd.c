@@ -1,22 +1,15 @@
-/**
+/* SPDX-License-Identifier: BSD-3-Clause */
+/*
  * @file eeprom_cmd.c
- * @author Copyright (c) 2022, TQ-Systems GmbH
- * @author TODO author of the file <TODO@tq-group.com>
+ * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @author Michael Bernhardt
+ *
  * @date 2022-05-18
  *
- * This software code contained herein is licensed under the terms and
- * conditions of the TQ-Systems Software License Agreement Version 1.0.2.
- * You may obtain a copy of the TQ-Systems Software License Agreement in the
- * folder TQS (TQ-Systems Software Licenses) at the following website:
- * https://www.tq-group.com/Software-Lizenzbedingungen
- * In case of any license issues please contact license@tq-group.com.
- *
  * -----------------------------------------------------------------------------
- * @brief <TODO short description of the file (only one line)>
+ * @brief This file contains the implementation of the EEPROM M24C64.
  *
- * <TODO Detailed description of the file>
  */
-
 /*******************************************************************************
  * local includes
  ******************************************************************************/
@@ -25,6 +18,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 /* project */
 #include <drivers/i2c.h>
 #include <kernel/dpl/DebugP.h>
@@ -38,9 +32,19 @@
  * local defines
  ******************************************************************************/
 
-#define DECIMAL_BASE      (10U)
-#define EEPROM_READ_SIZE  (1U)
-#define MAX_INPUT_PARAM   (2U)
+#define DECIMAL_BASE       (10U)
+#define HEX_BASE           (16U)
+#define EEPROM_READ_SIZE   (1U)
+#define MAX_INPUT_PARAM    (4U)
+#define EEPROM_PAGE_SIZE   (256U)
+#define EEPROM_WR_BUF_SIZE (2U + EEPROM_PAGE_SIZE)
+#define INDEX_INSTANCE     (0U)
+#define INDEX_OFFSET       (1U)
+#define INDEX_ACCESS       (2U)
+#define INDEX_DATA         (3U)
+
+#define TQ_EEPROM_ADD      (0x50)
+#define CUST_EEPROM_ADD    (0x54)
 
 /*******************************************************************************
  * local macros
@@ -50,9 +54,14 @@
 const CLI_Command_Definition_t eepromCommandDef =
 {
     "eeprom",
-    "\r\neeprom [I2c]:\r\n Read or write the EEPROM.\r\n\r\n",
+    "\r\neeprom [I2c]:\r\n Read or write the EEPROM.\r\n"
+    " usage: usage: eeprom [i] [o] [a] [d]\r\n"
+    " i - instance: 0 - TQ_EEPROM_ADD, 1 - CUST_EEPROM_ADD\r\n"
+    " o - offset\r\n"
+    " a - access: w - write, r -read\r\n"
+    " d - data\r\n\r\n",
     eepromCommand,
-    2
+    -1
 };
 
 /*******************************************************************************
@@ -63,45 +72,72 @@ typedef struct
 {
     uint8_t instance;
     uint32_t offset;
-    uint8_t data;
+    uint8_t* data;
+    uint8_t length;
 } eeprom_t;
 
 /*******************************************************************************
  * local static data
  ******************************************************************************/
 
-
+static const uint8_t eepromInstance[] = {TQ_EEPROM_ADD, CUST_EEPROM_ADD};
 
 /*******************************************************************************
  * forward declarations
  ******************************************************************************/
 
-static bool eepromRead(eeprom_t* eepromData);
+static bool eepromRead(eeprom_t* p_eepromData);
+static bool eepromWrite(eeprom_t* eepromData);
 
 /*******************************************************************************
  * local static functions
  ******************************************************************************/
 
-static bool eepromRead(eeprom_t* eepromData)
+/**
+ * @brief This function reads data from the EEPROM.
+ *
+ * @param p_eepromData Pointer to EEPROM data struct.
+ * @return success
+ */
+static bool eepromRead(eeprom_t* p_eepromData)
 {
     bool success = false;
+    int32_t         status          = 0;
+    I2C_Handle      i2cHandle       = NULL;
+    I2C_Transaction i2cTransaction  = {0};
+    uint8_t         txBuffer[2]     = {0};
 
-    DebugP_log("[EEPROM] Read EEPROM instance: %d.\r\n", eepromData->instance);
+    DebugP_log("[I2C] Read EEPROM instance: %d.\r\n", p_eepromData->instance);
 
-    if ((eepromData->instance == TQ_EEPROM) || (eepromData->instance == CUST_EEPROM))
+    if (p_eepromData->instance < sizeof(eepromInstance))
     {
-        Drivers_i2cOpen();
+        txBuffer[0U] = (p_eepromData->offset & 0xFF00U) >> 8U;
+        txBuffer[1U] = (p_eepromData->offset & 0x00FFU);
 
-        if (Board_driversOpen() != SystemP_SUCCESS)
+        Drivers_i2cOpen();
+        Board_driversOpen();
+        i2cHandle = I2C_getHandle(CONFIG_I2C0);
+
+        /* Set default transaction parameters */
+        I2C_Transaction_init(&i2cTransaction);
+
+        /* Override with required transaction parameters */
+        i2cTransaction.writeBuf     = txBuffer;
+        i2cTransaction.writeCount   = sizeof(txBuffer);
+        i2cTransaction.readBuf      = p_eepromData->data;
+        i2cTransaction.readCount    = 1;
+        i2cTransaction.slaveAddress = eepromInstance[p_eepromData->instance];
+
+        status = I2C_transfer(i2cHandle, &i2cTransaction);
+
+        if (status != SystemP_SUCCESS)
         {
-            DebugP_logError("[EEPROM] Board driver failed for instance %d !!!\r\n", eepromData->instance);
-        }
-        else if (EEPROM_read(gEepromHandle[TQ_EEPROM], eepromData->offset, &eepromData->data, EEPROM_READ_SIZE) != SystemP_SUCCESS)
-        {
-            DebugP_logError("[EEPROM] Read failed for instance %d !!!\r\n", eepromData->instance);
+            DebugP_logError("[EEPROM] Read failed %d for instance %d !!!\r\n", status, p_eepromData->instance);
+            success = false;
         }
         else
         {
+            DebugP_log("[EEPROM] Read data 0x%02X.\r\n", p_eepromData->data);
             success = true;
         }
 
@@ -112,45 +148,52 @@ static bool eepromRead(eeprom_t* eepromData)
     return success;
 }
 
-#define TQ_EEPROM_ADD    0x50
-#define CUST_EEPROM_ADD  0x54
-
-static bool eepromRead1(eeprom_t* eepromData)
+/**
+ * @brief This function writes data to the EEPROM.
+ *
+ * @param p_eepromData Pointer to EEPROM data struct.
+ * @return success
+ */
+static bool eepromWrite(eeprom_t* p_eepromData)
 {
-    bool success = false;
-    int32_t         status                     = 0;
-    I2C_Handle      i2cHandle                  = NULL;
-    I2C_Transaction i2cTransaction             = {0};
-    uint8_t         rxBuffer[10]  = {0};
-    uint8_t         txBuffer[2]                = {0};
+    bool success                                 = false;
+    int32_t status                               = 0;
+    I2C_Handle      i2cHandle                    = NULL;
+    I2C_Transaction i2cTransaction               = {0};
+    uint8_t         txBuffer[EEPROM_WR_BUF_SIZE] = {0};
 
-    DebugP_log("[I2C] Read EEPROM instance: %d.\r\n", eepromData->instance);
 
-    if ((eepromData->instance == TQ_EEPROM) || (eepromData->instance == CUST_EEPROM))
+    if (p_eepromData->instance < sizeof(eepromInstance))
     {
+        txBuffer[0U] = (p_eepromData->offset & 0xFF00U) >> 8U;
+        txBuffer[1U] = (p_eepromData->offset & 0x00FFU);
+
+        memcpy(&txBuffer[2U], p_eepromData->data, p_eepromData->length);
+
         Drivers_i2cOpen();
-        Board_driversOpen();
-        i2cHandle = I2C_getHandle(CONFIG_I2C0);
+        status = Board_driversOpen();
+        if (status == SystemP_SUCCESS)
+        {
+            i2cHandle = I2C_getHandle(CONFIG_I2C0);
 
-        /* Set default transaction parameters */
-        I2C_Transaction_init(&i2cTransaction);
+            /* Set default transaction parameters */
+            I2C_Transaction_init(&i2cTransaction);
 
-        /* Override with required transaction parameters */
-        i2cTransaction.writeBuf     = txBuffer;
-        i2cTransaction.writeCount   = 2;
-        i2cTransaction.readBuf      = rxBuffer;
-        i2cTransaction.readCount    = 4;
-        i2cTransaction.slaveAddress = TQ_EEPROM_ADD;
+            /* Override with required transaction parameters */
+            i2cTransaction.writeBuf     = txBuffer;
+            i2cTransaction.writeCount   = 2 + p_eepromData->length;
+            i2cTransaction.slaveAddress = eepromInstance[p_eepromData->instance];
 
-        status = I2C_transfer(i2cHandle, &i2cTransaction);
+            status = I2C_transfer(i2cHandle, &i2cTransaction);
+        }
 
         if (status != SystemP_SUCCESS)
         {
-            DebugP_logError("[EEPROM] Read failed for instance %d !!!\r\n", eepromData->instance);
+            DebugP_logError("[EEPROM] Write failure %d for instance %d !!!\r\n", status, i2cTransaction.slaveAddress);
         }
         else
         {
-            DebugP_log("[EEPROM] Read failed for instance %d %d %d %d !!!\r\n", rxBuffer[0], rxBuffer[1], rxBuffer[2], rxBuffer[3]);
+            DebugP_log("[EEPROM] write data 0x%02X.\r\n", *p_eepromData->data);
             success = true;
         }
 
@@ -165,13 +208,26 @@ static bool eepromRead1(eeprom_t* eepromData)
  * global functions
  ******************************************************************************/
 
+/**
+ * @brief This function handles the command of the EEPROM access. One byte can be read or written to the EEPROM.
+ *
+ * @param pcWriteBuffer cli output string buffer
+ * @param xWriteBufferLen length of the cli output string
+ * @param pcCommandString cli command input string
+ * @return pdFALSE = command is finished
+ */
 BaseType_t eepromCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
-    uint8_t paramCount  = 0;
-    eeprom_t eepromData = {0};
-    bool err = false;
-    char* pNextNumber                   = NULL;
+    uint8_t paramCount                = 0;
+    eeprom_t eepromData               = {0};
+    bool err                          = false;
+    char* pNextNumber                 = NULL;
     BaseType_t xParameterStringLength = 0;
+    uint8_t buf                       = 0;
+
+    /* default EEPROM data setting */
+    eepromData.data   = &buf;
+    eepromData.length = 1;
 
     char* pcParameter[MAX_INPUT_PARAM]  = {NULL};
 
@@ -181,25 +237,54 @@ BaseType_t eepromCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const c
         pcParameter[paramCount] = (char*) FreeRTOS_CLIGetParameter(pcCommandString, paramCount+1, &xParameterStringLength);
     }
 
-    eepromData.instance = strtoul(pcParameter[0], &pNextNumber, DECIMAL_BASE);
-    if ((eepromData.instance > 1) || (pcParameter[0] == pNextNumber))
+    eepromData.instance = strtoul(pcParameter[INDEX_INSTANCE], &pNextNumber, DECIMAL_BASE);
+    if ((pcParameter[INDEX_INSTANCE] == pNextNumber) || (eepromData.instance >= sizeof(eepromInstance)))
     {
         err = true;
     }
 
-    eepromData.offset = strtoul(pcParameter[1], &pNextNumber, DECIMAL_BASE);
-    if (pcParameter[1] == pNextNumber)
+    eepromData.offset = strtoul(pcParameter[INDEX_OFFSET], &pNextNumber, HEX_BASE);
+    if (pcParameter[INDEX_OFFSET] == pNextNumber)
     {
         err = true;
     }
 
-    if ((err != true) && (eepromRead1(&eepromData) == true))
+    if (err == false)
     {
-        sprintf(pcWriteBuffer, "EEPROM data 0x%02X\r\n",eepromData.data);
+        switch (*pcParameter[INDEX_ACCESS])
+        {
+        case 'r':
+            if (eepromRead(&eepromData) == true)
+            {
+                sprintf(pcWriteBuffer, "EEPROM data 0x%02X\r\n", *eepromData.data);
+            }
+            else
+            {
+                sprintf(pcWriteBuffer, "EEPROM read failure\r\n");
+            }
+            break;
+
+        case 'w':
+            *eepromData.data   = strtoul(pcParameter[INDEX_DATA], &pNextNumber, HEX_BASE);
+
+            if ((pcParameter[INDEX_OFFSET] == pNextNumber) || (eepromWrite(&eepromData) == false))
+            {
+                sprintf(pcWriteBuffer, "EEPROM write failure\r\n");
+            }
+            else
+            {
+                sprintf(pcWriteBuffer, "EEPROM write 0x%02X\r\n", *eepromData.data);
+            }
+            break;
+
+        default:
+            sprintf(pcWriteBuffer, "EEPROM wrong parameter\r\n");
+            break;
+        }
     }
     else
     {
-        sprintf(pcWriteBuffer, "EEPROM failure\r\n");
+        sprintf(pcWriteBuffer, "EEPROM wrong parameter\r\n");
     }
 
     return pdFALSE;
