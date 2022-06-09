@@ -27,6 +27,7 @@
 #include "ti_board_open_close.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "utilities.h"
 /* own */
 #include "qspi_nor_flash_cmd.h"
 
@@ -103,8 +104,6 @@ const CLI_Command_Definition_t qspiNorFlashCommandDef =
 #define OSPI_NOR_PAGE_PROG_TIMEOUT  pdMS_TO_TICKS(400U)
 #define OSPI_NOR_SR_WIP             (1U)
 #define FLASH_ADD                   (0U)
-
-#define ARRAY_SIZE(x) (sizeof (x) / sizeof (x[0]))
 
 /*******************************************************************************
  * local static data

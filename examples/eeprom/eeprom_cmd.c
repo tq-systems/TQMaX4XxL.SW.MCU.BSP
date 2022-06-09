@@ -20,11 +20,13 @@
 #include <stdbool.h>
 #include <string.h>
 /* project */
+#include "projdefs.h"
 #include <drivers/i2c.h>
 #include <kernel/dpl/DebugP.h>
 #include "ti_drivers_config.h"
 #include "ti_drivers_open_close.h"
 #include "ti_board_open_close.h"
+#include "utilities.h"
 /* own */
 #include "eeprom_cmd.h"
 
@@ -34,7 +36,6 @@
 
 #define DECIMAL_BASE       (10U)
 #define HEX_BASE           (16U)
-#define EEPROM_READ_SIZE   (1U)
 #define MAX_INPUT_PARAM    (4U)
 #define EEPROM_PAGE_SIZE   (256U)
 #define EEPROM_WR_BUF_SIZE (2U + EEPROM_PAGE_SIZE)
@@ -56,7 +57,7 @@
 const CLI_Command_Definition_t eepromCommandDef =
 {
     "eeprom",
-    "\r\neeprom [I2c]:\r\n Read or write the EEPROM.\r\n"
+    "\r\neeprom [I2c]:\r\n Read or write from/to the EEPROM.\r\n"
     " usage: usage: eeprom [i] [o] [a] [d]\r\n"
     " i - instance: 0 - TQ_EEPROM_ADD, 1 - CUST_EEPROM_ADD\r\n"
     " o - offset in hex\r\n"
@@ -111,7 +112,7 @@ static bool eepromRead(eeprom_t* p_eepromData)
 
     DebugP_log("[I2C] Read EEPROM instance: %d.\r\n", p_eepromData->instance);
 
-    if ((p_eepromData->instance < sizeof(eepromInstance)) && (p_eepromData->data != NULL))
+    if ((p_eepromData->instance < ARRAY_SIZE(eepromInstance)) && (p_eepromData->data != NULL))
     {
         txBuffer[0U] = (p_eepromData->offset & 0xFF00U) >> 8U;
         txBuffer[1U] = (p_eepromData->offset & 0x00FFU);
@@ -125,7 +126,7 @@ static bool eepromRead(eeprom_t* p_eepromData)
 
         /* Override with required transaction parameters */
         i2cTransaction.writeBuf     = txBuffer;
-        i2cTransaction.writeCount   = sizeof(txBuffer);
+        i2cTransaction.writeCount   = ARRAY_SIZE(txBuffer);
         i2cTransaction.readBuf      = p_eepromData->data;
         i2cTransaction.readCount    = p_eepromData->length;
         i2cTransaction.slaveAddress = eepromInstance[p_eepromData->instance];
@@ -165,7 +166,7 @@ static bool eepromWrite(eeprom_t* p_eepromData)
     uint8_t         txBuffer[EEPROM_WR_BUF_SIZE] = {0};
 
 
-    if ((p_eepromData->instance < sizeof(eepromInstance)) && (p_eepromData->data != NULL))
+    if ((p_eepromData->instance < ARRAY_SIZE(eepromInstance)) && (p_eepromData->data != NULL))
     {
         txBuffer[0U] = (p_eepromData->offset & 0xFF00U) >> 8U;
         txBuffer[1U] = (p_eepromData->offset & 0x00FFU);
@@ -218,20 +219,19 @@ static bool eepromWrite(eeprom_t* p_eepromData)
  * @param pcCommandString cli command input string
  * @return pdFALSE = command is finished
  */
-BaseType_t eepromCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
+BaseType_t eepromCommand(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString)
 {
-    uint8_t paramCount                = 0;
-    eeprom_t eepromData               = {0};
-    bool err                          = false;
-    char* pNextNumber                 = NULL;
-    BaseType_t xParameterStringLength = 0;
-    uint8_t dataBuf                   = 0;
+    uint8_t    paramCount                   = 0;
+    eeprom_t   eepromData                   = {0};
+    bool       err                          = false;
+    char*      pNextNumber                  = NULL;
+    char*      pcParameter[MAX_INPUT_PARAM] = {NULL};
+    BaseType_t xParameterStringLength       = 0;
+    uint8_t    dataBuf                      = 0;
 
     /* default EEPROM data setting */
     eepromData.data   = &dataBuf;
     eepromData.length = MAX_DATA;
-
-    char* pcParameter[MAX_INPUT_PARAM]  = {NULL};
 
     /* get all parameter */
     for (paramCount = 0; paramCount < MAX_INPUT_PARAM; paramCount++)
@@ -240,7 +240,7 @@ BaseType_t eepromCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const c
     }
 
     eepromData.instance = strtoul(pcParameter[INDEX_INSTANCE], &pNextNumber, DECIMAL_BASE);
-    if ((pcParameter[INDEX_INSTANCE] == pNextNumber) || (eepromData.instance >= sizeof(eepromInstance)))
+    if ((pcParameter[INDEX_INSTANCE] == pNextNumber) || (eepromData.instance >= ARRAY_SIZE(eepromInstance)))
     {
         err = true;
     }

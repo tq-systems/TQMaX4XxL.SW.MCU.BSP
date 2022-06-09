@@ -1,18 +1,18 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * @file eeprom_cmd.h
+ * @file utilities.h
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
- * @date 2022-05-18
+ * @date 2022-06-09
  *
  * -----------------------------------------------------------------------------
- * @brief This file contains the declaration of the EEPROM M24C64.
+ * @brief This file contains global macros and utilities.
  *
  */
 
-#ifndef EXAMPLES_INCLUDE_EEPROM_CMD_H_
-#define EXAMPLES_INCLUDE_EEPROM_CMD_H_
+#ifndef EXAMPLES_INCLUDE_UTILITIES_H_
+#define EXAMPLES_INCLUDE_UTILITIES_H_
 
 /*******************************************************************************
  * includes
@@ -21,8 +21,6 @@
 /* runtime */
 
 /* project */
-#include "portmacro.h"
-#include "FreeRTOS_CLI.h"
 
 /*******************************************************************************
  * defines
@@ -34,7 +32,7 @@
  * macros
  ******************************************************************************/
 
-
+#define ARRAY_SIZE(x) (sizeof (x) / sizeof (x[0]))
 
 /*******************************************************************************
  * typedefs
@@ -46,16 +44,16 @@
  * prototypes
  ******************************************************************************/
 
-BaseType_t eepromCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString);
+
 
 /*******************************************************************************
  * global extern data
  ******************************************************************************/
 
-extern const CLI_Command_Definition_t eepromCommandDef;
+
 
 /******************************************************************************/
 
-#endif /* EXAMPLES_INCLUDE_EEPROM_CMD_H_ */
+#endif /* EXAMPLES_INCLUDE_UTILITIES_H_ */
 
 /*[EOF]************************************************************************/
