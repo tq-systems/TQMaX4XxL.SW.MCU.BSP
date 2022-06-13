@@ -8,6 +8,8 @@
 /**
  * Import the modules used in this configuration.
  */
+const ddr        = scripting.addModule("/drivers/ddr/ddr", {}, false);
+const ddr1       = ddr.addInstance();
 const gpio       = scripting.addModule("/drivers/gpio/gpio", {}, false);
 const gpio1      = gpio.addInstance();
 const gpio2      = gpio.addInstance();
@@ -34,6 +36,9 @@ const mpu_armv76 = mpu_armv7.addInstance();
 /**
  * Write custom configuration values to the imported modules.
  */
+ddr1.$name                    = "CONFIG_DDR0";
+ddr1.ddrConfigIncludeFileName = "C:/ti/mcu_plus_sdk_am64x_08_02_00_31/source/drivers/board_ddrReginit.h";
+
 gpio1.pinDir                   = "OUTPUT";
 gpio1.useMcuDomainPeripherals  = true;
 gpio1.$name                    = "GPIO_USER_LED_1";
