@@ -48,6 +48,7 @@
 #include "i2c_rtc_cmd.h"
 #include "qspi_nor_flash_cmd.h"
 #include "eeprom_cmd.h"
+#include "mcan_cmd.h"
 
 #define APP_UART_RECEIVE_BUFSIZE (1)
 #define MAX_INPUT_LENGTH         (50)
@@ -83,6 +84,7 @@ void cliTask( void *pvParameters )
     FreeRTOS_CLIRegisterCommand(&emmcCommandDef);
     FreeRTOS_CLIRegisterCommand(&qspiNorFlashCommandDef);
     FreeRTOS_CLIRegisterCommand(&eepromCommandDef);
+    FreeRTOS_CLIRegisterCommand(&mcanCommandDef);
 
     while(1)
     {
