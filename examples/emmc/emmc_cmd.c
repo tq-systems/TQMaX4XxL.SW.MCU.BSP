@@ -1,20 +1,16 @@
-/**
+/* SPDX-License-Identifier: BSD-3-Clause */
+/*
  * @file emmc_cmd.c
- * @author Copyright (c) 2022, TQ-Systems GmbH
+ * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
- * @date 2022-05-19
  *
- * This software code contained herein is licensed under the terms and
- * conditions of the TQ-Systems Software License Agreement Version 1.0.2.
- * You may obtain a copy of the TQ-Systems Software License Agreement in the
- * folder TQS (TQ-Systems Software Licenses) at the following website:
- * https://www.tq-group.com/Software-Lizenzbedingungen
- * In case of any license issues please contact license@tq-group.com.
+ * @date 2022-05-19
  *
  * -----------------------------------------------------------------------------
  * @brief This file includes the eMMC implementation.
  *
  */
+
 
 /*******************************************************************************
  * local includes
@@ -78,7 +74,7 @@ extern bool mmcsd_raw_io_main(void *args);
  ******************************************************************************/
 
 /**
- * @brief This function handles the led blink command
+ * @brief This function handles the eMMC command
  *
  * @param pcWriteBuffer cli output string buffer
  * @param xWriteBufferLen length of the cli output string
