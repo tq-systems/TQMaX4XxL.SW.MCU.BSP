@@ -13,6 +13,9 @@ const gpio1      = gpio.addInstance();
 const gpio2      = gpio.addInstance();
 const i2c        = scripting.addModule("/drivers/i2c/i2c", {}, false);
 const i2c1       = i2c.addInstance();
+const mcan       = scripting.addModule("/drivers/mcan/mcan", {}, false);
+const mcan1      = mcan.addInstance();
+const mcan2      = mcan.addInstance();
 const mmcsd      = scripting.addModule("/drivers/mmcsd/mmcsd", {}, false);
 const mmcsd1     = mmcsd.addInstance();
 const ospi       = scripting.addModule("/drivers/ospi/ospi", {}, false);
@@ -44,6 +47,12 @@ gpio2.MCU_GPIO.gpioPin.$assign = "ball.C8";
 
 i2c1.$name       = "CONFIG_I2C0";
 i2c1.I2C.$assign = "I2C0";
+
+mcan1.$name        = "CONFIG_MCAN0";
+mcan1.MCAN.$assign = "MCAN0";
+
+mcan2.$name        = "CONFIG_MCAN1";
+mcan2.MCAN.$assign = "MCAN1";
 
 mmcsd1.$name = "CONFIG_MMCSD0";
 
@@ -94,6 +103,10 @@ mpu_armv76.size     = 31;
 gpio2.MCU_GPIO.$suggestSolution  = "MCU_GPIO0";
 i2c1.I2C.SCL.$suggestSolution    = "ball.A18";
 i2c1.I2C.SDA.$suggestSolution    = "ball.B18";
+mcan1.MCAN.RX.$suggestSolution   = "ball.B17";
+mcan1.MCAN.TX.$suggestSolution   = "ball.A17";
+mcan2.MCAN.RX.$suggestSolution   = "ball.D17";
+mcan2.MCAN.TX.$suggestSolution   = "ball.C17";
 mmcsd1.MMC0.$suggestSolution     = "MMC0";
 ospi1.OSPI.$suggestSolution      = "OSPI0";
 ospi1.OSPI.CLK.$suggestSolution  = "ball.N20";
