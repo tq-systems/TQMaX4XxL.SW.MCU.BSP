@@ -1,7 +1,7 @@
 /**
  * @file emmc_cmd.c
  * @author Copyright (c) 2022, TQ-Systems GmbH
- * @author TODO author of the file <TODO@tq-group.com>
+ * @author Michael Bernhardt
  * @date 2022-05-19
  *
  * This software code contained herein is licensed under the terms and
@@ -12,9 +12,8 @@
  * In case of any license issues please contact license@tq-group.com.
  *
  * -----------------------------------------------------------------------------
- * @brief <TODO short description of the file (only one line)>
+ * @brief This file includes the eMMC implementation.
  *
- * <TODO Detailed description of the file>
  */
 
 /*******************************************************************************
@@ -24,9 +23,10 @@
 /* runtime */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
 /* project */
-#include <drivers/mmcsd.h>
-#include "ti_drivers_config.h"
+
 /* own */
 #include "emmc_cmd.h"
 /*******************************************************************************
@@ -43,7 +43,7 @@
 const CLI_Command_Definition_t emmcCommandDef =
 {
     "emmc",
-    "\r\nemmc [eMMC]:\r\n TODO\r\n\r\n",
+    "\r\nemmc [eMMC]:\r\n This function starts an eMMC raw io test.\r\n\r\n",
     emmcCommand,
     0
 };
@@ -65,7 +65,7 @@ const CLI_Command_Definition_t emmcCommandDef =
  * forward declarations
  ******************************************************************************/
 
-
+extern bool mmcsd_raw_io_main(void *args);
 
 /*******************************************************************************
  * local static functions
@@ -87,28 +87,14 @@ const CLI_Command_Definition_t emmcCommandDef =
  */
 BaseType_t emmcCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
-    MMCSD_Params mmcsdParams;
-    MMCSD_Handle gMmcsdHandle;
-    int32_t status = 0;
-    uint8_t rBuff[10] = {0};
-
-    MMCSD_Params_init(&mmcsdParams);
-    gMmcsdHandle = MMCSD_open(0, &mmcsdParams);
-    gMmcsdHandle = MMCSD_getHandle(CONFIG_MMCSD0);
-
-    status = MMCSD_read(gMmcsdHandle, rBuff, 0, 1);
-
-    if (status == SystemP_SUCCESS)
+    if (mmcsd_raw_io_main(NULL) == true)
     {
-        sprintf(pcWriteBuffer, "Buffer: %u %u %u %u\r\n", rBuff[0], rBuff[1], rBuff[2], rBuff[4]);
+        sprintf(pcWriteBuffer, "eMMC all tests have passed \r\n");
     }
     else
     {
-        sprintf(pcWriteBuffer, "Error status: %d\r\n", status);
+        sprintf(pcWriteBuffer, "eMMC tests failed\r\n");
     }
-
-
-    MMCSD_close(gMmcsdHandle);
 
     return pdFALSE;
 }

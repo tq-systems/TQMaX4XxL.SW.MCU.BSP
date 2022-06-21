@@ -1,7 +1,7 @@
 /**
  * @file emmc_cmd.h
  * @author Copyright (c) 2022, TQ-Systems GmbH
- * @author TODO author of the file <TODO@tq-group.com>
+ * @author Michael Bernhardt
  * @date 2022-05-19
  *
  * This software code contained herein is licensed under the terms and
@@ -12,9 +12,8 @@
  * In case of any license issues please contact license@tq-group.com.
  *
  * -----------------------------------------------------------------------------
- * @brief <TODO short description of the file (only one line)>
+ * @brief This file includes the eMMC declaration.
  *
- * <TODO Detailed description of the file>
  */
 
 #ifndef EXAMPLES_INCLUDE_EMMC_CMD_H_
