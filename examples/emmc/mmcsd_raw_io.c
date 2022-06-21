@@ -1,6 +1,9 @@
 /*
  *  Copyright (C) 2021 Texas Instruments Incorporated
  *
+ *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ *  Author Michael Bernhardt
+ *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
  *  are met:
@@ -44,11 +47,12 @@ uint8_t gMmcsdRxBuf[APP_MMCSD_DATA_SIZE] __attribute__((aligned(128U)));
 
 void mmcsd_raw_io_fill_buffers(void);
 
-void mmcsd_raw_io_main(void *args)
+bool mmcsd_raw_io_main(void *args)
 {
     int32_t status = SystemP_SUCCESS;
+    bool success   = false;
 
-    Drivers_open();
+    Drivers_mmcsdOpen();
     status = Board_driversOpen();
     DebugP_assert(status == SystemP_SUCCESS);
 
@@ -77,19 +81,17 @@ void mmcsd_raw_io_main(void *args)
     if(SystemP_SUCCESS == status)
     {
         DebugP_log("All tests have passed!!\r\n");
+        success = true;
     }
     else
     {
         DebugP_log("Some tests have failed!!\r\n");
     }
 
-    MMCSD_close(gMmcsdHandle[CONFIG_MMCSD0]);
-    gMmcsdHandle[CONFIG_MMCSD0] = NULL;
-
-    MMCSD_deinit();
-
     Board_driversClose();
-    Drivers_close();
+    Drivers_mmcsdClose();
+
+    return success;
 }
 
 void mmcsd_raw_io_fill_buffers(void)
