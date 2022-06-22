@@ -79,7 +79,7 @@ extern bool mmcsd_raw_io_main(void *args);
  * @param pcWriteBuffer cli output string buffer
  * @param xWriteBufferLen length of the cli output string
  * @param pcCommandString cli command input string
- * @return success
+ * @return pdFALSE = command is finished
  */
 BaseType_t emmcCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
