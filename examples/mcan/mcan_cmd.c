@@ -7,7 +7,7 @@
  * @date 2022-06-21
  *
  * -----------------------------------------------------------------------------
- * @brief TODO
+ * @brief This function contains the implementation of the mcan bus command.
  *
  */
 
@@ -17,7 +17,6 @@
 
 /* runtime */
 #include <stdio.h>
-#include <string.h>
 /* project */
 #include <drivers/mcan.h>
 /* own */
@@ -32,11 +31,11 @@
  * local macros
  ******************************************************************************/
 
-/* The definition of the "ledblink" command. */
+/* The definition of the "mcan" command. */
 const CLI_Command_Definition_t mcanCommandDef =
 {
     "mcan",
-    "\r\nmcan [MCAN]:\r\n TODO\r\n\r\n",
+    "\r\nmcan [MCAN]:\r\n Sends or receives CAN messages.\n Usage mcan [v] \n  1 - send 10 CAN msg\n  2 - received one CAN msg \r\r\n\r\n",
     mcanCommand,
     1
 };
@@ -56,6 +55,8 @@ const CLI_Command_Definition_t mcanCommandDef =
  * forward declarations
  ******************************************************************************/
 
+extern void mcan_rx_interrupt_main(void *args);
+extern void mcan_tx_interrupt_main(void *args);
 
 /*******************************************************************************
  * local static functions
@@ -80,20 +81,34 @@ BaseType_t mcanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const cha
     BaseType_t xParameterStringLength       = 0;
     const char* pcParameter1 = FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength);
 
+    MCAN_RxBufElement rxMsg = {0};
+    MCAN_TxBufElement txMsg = {0};
+    uint8_t i = 0;
+    int counter = 0;
 
     switch (*pcParameter1)
     {
     case '1':
-//        mcan_loopback_interrupt_main(NULL);
-//        mcan_loopback_tx_interrupt_main(NULL);
-        test();
-        sprintf(pcWriteBuffer, "success\r\n");
+        mcan_tx_interrupt_main(&txMsg);
+
+        counter = sprintf(pcWriteBuffer, "send: ");
+        for(i = 0; i < txMsg.dlc; i++)
+        {
+            counter += sprintf(&pcWriteBuffer[counter], "%d ", txMsg.data[i]);
+        }
+
+        counter += sprintf(&pcWriteBuffer[counter], "\r\n");
         break;
 
     case '2':
-//        mcan_loopback_polling_main(NULL);
-        mcan_loopback_rx_interrupt_main(NULL);
-        sprintf(pcWriteBuffer, "success\r\n");
+        mcan_rx_interrupt_main(&rxMsg);
+        counter =  sprintf(pcWriteBuffer, "received: ");
+        for(i = 0; i < rxMsg.dlc; i++)
+        {
+            counter += sprintf(&pcWriteBuffer[counter], "%d ", rxMsg.data[i]);
+        }
+
+        counter += sprintf(&pcWriteBuffer[counter], "\r\n");
         break;
 
     default:

@@ -7,7 +7,7 @@
  * @date 2022-06-21
  *
  * -----------------------------------------------------------------------------
- * @brief This file includes the i2c rtc declaration.
+ * @brief This file contains the declaration of the mcan bus command.
  *
  */
 
