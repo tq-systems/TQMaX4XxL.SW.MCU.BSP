@@ -1,6 +1,9 @@
 /*
  *  Copyright (C) 2021 Texas Instruments Incorporated
  *
+ *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ *  Author Michael Bernhardt
+ *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
  *  are met:
@@ -60,6 +63,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <kernel/dpl/DebugP.h>
 #include <kernel/dpl/TaskP.h>
 #include <kernel/dpl/AddrTranslateP.h>
@@ -124,24 +128,19 @@ static void    App_mcanInitStdFilterElemParams(
                                   MCAN_StdMsgIDFilterElement *stdFiltElem,
                                   uint32_t bufNum);
 static void    App_mcanInitExpectedRxData(void);
+extern int32_t IpcNotify_syncAll(uint32_t timeout);
 
-void mcan_loopback_rx_interrupt_main(void *args)
+void mcan_rx_interrupt_main(void *args)
 {
     int32_t                 status = SystemP_SUCCESS;
     HwiP_Params             hwiPrms;
     MCAN_RxBufElement       rxMsg;
     MCAN_RxNewDataStatus    newDataStatus;
     MCAN_ErrCntStatus       errCounter;
-    uint32_t                i, bufNum, fifoNum, bitPos = 0U;
+    uint32_t                bufNum, fifoNum, bitPos = 0U;
 
     /* Open drivers to open the UART driver for console */
-    Drivers_open();
     Board_driversOpen();
-
-    /* Enabled transceiver in RX application. No need to do in TX application.
-     * If user wants to use only TX application then this function need to be
-     * called in TX application also. */
-    mcan_enableTransceiver();
 
     /* Wait for mcan tx application to be ready */
     IpcNotify_syncAll(SystemP_WAIT_FOREVER);
@@ -168,41 +167,34 @@ void mcan_loopback_rx_interrupt_main(void *args)
     /* Enable Interrupts */
     App_mcanEnableIntr();
 
-    /* Transmit And Receive Message */
-    for (i = 0U; i < APP_MCAN_MSG_LOOP_COUNT; i++)
+    /* Receive Message */
+
+    /* Wait for mcan tx application to be ready */
+    IpcNotify_syncAll(SystemP_WAIT_FOREVER);
+
+    /* Wait for Rx completion */
+    SemaphoreP_pend(&gMcanRxDoneSem, 10000);
+
+    /* Checking for Rx Errors */
+    MCAN_getErrCounters(gMcanRxBaseAddr, &errCounter);
+    DebugP_assert((0U == errCounter.recErrCnt) && (0U == errCounter.canErrLogCnt));
+
+    /* Get the new data staus, indicates buffer num which received message */
+    MCAN_getNewDataStatus(gMcanRxBaseAddr, &newDataStatus);
+    MCAN_clearNewDataStatus(gMcanRxBaseAddr, &newDataStatus);
+
+    /* Select buffer and fifo number, Buffer is used in this app */
+    bufNum = 0U;
+    fifoNum = MCAN_RX_FIFO_NUM_0;
+
+    bitPos = (1U << bufNum);
+    if (bitPos == (newDataStatus.statusLow & bitPos))
     {
-
-        /* Wait for mcan tx application to be ready */
-        IpcNotify_syncAll(SystemP_WAIT_FOREVER);
-
-        /* Wait for Rx completion */
-        SemaphoreP_pend(&gMcanRxDoneSem, SystemP_WAIT_FOREVER);
-
-        /* Checking for Rx Errors */
-        MCAN_getErrCounters(gMcanRxBaseAddr, &errCounter);
-        DebugP_assert((0U == errCounter.recErrCnt) &&
-                      (0U == errCounter.canErrLogCnt));
-
-        /* Get the new data staus, indicates buffer num which received message */
-        MCAN_getNewDataStatus(gMcanRxBaseAddr, &newDataStatus);
-        MCAN_clearNewDataStatus(gMcanRxBaseAddr, &newDataStatus);
-
-        /* Select buffer and fifo number, Buffer is used in this app */
-        bufNum = 0U;
-        fifoNum = MCAN_RX_FIFO_NUM_0;
-
-        bitPos = (1U << bufNum);
-        if (bitPos == (newDataStatus.statusLow & bitPos))
-        {
-            MCAN_readMsgRam(gMcanRxBaseAddr, MCAN_MEM_TYPE_BUF, bufNum, fifoNum, &rxMsg);
-        }
-        else
-        {
-            DebugP_assert(FALSE);
-        }
-
-        /* Compare Tx/Rx data */
-        App_mcanCompareMsg(&rxMsg);
+        MCAN_readMsgRam(gMcanRxBaseAddr, MCAN_MEM_TYPE_BUF, bufNum, fifoNum, &rxMsg);
+    }
+    else
+    {
+        DebugP_assert(FALSE);
     }
 
     /* De-Construct Rx Semaphore objects */
@@ -214,12 +206,11 @@ void mcan_loopback_rx_interrupt_main(void *args)
 
     DebugP_log("All tests have passed!!\r\n");
 
+    memcpy(args, &rxMsg, sizeof(rxMsg));
+
     Board_driversClose();
     /* We don't close drivers so that the UART driver remains open and flush any
      * pending messages to console */
-    /* Drivers_close(); */
-
-    return;
 }
 
 static void App_mcanConfig(void)
@@ -234,7 +225,7 @@ static void App_mcanConfig(void)
     /* Initialize MCAN module initParams */
     MCAN_initOperModeParams(&initParams);
     /* CAN FD Mode and Bit Rate Switch Enabled */
-    initParams.fdMode          = TRUE;
+    initParams.fdMode          = FALSE;
     initParams.brsEnable       = TRUE;
 
     /* Initialize MCAN module Global Filter Params */

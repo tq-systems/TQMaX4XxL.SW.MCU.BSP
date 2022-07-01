@@ -1,6 +1,9 @@
 /*
  *  Copyright (C) 2021 Texas Instruments Incorporated
  *
+ *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ *  Author Michael Bernhardt
+ *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
  *  are met:
@@ -60,6 +63,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <kernel/dpl/DebugP.h>
 #include <kernel/dpl/TaskP.h>
 #include <kernel/dpl/AddrTranslateP.h>
@@ -115,8 +119,9 @@ static void    App_mcanInitMsgRamConfigParams(
                MCAN_MsgRAMConfigParams *msgRAMConfigParams);
 static void    App_mcanEnableIntr(void);
 static void    App_mcanConfigTxMsg(MCAN_TxBufElement *txMsg);
+extern int32_t IpcNotify_syncAll(uint32_t timeout);
 
-void mcan_loopback_tx_interrupt_main(void *args)
+void mcan_tx_interrupt_main(void *args)
 {
     int32_t                 status = SystemP_SUCCESS;
     HwiP_Params             hwiPrms;
@@ -125,7 +130,6 @@ void mcan_loopback_tx_interrupt_main(void *args)
     uint32_t                i, bufNum = 0U;
 
     /* Open drivers to open the UART driver for console */
-    Drivers_open();
     Board_driversOpen();
 
     /* Wait for mcan rx application to be ready */
@@ -178,7 +182,7 @@ void mcan_loopback_tx_interrupt_main(void *args)
         DebugP_assert(status == CSL_PASS);
 
         /* Wait for Tx completion */
-        SemaphoreP_pend(&gMcanTxDoneSem, SystemP_WAIT_FOREVER);
+        SemaphoreP_pend(&gMcanTxDoneSem, 100);
 
         MCAN_getProtocolStatus(gMcanRxBaseAddr, &protStatus);
         /* Checking for Tx Errors */
@@ -202,7 +206,8 @@ void mcan_loopback_tx_interrupt_main(void *args)
     DebugP_log("[MCAN]TX test passed!!\r\n");
 
     Board_driversClose();
-    Drivers_close();
+
+    memcpy(args, &txMsg, sizeof(txMsg));
 
     return;
 }
@@ -266,10 +271,10 @@ static void App_mcanConfigTxMsg(MCAN_TxBufElement *txMsg)
     MCAN_initTxBufElement(txMsg);
     /* Standard message identifier 11 bit, stored into ID[28-18] */
     txMsg->id  = ((APP_MCAN_STD_ID & MCAN_STD_ID_MASK) << MCAN_STD_ID_SHIFT);
-    txMsg->dlc = MCAN_DATA_SIZE_64BYTES; /* Payload size is 64 bytes */
-    txMsg->fdf = TRUE; /* CAN FD Frame Format */
+    txMsg->dlc = MCAN_DATA_SIZE_8BYTES; /* Payload size is 64 bytes */
+    txMsg->fdf = FALSE; /* CAN FD Frame Format */
     txMsg->xtd = FALSE; /* Extended id not configured */
-    for (i = 0U; i < gMcanTxDataSize[MCAN_DATA_SIZE_64BYTES]; i++)
+    for (i = 0U; i < gMcanTxDataSize[MCAN_DATA_SIZE_8BYTES]; i++)
     {
         txMsg->data[i] = i;
     }
@@ -280,8 +285,7 @@ static void App_mcanConfigTxMsg(MCAN_TxBufElement *txMsg)
 static void App_mcanEnableIntr(void)
 {
     MCAN_enableIntr(gMcanRxBaseAddr, MCAN_INTR_MASK_ALL, (uint32_t)TRUE);
-    MCAN_enableIntr(gMcanRxBaseAddr,
-                    MCAN_INTR_SRC_RES_ADDR_ACCESS, (uint32_t)FALSE);
+    MCAN_enableIntr(gMcanRxBaseAddr, MCAN_INTR_SRC_RES_ADDR_ACCESS, (uint32_t)FALSE);
     /* Select Interrupt Line 0 */
     MCAN_selectIntrLine(gMcanRxBaseAddr, MCAN_INTR_MASK_ALL, MCAN_INTR_LINE_NUM_0);
     /* Enable Interrupt Line */
