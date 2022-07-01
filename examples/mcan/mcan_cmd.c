@@ -74,17 +74,16 @@ extern void mcan_tx_interrupt_main(void *args);
  * @param pcWriteBuffer cli output string buffer
  * @param xWriteBufferLen length of the cli output string
  * @param pcCommandString cli command input string
- * @return success
+ * @return pdFALSE = mcan cmd is complete
  */
 BaseType_t mcanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
-    BaseType_t xParameterStringLength       = 0;
-    const char* pcParameter1 = FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength);
-
-    MCAN_RxBufElement rxMsg = {0};
-    MCAN_TxBufElement txMsg = {0};
-    uint8_t i = 0;
-    int counter = 0;
+    uint8_t           i                      = 0;
+    int32_t           counter                = 0;
+    BaseType_t        xParameterStringLength = 0;
+    MCAN_RxBufElement rxMsg                  = {0};
+    MCAN_TxBufElement txMsg                  = {0};
+    const char*       pcParameter1           = FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength);
 
     switch (*pcParameter1)
     {
@@ -92,7 +91,7 @@ BaseType_t mcanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const cha
         mcan_tx_interrupt_main(&txMsg);
 
         counter = sprintf(pcWriteBuffer, "send: ");
-        for(i = 0; i < txMsg.dlc; i++)
+        for (i = 0; i < txMsg.dlc; i++)
         {
             counter += sprintf(&pcWriteBuffer[counter], "%d ", txMsg.data[i]);
         }
@@ -103,7 +102,7 @@ BaseType_t mcanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const cha
     case '2':
         mcan_rx_interrupt_main(&rxMsg);
         counter =  sprintf(pcWriteBuffer, "received: ");
-        for(i = 0; i < rxMsg.dlc; i++)
+        for (i = 0; i < rxMsg.dlc; i++)
         {
             counter += sprintf(&pcWriteBuffer[counter], "%d ", rxMsg.data[i]);
         }
