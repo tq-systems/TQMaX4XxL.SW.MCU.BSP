@@ -13,6 +13,8 @@ const gpio1      = gpio.addInstance();
 const gpio2      = gpio.addInstance();
 const i2c        = scripting.addModule("/drivers/i2c/i2c", {}, false);
 const i2c1       = i2c.addInstance();
+const mmcsd      = scripting.addModule("/drivers/mmcsd/mmcsd", {}, false);
+const mmcsd1     = mmcsd.addInstance();
 const ospi       = scripting.addModule("/drivers/ospi/ospi", {}, false);
 const ospi1      = ospi.addInstance();
 const uart       = scripting.addModule("/drivers/uart/uart", {}, false);
@@ -42,6 +44,8 @@ gpio2.MCU_GPIO.gpioPin.$assign = "ball.C8";
 
 i2c1.$name       = "CONFIG_I2C0";
 i2c1.I2C.$assign = "I2C0";
+
+mmcsd1.$name = "CONFIG_MMCSD0";
 
 ospi1.$name        = "CONFIG_OSPI0";
 ospi1.xferLines    = "QUAD";
@@ -90,6 +94,7 @@ mpu_armv76.size     = 31;
 gpio2.MCU_GPIO.$suggestSolution  = "MCU_GPIO0";
 i2c1.I2C.SCL.$suggestSolution    = "ball.A18";
 i2c1.I2C.SDA.$suggestSolution    = "ball.B18";
+mmcsd1.MMC0.$suggestSolution     = "MMC0";
 ospi1.OSPI.$suggestSolution      = "OSPI0";
 ospi1.OSPI.CLK.$suggestSolution  = "ball.N20";
 ospi1.OSPI.CSn0.$suggestSolution = "ball.L19";
