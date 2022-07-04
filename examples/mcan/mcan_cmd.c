@@ -18,6 +18,7 @@
 /* runtime */
 #include <stdio.h>
 /* project */
+#include "ti_drivers_config.h"
 #include <drivers/mcan.h>
 /* own */
 #include "mcan_cmd.h"
@@ -35,9 +36,9 @@
 const CLI_Command_Definition_t mcanCommandDef =
 {
     "mcan",
-    "\r\nmcan [MCAN]:\r\n Sends or receives CAN messages.\n Usage mcan [v] \n  1 - send 10 CAN msg\n  2 - received one CAN msg \r\r\n\r\n",
+    "\r\nmcan [MCAN]:\r\n Sends or receives CAN messages.\n Usage mcan [c] [v] \n c:\n  0 - CAN 0\n  1 - CAN 1\n v:\n  1 - send 10 CAN msg\n  2 - received one CAN msg \r\r\n\r\n",
     mcanCommand,
-    1
+    2
 };
 
 /*******************************************************************************
@@ -55,8 +56,8 @@ const CLI_Command_Definition_t mcanCommandDef =
  * forward declarations
  ******************************************************************************/
 
-extern void mcan_rx_interrupt_main(void *args);
-extern void mcan_tx_interrupt_main(void *args);
+extern void mcan_rx_interrupt_main(void *args, uint64_t mcanAdd);
+extern void mcan_tx_interrupt_main(void *args, uint64_t mcanAdd);
 
 /*******************************************************************************
  * local static functions
@@ -81,38 +82,58 @@ BaseType_t mcanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const cha
     uint8_t           i                      = 0;
     int32_t           counter                = 0;
     BaseType_t        xParameterStringLength = 0;
+    uint32_t          usedCanAdd             = 0;
     MCAN_RxBufElement rxMsg                  = {0};
     MCAN_TxBufElement txMsg                  = {0};
+    bool              err                    = false;
     const char*       pcParameter1           = FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength);
+    const char*       pcParameter2           = FreeRTOS_CLIGetParameter(pcCommandString, 2, &xParameterStringLength);
 
-    switch (*pcParameter1)
+    if (*pcParameter1 == '0')
     {
-    case '1':
-        mcan_tx_interrupt_main(&txMsg);
-
-        counter = sprintf(pcWriteBuffer, "send: ");
-        for (i = 0; i < txMsg.dlc; i++)
-        {
-            counter += sprintf(&pcWriteBuffer[counter], "%d ", txMsg.data[i]);
-        }
-
-        counter += sprintf(&pcWriteBuffer[counter], "\r\n");
-        break;
-
-    case '2':
-        mcan_rx_interrupt_main(&rxMsg);
-        counter =  sprintf(pcWriteBuffer, "received: ");
-        for (i = 0; i < rxMsg.dlc; i++)
-        {
-            counter += sprintf(&pcWriteBuffer[counter], "%d ", rxMsg.data[i]);
-        }
-
-        counter += sprintf(&pcWriteBuffer[counter], "\r\n");
-        break;
-
-    default:
+        usedCanAdd = CONFIG_MCAN0_BASE_ADDR;
+    }
+    else if(*pcParameter1 == '1')
+    {
+        usedCanAdd = CONFIG_MCAN1_BASE_ADDR;
+    }
+    else
+    {
         sprintf(pcWriteBuffer, "wrong parameter \r\n");
-        break;
+        err = true;
+    }
+
+    if (err == false)
+    {
+        switch (*pcParameter2)
+        {
+        case '1':
+            mcan_tx_interrupt_main(&txMsg, usedCanAdd);
+
+            counter = sprintf(pcWriteBuffer, "send: ");
+            for (i = 0; i < txMsg.dlc; i++)
+            {
+                counter += sprintf(&pcWriteBuffer[counter], "%d ", txMsg.data[i]);
+            }
+
+            counter += sprintf(&pcWriteBuffer[counter], "\r\n");
+            break;
+
+        case '2':
+            mcan_rx_interrupt_main(&rxMsg, usedCanAdd);
+            counter =  sprintf(pcWriteBuffer, "received: ");
+            for (i = 0; i < rxMsg.dlc; i++)
+            {
+                counter += sprintf(&pcWriteBuffer[counter], "%d ", rxMsg.data[i]);
+            }
+
+            counter += sprintf(&pcWriteBuffer[counter], "\r\n");
+            break;
+
+        default:
+            sprintf(pcWriteBuffer, "wrong parameter \r\n");
+            break;
+        }
     }
 
     return pdFALSE;

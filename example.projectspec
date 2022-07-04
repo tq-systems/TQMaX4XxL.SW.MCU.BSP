@@ -99,12 +99,14 @@
         <file path="examples/eeprom/eepromm_cmd.c"                  targetDirectory="examples/eeprom"          action="copy"></file>
         <file path="examples/emmc/emmc_cmd.c"                       targetDirectory="examples/emmc"            action="copy"></file>
         <file path="examples/emmc/mmcsd_raw_io.c"                   targetDirectory="examples/mmcsd_raw_io"    action="copy"></file>
+        <file path="examples/mcan/mcan_cmd.c"                       targetDirectory="examples/mcan"            action="copy"></file>
         <file path="examples/include/gpio_led_blink_cmd.h"          targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/i2c_temperature_cmd.h"         targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/i2c_scan_cmd.h"                targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/i2c_rtc_cmd.h"                 targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/eepromm_cmd.h"                 targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/emmc_cmd.h"                    targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/mcan_cmd.h"                    targetDirectory="examples/include"         action="copy"></file>
 
         <file path="FreeRTOS/FreeRTOSConfig.h"   targetDirectory="FreeRTOS"       action="copy"></file>
         <file path="FreeRTOS/CLI/CLI_task.c"     targetDirectory="FreeRTOS/CLI"   action="copy"></file>

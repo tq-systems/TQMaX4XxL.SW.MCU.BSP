@@ -73,8 +73,10 @@
 #include "ti_drivers_open_close.h"
 #include "ti_board_open_close.h"
 
-#define APP_MCAN_BASE_ADDR                       (CONFIG_MCAN0_BASE_ADDR)
-#define APP_MCAN_INTR_NUM                        (CONFIG_MCAN0_INTR)
+#define APP_MCAN_BASE_ADDR_0                     (CONFIG_MCAN0_BASE_ADDR)
+#define APP_MCAN_INTR_NUM_0                      (CONFIG_MCAN0_INTR)
+#define APP_MCAN_BASE_ADDR_1                     (CONFIG_MCAN1_BASE_ADDR)
+#define APP_MCAN_INTR_NUM_1                      (CONFIG_MCAN1_INTR)
 #define APP_MCAN_MSG_LOOP_COUNT                  (10U)
 
 /* Allocate Message RAM memory section to filter elements, buffers, FIFO */
@@ -130,7 +132,7 @@ static void    App_mcanInitStdFilterElemParams(
 static void    App_mcanInitExpectedRxData(void);
 extern int32_t IpcNotify_syncAll(uint32_t timeout);
 
-void mcan_rx_interrupt_main(void *args)
+void mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
 {
     int32_t                 status = SystemP_SUCCESS;
     HwiP_Params             hwiPrms;
@@ -153,13 +155,20 @@ void mcan_rx_interrupt_main(void *args)
 
     /* Register interrupt */
     HwiP_Params_init(&hwiPrms);
-    hwiPrms.intNum      = APP_MCAN_INTR_NUM;
+    if (mcanAdd == CONFIG_MCAN0_BASE_ADDR)
+    {
+        hwiPrms.intNum      = APP_MCAN_INTR_NUM_0;
+    }
+    else
+    {
+        hwiPrms.intNum      = APP_MCAN_INTR_NUM_1;
+    }
     hwiPrms.callback    = &App_mcanIntrISR;
     status              = HwiP_construct(&gMcanRxHwiObject, &hwiPrms);
     DebugP_assert(status == SystemP_SUCCESS);
 
     /* Assign MCAN instance address */
-    gMcanRxBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(APP_MCAN_BASE_ADDR);
+    gMcanRxBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(mcanAdd);
 
     /* Configure MCAN module, Enable LoopBack Mode */
     App_mcanConfig();
@@ -299,8 +308,7 @@ static void App_mcanInitStdFilterElemParams(MCAN_StdMsgIDFilterElement *stdFiltE
 static void App_mcanEnableIntr(void)
 {
     MCAN_enableIntr(gMcanRxBaseAddr, MCAN_INTR_MASK_ALL, (uint32_t)TRUE);
-    MCAN_enableIntr(gMcanRxBaseAddr,
-                    MCAN_INTR_SRC_RES_ADDR_ACCESS, (uint32_t)FALSE);
+    MCAN_enableIntr(gMcanRxBaseAddr, MCAN_INTR_SRC_RES_ADDR_ACCESS, (uint32_t)FALSE);
     /* Select Interrupt Line 0 */
     MCAN_selectIntrLine(gMcanRxBaseAddr, MCAN_INTR_MASK_ALL, MCAN_INTR_LINE_NUM_0);
     /* Enable Interrupt Line */
