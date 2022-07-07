@@ -49,6 +49,7 @@
 #include "qspi_nor_flash_cmd.h"
 #include "eeprom_cmd.h"
 #include "mcan_cmd.h"
+#include "eth_cmd.h"
 #include "lpddr4_cmd.h"
 #include "gpio_dig_cmd.h"
 
@@ -79,14 +80,15 @@ void cliTask( void *pvParameters )
     UART_write(gUartHandle[CONFIG_USART0], &trans);
 
     /* register all commands */
-    FreeRTOS_CLIRegisterCommand(&ledBlinkCommandDef);
-    FreeRTOS_CLIRegisterCommand(&i2cTempCommandDef);
-    FreeRTOS_CLIRegisterCommand(&i2cBusScanCommandDef);
-    FreeRTOS_CLIRegisterCommand(&i2cRtcCommandDef);
-    FreeRTOS_CLIRegisterCommand(&emmcCommandDef);
-    FreeRTOS_CLIRegisterCommand(&qspiNorFlashCommandDef);
-    FreeRTOS_CLIRegisterCommand(&eepromCommandDef);
+//    FreeRTOS_CLIRegisterCommand(&ledBlinkCommandDef);
+//    FreeRTOS_CLIRegisterCommand(&i2cTempCommandDef);
+//    FreeRTOS_CLIRegisterCommand(&i2cBusScanCommandDef);
+//    FreeRTOS_CLIRegisterCommand(&i2cRtcCommandDef);
+//    FreeRTOS_CLIRegisterCommand(&emmcCommandDef);
+//    FreeRTOS_CLIRegisterCommand(&qspiNorFlashCommandDef);
+//    FreeRTOS_CLIRegisterCommand(&eepromCommandDef);
     FreeRTOS_CLIRegisterCommand(&mcanCommandDef);
+    FreeRTOS_CLIRegisterCommand(&ethCommandDef);
     FreeRTOS_CLIRegisterCommand(&lpddr4CommandDef);
     FreeRTOS_CLIRegisterCommand(&gpioDigCommandDef);
 

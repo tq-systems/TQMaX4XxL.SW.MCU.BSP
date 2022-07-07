@@ -31,11 +31,70 @@
  */
 
 #include <stdint.h>
+#include <drivers/pinmux.h>
+#include <enet_board_cfg.h>
+#include <networking/enet/core/include/phy/dp83867.h>
 
 #define TMP100_SOC_ADDR         0x4A
+/* The delay values are set based on trial and error and not tuned per port of the evm */
+uint32_t txDelay = 250U;
+uint32_t rxDelay = 2000U;
 
 uint8_t Board_getSocTemperatureSensorAddr(void)
 {
     return (TMP100_SOC_ADDR);
 }
 
+static Pinmux_PerCfg_t MDIOPinMuxMainDomainCfg[] = {
+    /* MDIO0 pin config */
+    /* MDIO0_MDC -> PRG0_PRU1_GPO19 (R2) */
+    {
+        PIN_PRG0_PRU1_GPO19,
+        ( PIN_MODE(4) | PIN_PULL_DISABLE )
+    },
+    /* MDIO0_MDIO -> PRG0_PRU1_GPO18 (P5) */
+    {
+        PIN_PRG0_PRU1_GPO18,
+        ( PIN_MODE(4) | PIN_INPUT_ENABLE | PIN_PULL_DISABLE )
+    },
+
+    {PINMUX_END, PINMUX_END}
+};
+
+/*
+ * Board info
+ */
+void Board_cpswMuxSel(void)
+{
+    /* MDIO0 pin config */
+    Pinmux_config(MDIOPinMuxMainDomainCfg, PINMUX_DOMAIN_ID_MAIN);
+
+    return;
+}
+
+/*
+ * Get ethernet type
+ */
+uint32_t Board_getEthType(void)
+{
+    return ENET_CPSW_3G;
+}
+
+/*
+* Tx and Rx Delay set
+*/
+void Board_TxRxDelaySet(const EnetBoard_PhyCfg *boardPhyCfg)
+{
+   Dp83867_Cfg *extendedCfg = (Dp83867_Cfg *)boardPhyCfg->extendedCfg;
+   extendedCfg->txDelayInPs = txDelay;
+   extendedCfg->rxDelayInPs = rxDelay;
+   return;
+}
+
+/*
+ * Get ethernet board id
+ */
+uint32_t Board_getEthBoardId(void)
+{
+    return ENETBOARD_AM64X_AM243X_EVM;
+}
