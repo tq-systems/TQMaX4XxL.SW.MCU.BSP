@@ -36,7 +36,7 @@
 const CLI_Command_Definition_t mcanCommandDef =
 {
     "mcan",
-    "\r\nmcan [MCAN]:\r\n Sends or receives CAN messages.\n Usage mcan [c] [v] \n c:\n  0 - CAN 0\n  1 - CAN 1\n v:\n  1 - send 10 CAN msg\n  2 - received one CAN msg \r\r\n\r\n",
+    "\r\nmcan [MCAN]:\r\n Sends or receives CAN messages.\n Usage mcan [c] [v] \n c:\n  0 - CAN 0\n  1 - CAN 1\n v:\n  0 - send 10 CAN msg\n  1 - received one CAN msg \r\r\n\r\n",
     mcanCommand,
     2
 };
@@ -107,7 +107,7 @@ BaseType_t mcanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const cha
     {
         switch (*pcParameter2)
         {
-        case '1':
+        case '0':
             mcan_tx_interrupt_main(&txMsg, usedCanAdd);
 
             counter = sprintf(pcWriteBuffer, "send: ");
@@ -119,7 +119,7 @@ BaseType_t mcanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const cha
             counter += sprintf(&pcWriteBuffer[counter], "\r\n");
             break;
 
-        case '2':
+        case '1':
             mcan_rx_interrupt_main(&rxMsg, usedCanAdd);
             counter =  sprintf(pcWriteBuffer, "received: ");
             for (i = 0; i < rxMsg.dlc; i++)
