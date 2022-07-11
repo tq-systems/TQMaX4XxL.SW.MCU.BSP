@@ -36,7 +36,7 @@
 const CLI_Command_Definition_t mcanCommandDef =
 {
     "mcan",
-    "\r\nmcan [MCAN]:\r\n Sends or receives CAN messages.\n Usage mcan [c] [v] \n c:\n  0 - CAN 0\n  1 - CAN 1\n v:\n  0 - send 10 CAN msg\n  1 - received one CAN msg \r\r\n\r\n",
+    "\r\nmcan [MCAN]:\r\n Sends or receives CAN messages.\n Usage mcan [c] [v] \n c:\n  0 - CAN 0\n  1 - CAN 1\n v:\n  0 - send 10 CAN msg\n  1 - receive and print one CAN msg \r\r\n\r\n",
     mcanCommand,
     2
 };
@@ -77,7 +77,7 @@ extern void mcan_tx_interrupt_main(void *args, uint64_t mcanAdd);
  * @param pcCommandString cli command input string
  * @return pdFALSE = mcan cmd is complete
  */
-BaseType_t mcanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
+BaseType_t mcanCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString)
 {
     uint8_t           i                      = 0;
     int32_t           counter                = 0;
@@ -93,7 +93,7 @@ BaseType_t mcanCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const cha
     {
         usedCanAdd = CONFIG_MCAN0_BASE_ADDR;
     }
-    else if(*pcParameter1 == '1')
+    else if (*pcParameter1 == '1')
     {
         usedCanAdd = CONFIG_MCAN1_BASE_ADDR;
     }
