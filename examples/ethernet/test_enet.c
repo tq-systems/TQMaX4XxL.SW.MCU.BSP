@@ -48,8 +48,8 @@
 #include "ti_drivers_config.h"
 
 /* ENET MACROS */
-#define CONFIG_ENET_CPSW0_PHY0_ADDR (0U)
-#define CONFIG_ENET_CPSW0_PHY1_ADDR (0U)
+//#define CONFIG_ENET_CPSW0_PHY0_ADDR (0U)
+//#define CONFIG_ENET_CPSW0_PHY1_ADDR (0U)
 
 extern void Board_cpswMuxSel(void);
 extern void Board_TxRxDelaySet(const EnetBoard_PhyCfg *boardPhyCfg);
@@ -183,6 +183,7 @@ int enet_lwip_example(void *args)
 
     Board_cpswMuxSel();
 
+    DebugP_log("\r\n");
     DebugP_log("==========================\r\n");
     DebugP_log("      ENET LWIP App       \r\n");
     DebugP_log("==========================\r\n");
@@ -191,10 +192,10 @@ int enet_lwip_example(void *args)
                             &instId,
                              macPortList,
                              &numMacPorts);
-//    EnetAppUtils_enableClocks(enetType, instId);
+    EnetAppUtils_enableClocks(enetType, instId);
 
     /* no stdio-buffering, please! */
-    //setvbuf(stdout, NULL,_IONBF, 0);
+    setvbuf(stdout, NULL,_IONBF, 0);
     main_loop(NULL);
     return 0;
 }

@@ -280,7 +280,7 @@ static void udp_recv_perf_traffic(int sock)
 }
 
 #define UDP_TX_TIME_CHECK_PACKET_COUNT (50 * 1000)
-#define UDP_TX_NUM_BUFS  (192)
+#define UDP_TX_NUM_BUFS  (10)
 #define UDP_IPERF_R5F_CACHE_LINE_SIZE  (32)
 
 char snd_buf_array[UDP_TX_NUM_BUFS][UTILS_ALIGN(UDP_RECV_BUFSIZE,UDP_IPERF_R5F_CACHE_LINE_SIZE)] 
