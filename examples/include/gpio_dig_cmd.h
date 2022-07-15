@@ -48,13 +48,13 @@
  * prototypes
  ******************************************************************************/
 
-
+BaseType_t gpioDigCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString );
 
 /*******************************************************************************
  * global extern data
  ******************************************************************************/
 
-
+extern const CLI_Command_Definition_t gpioDigCommandDef;
 
 /******************************************************************************/
 

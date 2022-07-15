@@ -54,10 +54,13 @@ TaskHandle_t gMainTaskHandle;
 TaskHandle_t gCliTaskHandle;
 
 void uart_echo(void *args);
+extern bool gpioDigInit(void);
 
 void freertos_main(void *args)
 {
     gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
+
+    gpioDigInit();
 
     vTaskDelete(NULL);
 }

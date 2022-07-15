@@ -23,6 +23,7 @@ const gpio11     = gpio.addInstance();
 const gpio12     = gpio.addInstance();
 const gpio13     = gpio.addInstance();
 const gpio14     = gpio.addInstance();
+const gpio15     = gpio.addInstance();
 const i2c        = scripting.addModule("/drivers/i2c/i2c", {}, false);
 const i2c1       = i2c.addInstance();
 const mcan       = scripting.addModule("/drivers/mcan/mcan", {}, false);
@@ -105,6 +106,11 @@ gpio14.$name                = "STATUS_OUT_4";
 gpio14.pinDir               = "OUTPUT";
 gpio14.GPIO.gpioPin.$assign = "ball.Y18";
 
+gpio15.$name                    = "USER_BUTTON";
+gpio15.useMcuDomainPeripherals  = true;
+gpio15.trigType                 = "RISE_EDGE";
+gpio15.MCU_GPIO.gpioPin.$assign = "ball.A7";
+
 i2c1.$name       = "CONFIG_I2C0";
 i2c1.I2C.$assign = "I2C0";
 
@@ -173,6 +179,7 @@ gpio11.GPIO.$suggestSolution     = "GPIO0";
 gpio12.GPIO.$suggestSolution     = "GPIO0";
 gpio13.GPIO.$suggestSolution     = "GPIO0";
 gpio14.GPIO.$suggestSolution     = "GPIO0";
+gpio15.MCU_GPIO.$suggestSolution = "MCU_GPIO0";
 i2c1.I2C.SCL.$suggestSolution    = "ball.A18";
 i2c1.I2C.SDA.$suggestSolution    = "ball.B18";
 mcan1.MCAN.RX.$suggestSolution   = "ball.B17";
