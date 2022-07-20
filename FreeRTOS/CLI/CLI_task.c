@@ -50,6 +50,7 @@
 #include "eeprom_cmd.h"
 #include "mcan_cmd.h"
 #include "lpddr4_cmd.h"
+#include "gpio_dig_cmd.h"
 
 #define APP_UART_RECEIVE_BUFSIZE (1)
 #define MAX_INPUT_LENGTH         (50)
@@ -87,6 +88,7 @@ void cliTask( void *pvParameters )
     FreeRTOS_CLIRegisterCommand(&eepromCommandDef);
     FreeRTOS_CLIRegisterCommand(&mcanCommandDef);
     FreeRTOS_CLIRegisterCommand(&lpddr4CommandDef);
+    FreeRTOS_CLIRegisterCommand(&gpioDigCommandDef);
 
     while(1)
     {

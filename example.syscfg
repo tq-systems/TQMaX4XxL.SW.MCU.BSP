@@ -60,7 +60,7 @@ gpio2.MCU_GPIO.gpioPin.$assign = "ball.C8";
 
 gpio3.$name                = "DIG_IN_1";
 gpio3.trigType             = "BOTH_EDGE";
-gpio3.GPIO.gpioPin.$assign = "ball.N16";
+gpio3.GPIO.gpioPin.$assign = "ball.T21";
 
 gpio4.$name                = "DIG_IN_2";
 gpio4.trigType             = "BOTH_EDGE";
@@ -79,7 +79,6 @@ gpio7.pinDir               = "OUTPUT";
 gpio7.GPIO.gpioPin.$assign = "ball.W20";
 
 gpio8.$name                = "STATUS_OUT_1";
-gpio8.pinDir               = "OUTPUT";
 gpio8.GPIO.gpioPin.$assign = "ball.W21";
 
 gpio9.$name                = "EN_DIG_OUT_2";
@@ -87,7 +86,6 @@ gpio9.pinDir               = "OUTPUT";
 gpio9.GPIO.gpioPin.$assign = "ball.V18";
 
 gpio10.$name                = "STATUS_OUT_2";
-gpio10.pinDir               = "OUTPUT";
 gpio10.GPIO.gpioPin.$assign = "ball.Y21";
 
 gpio11.$name                = "EN_DIG_OUT_3";
@@ -95,15 +93,13 @@ gpio11.pinDir               = "OUTPUT";
 gpio11.GPIO.gpioPin.$assign = "ball.Y20";
 
 gpio12.$name                = "STATUS_OUT_3";
-gpio12.pinDir               = "OUTPUT";
-gpio12.GPIO.gpioPin.$assign = "ball.T21";
+gpio12.GPIO.gpioPin.$assign = "ball.N16";
 
 gpio13.$name                = "EN_DIG_OUT_4";
 gpio13.pinDir               = "OUTPUT";
 gpio13.GPIO.gpioPin.$assign = "ball.P17";
 
 gpio14.$name                = "STATUS_OUT_4";
-gpio14.pinDir               = "OUTPUT";
 gpio14.GPIO.gpioPin.$assign = "ball.Y18";
 
 gpio15.$name                    = "USER_BUTTON";

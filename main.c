@@ -40,27 +40,33 @@
 
 #define MAIN_TASK_PRI  (configMAX_PRIORITIES-1)
 #define CLI_TASK_PRI   (configMAX_PRIORITIES-1)
+#define GPIO_TASK_PRI  (configMAX_PRIORITIES-1)
+
 
 #define MAIN_TASK_SIZE (16384U/sizeof(configSTACK_DEPTH_TYPE))
 #define CLI_TASK_SIZE  (16384U/sizeof(configSTACK_DEPTH_TYPE))
+#define GPIO_TASK_SIZE (256)
 
 StackType_t gMainTaskStack[MAIN_TASK_SIZE] __attribute__((aligned(32)));
 StackType_t gCliTaskStack[CLI_TASK_SIZE] __attribute__((aligned(32)));
+StackType_t gGpioTaskStack[GPIO_TASK_SIZE] __attribute__((aligned(32)));
 
 StaticTask_t gMainTaskObj;
 StaticTask_t gCliTaskObj;
+StaticTask_t gGpioTaskObj;
 
 TaskHandle_t gMainTaskHandle;
 TaskHandle_t gCliTaskHandle;
+TaskHandle_t gGpioTaskHandle;
 
 void uart_echo(void *args);
-extern bool gpioDigInit(void);
+extern void gpioPollingTask(void *pvParameters);
 
 void freertos_main(void *args)
 {
-    gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
+    gGpioTaskHandle = xTaskCreateStatic(gpioPollingTask, "GPIO Polling Task", GPIO_TASK_SIZE, NULL, GPIO_TASK_PRI, gGpioTaskStack, &gGpioTaskObj);
 
-    gpioDigInit();
+    gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
 
     vTaskDelete(NULL);
 }
