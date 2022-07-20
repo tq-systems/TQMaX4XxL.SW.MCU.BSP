@@ -7,7 +7,7 @@
  * @date 2022-06-09
  *
  * -----------------------------------------------------------------------------
- * @brief <TODO short description of the file (only one line)>
+ * @brief This file contains the implementation of the LPDDR4.
  */
 
 /*******************************************************************************
@@ -15,13 +15,10 @@
  ******************************************************************************/
 
 /* runtime */
-#include <stdbool.h>
-#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
 /* project */
-#include "projdefs.h"
-#include <drivers/ddr.h>
-//#include "drivers/ddr/v0/soc/am64x_am243x/board_lpddrReginit.h"
-#include "drivers/board_ddrReginit.h"
+
 /* own */
 #include "lpddr4_cmd.h"
 
@@ -29,19 +26,36 @@
  * local defines
  ******************************************************************************/
 
-
+#define HEXA_BASE       (16U)
+#define DDR4_SIZE       (0x80000000U)
 
 /*******************************************************************************
  * local macros
  ******************************************************************************/
 
-/* The definition of the "ledblink" command. */
+enum
+{
+    LPDDR4_ACCESS,
+    LPDDR4_OFFSET,
+    LPDDR4_VALUE,
+    LPDDR4_MAX
+};
+
+/* The definition of the "LPDDR4" command. */
 const CLI_Command_Definition_t lpddr4CommandDef =
 {
     "lpddr4",
-    "\r\nlpddr4 [lpddr4]:\r\n Read or write from/to the LPDDR4.\r\n\r\n",
+    "\r\nlpddr4 [lpddr4]:\r\n Read or write from/to the LPDDR4.\n "
+    " Usage lpddr4 [access] [offset] [value]\n"
+    " access:\n"
+    "  w - write\n"
+    "  r - read\n"
+    " offset:\n"
+    "  address offset in hex\n"
+    " value:\n"
+    "  value to write in LPDDR4, only used in the write option.\r\n\r\n",
     lpddr4Command,
-    0
+    -1
 };
 
 /*******************************************************************************
@@ -54,62 +68,96 @@ const CLI_Command_Definition_t lpddr4CommandDef =
  * local static data
  ******************************************************************************/
 
-
+static const uint32_t LPDDR4_START_ADD = 0x80000000;
 
 /*******************************************************************************
  * forward declarations
  ******************************************************************************/
 
-
+static void writeLpddr4(uint32_t offset, uint32_t value);
+static uint32_t readLpddr4(uint32_t offset);
 
 /*******************************************************************************
  * local static functions
  ******************************************************************************/
 
-static bool writeLpddr4(void)
+/**
+ * @brief This function writes data to the LPDDR4.
+ *
+ * @param offset Offset of the LPDDR4 address to be written.
+ * @param value Value to write to LPDDR4.
+ */
+static void writeLpddr4(uint32_t offset, uint32_t value)
 {
-    bool    success = false;
-    int32_t status  = 0;
+    uint32_t* ddr4Add  = (uint32_t*) (LPDDR4_START_ADD + offset);
 
-    static DDR_Params gDdrParams =
-    {
-        /* below values are set using the globals defined in drivers/ddr/v0/soc/am64x_am243x/board_ddrReginit.h */
-        .clk1Freq              = DDRSS_PLL_FREQUENCY_1,
-        .clk2Freq              = DDRSS_PLL_FREQUENCY_2,
-        .ddrssCtlReg           = DDRSS_ctlReg,
-        .ddrssPhyIndepReg      = DDRSS_phyIndepReg,
-        .ddrssPhyReg           = DDRSS_phyReg,
-        .ddrssCtlRegNum        = DDRSS_ctlRegNum,
-        .ddrssPhyIndepRegNum   = DDRSS_phyIndepRegNum,
-        .ddrssPhyRegNum        = DDRSS_phyRegNum,
-        .ddrssCtlRegCount      = DDRSS_CTL_REG_INIT_COUNT,
-        .ddrssPhyIndepRegCount = DDRSS_PHY_INDEP_REG_INIT_COUNT,
-        .ddrssPhyRegCount      = DDRSS_PHY_REG_INIT_COUNT,
-        .fshcount              = DDRSS_PLL_FHS_CNT,
-    };
+    *ddr4Add = value;
 
-    status = DDR_init(&gDdrParams);
+    DebugP_log("[LPDDR4] Write value 0x%02X to add 0x%02X.\r\n", value, ddr4Add);
+}
 
-    if (status == SystemP_SUCCESS)
-    {
-        DebugP_log("[LPDDR4] init success.\r\n");
-        success = true;
-    }
-    else
-    {
-        DebugP_logError("[LPDDR4] Init failure %d!!!\r\n", status);
-    }
+/**
+ * @brief This function reads data from the LPDDR4.
+ *
+ * @param offset Offset of the LPDDR4 address to be read.
+ * @return Value of the read address.
+ */
+static uint32_t readLpddr4(uint32_t offset)
+{
+    uint32_t* ddr4Add  = NULL;
+    uint32_t value     = 0;
 
-    return success;
+    ddr4Add = (uint32_t*) (LPDDR4_START_ADD + offset);
+    value   = *(uint32_t*)ddr4Add;
+    DebugP_log("[LPDDR4] Read from add: 0x%02X: 0x%02X\r\n", ddr4Add, value);
+
+    return value;
 }
 
 /*******************************************************************************
  * global functions
  ******************************************************************************/
 
+/**
+ * @brief This function handles the command of the LPDDR4 access.
+ *
+ * @param pcWriteBuffer cli output string buffer
+ * @param xWriteBufferLen length of the cli output string
+ * @param pcCommandString cli command input string
+ * @return pdFALSE = command is finished
+ */
 BaseType_t lpddr4Command(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString)
 {
-    writeLpddr4();
+    uint8_t    paramCount              = 0;
+    char*      pcParameter[LPDDR4_MAX] = {NULL};
+    BaseType_t xParameterStringLength  = 0;
+    char*      pNextNumber             = NULL;
+    uint32_t   offset                  = 0;
+    uint32_t   value                   = 0;
+
+    /* get all parameter */
+    for (paramCount = 0; paramCount < LPDDR4_MAX; paramCount++)
+    {
+        pcParameter[paramCount] = (char*) FreeRTOS_CLIGetParameter(pcCommandString, paramCount+1, &xParameterStringLength);
+    }
+
+    offset = strtoul(pcParameter[LPDDR4_OFFSET], &pNextNumber, HEXA_BASE);
+
+    if ((*pcParameter[LPDDR4_ACCESS] == 'w') && (offset < (DDR4_SIZE - 4)) && (pcParameter[LPDDR4_VALUE] != NULL))
+    {
+        value  = strtoul(pcParameter[LPDDR4_VALUE], &pNextNumber, HEXA_BASE);
+        writeLpddr4(offset, value);
+        sprintf(pcWriteBuffer, "[LPDDR4] Write value 0x%02X to add 0x%02X\r\n", value, (offset + LPDDR4_START_ADD));
+    }
+    else if ((*pcParameter[LPDDR4_ACCESS] == 'r') && (offset < (DDR4_SIZE - 4)) && (pcParameter[LPDDR4_VALUE] == NULL))
+    {
+        value = readLpddr4(offset);
+        sprintf(pcWriteBuffer, "[LPDDR4] Read from add 0x%02X: 0x%02X\r\n", (offset + LPDDR4_START_ADD), value);
+    }
+    else
+    {
+        sprintf(pcWriteBuffer, "[LPDDR4] Wrong parameter.\r\n");
+    }
 
     return pdFALSE;
 }

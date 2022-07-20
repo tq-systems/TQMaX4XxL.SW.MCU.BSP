@@ -7,7 +7,7 @@
  * @date 2022-06-09
  *
  * -----------------------------------------------------------------------------
- * @brief <TODO short description of the file (only one line)>
+ * @brief This file contains the declaration of the LPDDR4.
  */
 
 #ifndef EXAMPLES_INCLUDE_LPDDR4_CMD_H_
@@ -21,6 +21,7 @@
 
 /* project */
 #include "portmacro.h"
+#include "projdefs.h"
 #include "FreeRTOS_CLI.h"
 
 /*******************************************************************************
@@ -45,7 +46,7 @@
  * prototypes
  ******************************************************************************/
 
-BaseType_t lpddr4Command(char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString);
+BaseType_t lpddr4Command(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
 
 /*******************************************************************************
  * global extern data
