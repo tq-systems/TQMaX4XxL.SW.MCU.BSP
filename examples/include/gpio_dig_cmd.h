@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * @file emmc_cmd.h
+ * @file gpio_dig_comd.h
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
@@ -48,7 +48,7 @@
  * prototypes
  ******************************************************************************/
 
-BaseType_t gpioDigCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString );
+BaseType_t gpioDigCommand(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
 
 /*******************************************************************************
  * global extern data

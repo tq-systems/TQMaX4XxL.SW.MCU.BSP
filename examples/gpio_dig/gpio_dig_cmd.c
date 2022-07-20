@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * @file emmc_cmd.c
+ * @file gpio_dig_comd.c
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
@@ -61,17 +61,10 @@ enum
 
 enum
 {
-    OUT_1 = 0,
-    OUT_2,
-    OUT_3,
-    OUT_4,
-    OUT_MAX,
-};
-
-enum
-{
-    DIG_OUTPUT = 0,
-    DIG_OUT_STATUS,
+    DIG_OUT_1 = 0,
+    DIG_OUT_2,
+    DIG_OUT_3,
+    DIG_OUT_4,
     DIG_OUT_MAX,
 };
 
@@ -98,12 +91,18 @@ const CLI_Command_Definition_t gpioDigCommandDef =
  * local typedefs
  ******************************************************************************/
 
+typedef enum
+{
+    PIN_STATUS_LOW  = 0,
+    PIN_STATUS_HIGH = 1,
+} pinStatus_t;
+
 typedef struct
 {
-    bool status;
-    uint32_t baseAdd;
-    uint32_t pin;
-    uint32_t direction;
+    pinStatus_t pinStatus;
+    uint32_t    baseAdd;
+    uint32_t    pin;
+    uint32_t    direction;
 } digGpio_t;
 
 /*******************************************************************************
@@ -112,34 +111,34 @@ typedef struct
 
 static digGpio_t userButton            = {0};
 static digGpio_t digIn[DIG_IN_MAX]     = {0};
-static digGpio_t digOut[OUT_MAX]       = {0};
-static digGpio_t digOutStatus[OUT_MAX] = {0};
+static digGpio_t digOut[DIG_OUT_MAX]       = {0};
+static digGpio_t digOutStatus[DIG_OUT_MAX] = {0};
 
 /*******************************************************************************
  * forward declarations
  ******************************************************************************/
 
 static void gpioInit(void);
-static bool gpioSetStatus(const digGpio_t* const pGpio, const bool status);
+static bool gpioSetStatus(const digGpio_t* const pGpio, const pinStatus_t pinStatus);
 
 /*******************************************************************************
  * local static functions
  ******************************************************************************/
 
 /**
- * @brief This function set the GPIO output to high or low.
+ * @brief This function sets the GPIO output to high or low.
  *
  * @param pGpio Pointer to the structure of the GPIO to be set
- * @param status Status of the GPIO, false = low, true = high
+ * @param pinStatus Status of the GPIO, false = low, true = high
  * @return success
  */
-static bool gpioSetStatus(const digGpio_t* const pGpio, const bool status)
+static bool gpioSetStatus(const digGpio_t* const pGpio, const pinStatus_t pinStatus)
 {
     bool success = false;
 
     if ((pGpio != NULL) && (pGpio->baseAdd != 0) && (pGpio->pin != 0))
     {
-        if (status == true)
+        if (pinStatus == PIN_STATUS_HIGH)
         {
             GPIO_pinWriteHigh(pGpio->baseAdd, pGpio->pin);
             success = true;
@@ -182,37 +181,37 @@ static void gpioInit(void)
     digIn[DIG_IN_4].pin           = DIG_IN_4_PIN;
     digIn[DIG_IN_4].direction     = DIG_IN_4_DIR;
 
-    digOut[OUT_1].baseAdd         = (uint32_t)AddrTranslateP_getLocalAddr(EN_DIG_OUT_1_BASE_ADDR);
-    digOut[OUT_1].pin             = EN_DIG_OUT_1_PIN;
-    digOut[OUT_1].direction       = EN_DIG_OUT_1_DIR;
+    digOut[DIG_OUT_1].baseAdd         = (uint32_t)AddrTranslateP_getLocalAddr(EN_DIG_OUT_1_BASE_ADDR);
+    digOut[DIG_OUT_1].pin             = EN_DIG_OUT_1_PIN;
+    digOut[DIG_OUT_1].direction       = EN_DIG_OUT_1_DIR;
 
-    digOutStatus[OUT_1].baseAdd   = (uint32_t)AddrTranslateP_getLocalAddr(STATUS_OUT_1_BASE_ADDR);
-    digOutStatus[OUT_1].pin       = STATUS_OUT_1_PIN;
-    digOutStatus[OUT_1].direction = STATUS_OUT_1_DIR;
+    digOutStatus[DIG_OUT_1].baseAdd   = (uint32_t)AddrTranslateP_getLocalAddr(STATUS_OUT_1_BASE_ADDR);
+    digOutStatus[DIG_OUT_1].pin       = STATUS_OUT_1_PIN;
+    digOutStatus[DIG_OUT_1].direction = STATUS_OUT_1_DIR;
 
-    digOut[OUT_2].baseAdd         = (uint32_t)AddrTranslateP_getLocalAddr(EN_DIG_OUT_2_BASE_ADDR);
-    digOut[OUT_2].pin             = EN_DIG_OUT_2_PIN;
-    digOut[OUT_2].direction       = EN_DIG_OUT_2_DIR;
+    digOut[DIG_OUT_2].baseAdd         = (uint32_t)AddrTranslateP_getLocalAddr(EN_DIG_OUT_2_BASE_ADDR);
+    digOut[DIG_OUT_2].pin             = EN_DIG_OUT_2_PIN;
+    digOut[DIG_OUT_2].direction       = EN_DIG_OUT_2_DIR;
 
-    digOutStatus[OUT_2].baseAdd   = (uint32_t)AddrTranslateP_getLocalAddr(STATUS_OUT_2_BASE_ADDR);
-    digOutStatus[OUT_2].pin       = STATUS_OUT_2_PIN;
-    digOutStatus[OUT_2].direction = STATUS_OUT_2_DIR;
+    digOutStatus[DIG_OUT_2].baseAdd   = (uint32_t)AddrTranslateP_getLocalAddr(STATUS_OUT_2_BASE_ADDR);
+    digOutStatus[DIG_OUT_2].pin       = STATUS_OUT_2_PIN;
+    digOutStatus[DIG_OUT_2].direction = STATUS_OUT_2_DIR;
 
-    digOut[OUT_3].baseAdd         = (uint32_t)AddrTranslateP_getLocalAddr(EN_DIG_OUT_3_BASE_ADDR);
-    digOut[OUT_3].pin             = EN_DIG_OUT_3_PIN;
-    digOut[OUT_3].direction       = EN_DIG_OUT_3_DIR;
+    digOut[DIG_OUT_3].baseAdd         = (uint32_t)AddrTranslateP_getLocalAddr(EN_DIG_OUT_3_BASE_ADDR);
+    digOut[DIG_OUT_3].pin             = EN_DIG_OUT_3_PIN;
+    digOut[DIG_OUT_3].direction       = EN_DIG_OUT_3_DIR;
 
-    digOutStatus[OUT_3].baseAdd   = (uint32_t)AddrTranslateP_getLocalAddr(STATUS_OUT_3_BASE_ADDR);
-    digOutStatus[OUT_3].pin       = STATUS_OUT_3_PIN;
-    digOutStatus[OUT_3].direction = STATUS_OUT_3_DIR;
+    digOutStatus[DIG_OUT_3].baseAdd   = (uint32_t)AddrTranslateP_getLocalAddr(STATUS_OUT_3_BASE_ADDR);
+    digOutStatus[DIG_OUT_3].pin       = STATUS_OUT_3_PIN;
+    digOutStatus[DIG_OUT_3].direction = STATUS_OUT_3_DIR;
 
-    digOut[OUT_4].baseAdd         = (uint32_t)AddrTranslateP_getLocalAddr(EN_DIG_OUT_4_BASE_ADDR);
-    digOut[OUT_4].pin             = EN_DIG_OUT_4_PIN;
-    digOut[OUT_4].direction       = EN_DIG_OUT_4_DIR;
+    digOut[DIG_OUT_4].baseAdd         = (uint32_t)AddrTranslateP_getLocalAddr(EN_DIG_OUT_4_BASE_ADDR);
+    digOut[DIG_OUT_4].pin             = EN_DIG_OUT_4_PIN;
+    digOut[DIG_OUT_4].direction       = EN_DIG_OUT_4_DIR;
 
-    digOutStatus[OUT_4].baseAdd   = (uint32_t)AddrTranslateP_getLocalAddr(STATUS_OUT_4_BASE_ADDR);
-    digOutStatus[OUT_4].pin       = STATUS_OUT_4_PIN;
-    digOutStatus[OUT_4].direction = STATUS_OUT_4_DIR;
+    digOutStatus[DIG_OUT_4].baseAdd   = (uint32_t)AddrTranslateP_getLocalAddr(STATUS_OUT_4_BASE_ADDR);
+    digOutStatus[DIG_OUT_4].pin       = STATUS_OUT_4_PIN;
+    digOutStatus[DIG_OUT_4].direction = STATUS_OUT_4_DIR;
 
     /* init GPIOs */
     GPIO_setDirMode(userButton.baseAdd, userButton.pin, userButton.direction);
@@ -222,7 +221,7 @@ static void gpioInit(void)
         GPIO_setDirMode(digIn[counter].baseAdd, digIn[counter].pin, digIn[counter].direction);
     }
 
-    for (counter = 0; counter < OUT_MAX; counter++)
+    for (counter = 0; counter < DIG_OUT_MAX; counter++)
     {
         GPIO_setDirMode(digOut[counter].baseAdd,       digOut[counter].pin,       digOut[counter].direction);
         GPIO_setDirMode(digOutStatus[counter].baseAdd, digOutStatus[counter].pin, digOutStatus[counter].direction);
@@ -243,14 +242,14 @@ static void gpioInit(void)
  */
 BaseType_t gpioDigCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString)
 {
-    char*      pcParameter[MAX_INPUT_PARAM] = { NULL };
-    char*      pNextNumber                  = NULL;
-    BaseType_t xParameterStringLength       = 5;
-    uint8_t    outputNumber                 = 0;
-    uint8_t    status                       = 0;
-    uint8_t    paramCount                   = 0;
+    char*       pcParameter[MAX_INPUT_PARAM] = { NULL };
+    char*       pNextNumber                  = NULL;
+    BaseType_t  xParameterStringLength       = 5;
+    uint8_t     outputNumber                 = 0;
+    pinStatus_t pinStatus                    = PIN_STATUS_LOW;
+    uint8_t     paramCount                   = 0;
 
-    for (paramCount = 0; (paramCount < MAX_INPUT_PARAM) && (xParameterStringLength != 0); paramCount++)
+    for (paramCount = 0; ((paramCount < MAX_INPUT_PARAM) && (xParameterStringLength != 0)); paramCount++)
     {
         pcParameter[paramCount] = (char*) FreeRTOS_CLIGetParameter(pcCommandString, paramCount + 1, &xParameterStringLength);
     }
@@ -258,11 +257,12 @@ BaseType_t gpioDigCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const c
     if ((*pcParameter[PARAM_READ_WRITE] == 'w') && (pcParameter[PARAM_OUT_NUM] != NULL) && (pcParameter[PARAM_STATUS] != NULL))
     {
         outputNumber = strtol(pcParameter[PARAM_OUT_NUM], &pNextNumber, DECIMAL_BASE);
-        status       = strtol(pcParameter[PARAM_STATUS],  &pNextNumber, DECIMAL_BASE);
+        pinStatus    = strtol(pcParameter[PARAM_STATUS],  &pNextNumber, DECIMAL_BASE);
 
-        if ((outputNumber > OUT_1) && (outputNumber <= OUT_4) && ((status == 0) || (status == 1)))
+        /* enum DIG_OUT_1 - DIG_OUT_4 is defined as 0 - 3, but input parameter are defined as 1 - 4 because the same definition is in electric diagram. */
+        if ((outputNumber > DIG_OUT_1) && (outputNumber <= DIG_OUT_4) && ((pinStatus == PIN_STATUS_LOW) || (pinStatus == PIN_STATUS_HIGH)))
         {
-            if (gpioSetStatus(&digOut[outputNumber - 1], status) == true)
+            if (gpioSetStatus(&digOut[outputNumber - 1], pinStatus) == true)
             {
                 sprintf(pcWriteBuffer, "[GPIO] Set output successfully.\r\n");
             }
@@ -287,11 +287,10 @@ BaseType_t gpioDigCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const c
                                " GPIO_OUT_1  = %u\n"
                                " GPIO_OUT_2  = %u\n"
                                " GPIO_OUT_3  = %u\n"
-                               " GPIO_OUT_4  = %u\r\n", userButton.status,
-                                                        digIn[DIG_IN_1].status,     digIn[DIG_IN_2].status,
-                                                        digIn[DIG_IN_3].status,     digIn[DIG_IN_4].status,
-                                                        digOutStatus[OUT_1].status, digOutStatus[OUT_2].status,
-                                                        digOutStatus[OUT_3].status, digOutStatus[OUT_4].status);
+                               " GPIO_OUT_4  = %u\r\n",
+                               userButton.pinStatus,
+                               digIn[DIG_IN_1].pinStatus,         digIn[DIG_IN_2].pinStatus,         digIn[DIG_IN_3].pinStatus,         digIn[DIG_IN_4].pinStatus,
+                               digOutStatus[DIG_OUT_1].pinStatus, digOutStatus[DIG_OUT_2].pinStatus, digOutStatus[DIG_OUT_3].pinStatus, digOutStatus[DIG_OUT_4].pinStatus);
     }
     else
     {
@@ -308,41 +307,40 @@ BaseType_t gpioDigCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const c
  */
 void gpioPollingTask(void *pvParameters)
 {
-
     uint8_t  counter                   = 0;
     bool     pushButtonOld             = false;
     bool     digInOld[DIG_IN_MAX]      = {false};
-    bool     digOutStatusOld[OUT_MAX]  = {false};
+    bool     digOutStatusOld[DIG_OUT_MAX]  = {false};
 
     gpioInit();
 
     /* Task loop */
     while(1)
     {
-        userButton.status = GPIO_pinRead(userButton.baseAdd, userButton.pin);
-        if (pushButtonOld != userButton.status)
+        userButton.pinStatus = GPIO_pinRead(userButton.baseAdd, userButton.pin);
+        if (pushButtonOld != userButton.pinStatus)
         {
-            pushButtonOld = userButton.status;
-            DebugP_log("[GPIO] User Button state: %u\r\n", !userButton.status);
+            pushButtonOld = userButton.pinStatus;
+            DebugP_log("[GPIO] User Button state: %u\r\n", !userButton.pinStatus);
         }
 
         for (counter = 0; counter < DIG_IN_MAX; counter++)
         {
-            digIn[counter].status = GPIO_pinRead(digIn[counter].baseAdd, digIn[counter].pin);
-            if (digInOld[counter] != digIn[counter].status)
+            digIn[counter].pinStatus = GPIO_pinRead(digIn[counter].baseAdd, digIn[counter].pin);
+            if (digInOld[counter] != digIn[counter].pinStatus)
             {
-                digInOld[counter] = digIn[counter].status;
-                DebugP_log("[GPIO] dig in %u state: %u\r\n", counter+1, !digIn[counter].status);
+                digInOld[counter] = digIn[counter].pinStatus;
+                DebugP_log("[GPIO] dig in %u state: %u\r\n", counter+1, !digIn[counter].pinStatus);
             }
         }
 
-        for (counter = 0; counter < OUT_MAX; counter++)
+        for (counter = 0; counter < DIG_OUT_MAX; counter++)
         {
-            digOutStatus[counter].status = GPIO_pinRead(digOutStatus[counter].baseAdd, digOutStatus[counter].pin);
-            if (digOutStatusOld[counter] != digOutStatus[counter].status)
+            digOutStatus[counter].pinStatus = GPIO_pinRead(digOutStatus[counter].baseAdd, digOutStatus[counter].pin);
+            if (digOutStatusOld[counter] != digOutStatus[counter].pinStatus)
             {
-                digOutStatusOld[counter] = digOutStatus[counter].status;
-                DebugP_log("[GPIO] dig out status %u state: %u\r\n", counter+1, !digOutStatus[counter].status);
+                digOutStatusOld[counter] = digOutStatus[counter].pinStatus;
+                DebugP_log("[GPIO] dig out pinStatus %u state: %u\r\n", counter+1, !digOutStatus[counter].pinStatus);
             }
         }
 
