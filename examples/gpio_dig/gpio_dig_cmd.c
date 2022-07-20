@@ -7,7 +7,7 @@
  * @date 2022-07-15
  *
  * -----------------------------------------------------------------------------
- * @brief This file includes the digital gpio implementation.
+ * @brief This file contains the digital gpio implementation.
  *
  */
 /*******************************************************************************
