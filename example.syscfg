@@ -11,6 +11,19 @@
 const gpio       = scripting.addModule("/drivers/gpio/gpio", {}, false);
 const gpio1      = gpio.addInstance();
 const gpio2      = gpio.addInstance();
+const gpio3      = gpio.addInstance();
+const gpio4      = gpio.addInstance();
+const gpio5      = gpio.addInstance();
+const gpio6      = gpio.addInstance();
+const gpio7      = gpio.addInstance();
+const gpio8      = gpio.addInstance();
+const gpio9      = gpio.addInstance();
+const gpio10     = gpio.addInstance();
+const gpio11     = gpio.addInstance();
+const gpio12     = gpio.addInstance();
+const gpio13     = gpio.addInstance();
+const gpio14     = gpio.addInstance();
+const gpio15     = gpio.addInstance();
 const i2c        = scripting.addModule("/drivers/i2c/i2c", {}, false);
 const i2c1       = i2c.addInstance();
 const mcan       = scripting.addModule("/drivers/mcan/mcan", {}, false);
@@ -44,6 +57,55 @@ gpio2.$name                    = "GPIO_USER_LED_2";
 gpio2.pinDir                   = "OUTPUT";
 gpio2.useMcuDomainPeripherals  = true;
 gpio2.MCU_GPIO.gpioPin.$assign = "ball.C8";
+
+gpio3.$name                = "DIG_IN_1";
+gpio3.trigType             = "BOTH_EDGE";
+gpio3.GPIO.gpioPin.$assign = "ball.T21";
+
+gpio4.$name                = "DIG_IN_2";
+gpio4.trigType             = "BOTH_EDGE";
+gpio4.GPIO.gpioPin.$assign = "ball.N17";
+
+gpio5.$name                = "DIG_IN_3";
+gpio5.trigType             = "BOTH_EDGE";
+gpio5.GPIO.gpioPin.$assign = "ball.R19";
+
+gpio6.$name                = "DIG_IN_4";
+gpio6.trigType             = "BOTH_EDGE";
+gpio6.GPIO.gpioPin.$assign = "ball.R20";
+
+gpio7.$name                = "EN_DIG_OUT_1";
+gpio7.pinDir               = "OUTPUT";
+gpio7.GPIO.gpioPin.$assign = "ball.W20";
+
+gpio8.$name                = "STATUS_OUT_1";
+gpio8.GPIO.gpioPin.$assign = "ball.W21";
+
+gpio9.$name                = "EN_DIG_OUT_2";
+gpio9.pinDir               = "OUTPUT";
+gpio9.GPIO.gpioPin.$assign = "ball.V18";
+
+gpio10.$name                = "STATUS_OUT_2";
+gpio10.GPIO.gpioPin.$assign = "ball.Y21";
+
+gpio11.$name                = "EN_DIG_OUT_3";
+gpio11.pinDir               = "OUTPUT";
+gpio11.GPIO.gpioPin.$assign = "ball.Y20";
+
+gpio12.$name                = "STATUS_OUT_3";
+gpio12.GPIO.gpioPin.$assign = "ball.N16";
+
+gpio13.$name                = "EN_DIG_OUT_4";
+gpio13.pinDir               = "OUTPUT";
+gpio13.GPIO.gpioPin.$assign = "ball.P17";
+
+gpio14.$name                = "STATUS_OUT_4";
+gpio14.GPIO.gpioPin.$assign = "ball.Y18";
+
+gpio15.$name                    = "USER_BUTTON";
+gpio15.useMcuDomainPeripherals  = true;
+gpio15.trigType                 = "RISE_EDGE";
+gpio15.MCU_GPIO.gpioPin.$assign = "ball.A7";
 
 i2c1.$name       = "CONFIG_I2C0";
 i2c1.I2C.$assign = "I2C0";
@@ -101,6 +163,19 @@ mpu_armv76.size     = 31;
  * re-solve from scratch.
  */
 gpio2.MCU_GPIO.$suggestSolution  = "MCU_GPIO0";
+gpio3.GPIO.$suggestSolution      = "GPIO0";
+gpio4.GPIO.$suggestSolution      = "GPIO0";
+gpio5.GPIO.$suggestSolution      = "GPIO0";
+gpio6.GPIO.$suggestSolution      = "GPIO0";
+gpio7.GPIO.$suggestSolution      = "GPIO0";
+gpio8.GPIO.$suggestSolution      = "GPIO0";
+gpio9.GPIO.$suggestSolution      = "GPIO0";
+gpio10.GPIO.$suggestSolution     = "GPIO0";
+gpio11.GPIO.$suggestSolution     = "GPIO0";
+gpio12.GPIO.$suggestSolution     = "GPIO0";
+gpio13.GPIO.$suggestSolution     = "GPIO0";
+gpio14.GPIO.$suggestSolution     = "GPIO0";
+gpio15.MCU_GPIO.$suggestSolution = "MCU_GPIO0";
 i2c1.I2C.SCL.$suggestSolution    = "ball.A18";
 i2c1.I2C.SDA.$suggestSolution    = "ball.B18";
 mcan1.MCAN.RX.$suggestSolution   = "ball.B17";

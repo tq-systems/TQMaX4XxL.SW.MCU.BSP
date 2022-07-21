@@ -35,7 +35,7 @@
  * local macros
  ******************************************************************************/
 
-/* The definition of the "ledblink" command. */
+/* The definition of the "eMMC" command. */
 const CLI_Command_Definition_t emmcCommandDef =
 {
     "emmc",
