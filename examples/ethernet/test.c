@@ -687,11 +687,6 @@ main_loop(void * a0)
 #if USE_ETHERNET
     default_netif_poll();
     sys_msleep(1);
-    { /* implemented in test_enet.c */
-        void print_cpu_load();
-
-        print_cpu_load();
-    }
 #else /* USE_ETHERNET */
     /* try to read characters from serial line and pass them to PPPoS */
     count = sio_read(ppp_sio, (u8_t*)rxbuf, 1024);

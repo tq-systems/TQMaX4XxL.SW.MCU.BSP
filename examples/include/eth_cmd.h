@@ -47,7 +47,7 @@
  * prototypes
  ******************************************************************************/
 
-BaseType_t ethCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString );
+BaseType_t ethCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString);
 void ethTask(void *args);
 
 /*******************************************************************************
