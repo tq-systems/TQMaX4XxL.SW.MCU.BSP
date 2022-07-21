@@ -138,6 +138,10 @@ MEMORY
      */
     FLASH     : ORIGIN = 0x60100000 , LENGTH = 0x80000
 
+    /* when using multi-core application's i.e more than one R5F/M4F active, make sure
+     * this memory does not overlap with other R5F's
+     */
+    DDR       : ORIGIN = 0x80000000 , LENGTH = 0x80000000
 
     /* shared memory segments */
     /* On R5F,
