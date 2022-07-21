@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * @file gpio_dig_comd.c
+ * @file gpio_dig_cmd.c
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
@@ -109,8 +109,8 @@ typedef struct
  * local static data
  ******************************************************************************/
 
-static digGpio_t userButton            = {0};
-static digGpio_t digIn[DIG_IN_MAX]     = {0};
+static digGpio_t userButton                = {0};
+static digGpio_t digIn[DIG_IN_MAX]         = {0};
 static digGpio_t digOut[DIG_OUT_MAX]       = {0};
 static digGpio_t digOutStatus[DIG_OUT_MAX] = {0};
 
@@ -289,8 +289,14 @@ BaseType_t gpioDigCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const c
                                " GPIO_OUT_3  = %u\n"
                                " GPIO_OUT_4  = %u\r\n",
                                userButton.pinStatus,
-                               digIn[DIG_IN_1].pinStatus,         digIn[DIG_IN_2].pinStatus,         digIn[DIG_IN_3].pinStatus,         digIn[DIG_IN_4].pinStatus,
-                               digOutStatus[DIG_OUT_1].pinStatus, digOutStatus[DIG_OUT_2].pinStatus, digOutStatus[DIG_OUT_3].pinStatus, digOutStatus[DIG_OUT_4].pinStatus);
+                               digIn[DIG_IN_1].pinStatus,
+                               digIn[DIG_IN_2].pinStatus,
+                               digIn[DIG_IN_3].pinStatus,
+                               digIn[DIG_IN_4].pinStatus,
+                               digOutStatus[DIG_OUT_1].pinStatus,
+                               digOutStatus[DIG_OUT_2].pinStatus,
+                               digOutStatus[DIG_OUT_3].pinStatus,
+                               digOutStatus[DIG_OUT_4].pinStatus);
     }
     else
     {
@@ -307,9 +313,9 @@ BaseType_t gpioDigCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const c
  */
 void gpioPollingTask(void *pvParameters)
 {
-    uint8_t  counter                   = 0;
-    bool     pushButtonOld             = false;
-    bool     digInOld[DIG_IN_MAX]      = {false};
+    uint8_t  counter                       = 0;
+    bool     pushButtonOld                 = false;
+    bool     digInOld[DIG_IN_MAX]          = {false};
     bool     digOutStatusOld[DIG_OUT_MAX]  = {false};
 
     gpioInit();
