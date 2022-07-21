@@ -125,7 +125,8 @@ ospi1.xferLines    = "QUAD";
 ospi1.inputClkFreq = 83333333;
 
 uart1.$name            = "CONFIG_USART0";
-uart1.intrEnable       = "DISABLE";
+uart1.readMode         = "CALLBACK";
+uart1.readCallbackFxn  = "uartCallback";
 uart1.UART.$assign     = "USART0";
 uart1.UART.RXD.$assign = "ball.D15";
 uart1.UART.TXD.$assign = "ball.C16";

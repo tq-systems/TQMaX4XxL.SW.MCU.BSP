@@ -57,6 +57,7 @@
 #define MAX_INPUT_LENGTH         (50)
 
 uint8_t uartReceiveBuffer[APP_UART_RECEIVE_BUFSIZE];
+static SemaphoreP_Object gUartReadDoneSem;
 
 void cliTask( void *pvParameters )
 {
@@ -69,6 +70,10 @@ void cliTask( void *pvParameters )
     uint8_t          inputIndex                      = 0;
     BaseType_t       moreDataToFollow                = pdFALSE;
     UART_Transaction trans;
+    int32_t transferOK, status;
+
+    status = SemaphoreP_constructBinary(&gUartReadDoneSem, 0);
+    DebugP_assert(SystemP_SUCCESS == status);
 
     UART_Transaction_init(&trans);
 
@@ -88,7 +93,7 @@ void cliTask( void *pvParameters )
     FreeRTOS_CLIRegisterCommand(&qspiNorFlashCommandDef);
     FreeRTOS_CLIRegisterCommand(&eepromCommandDef);
     FreeRTOS_CLIRegisterCommand(&mcanCommandDef);
-//    FreeRTOS_CLIRegisterCommand(&ethCommandDef);
+    FreeRTOS_CLIRegisterCommand(&ethCommandDef);
     FreeRTOS_CLIRegisterCommand(&lpddr4CommandDef);
     FreeRTOS_CLIRegisterCommand(&gpioDigCommandDef);
 
@@ -98,6 +103,9 @@ void cliTask( void *pvParameters )
         trans.buf   = &rxedChar;
         trans.count = APP_UART_RECEIVE_BUFSIZE;
         UART_read(gUartHandle[CONFIG_USART0], &trans);
+
+        /* Wait for read completion */
+        SemaphoreP_pend(&gUartReadDoneSem, SystemP_WAIT_FOREVER);
 
         if(rxedChar == '\n')
         {
@@ -147,4 +155,9 @@ void cliTask( void *pvParameters )
             }
         }
     }
+}
+
+void uartCallback(UART_Handle handle, UART_Transaction *transaction)
+{
+    SemaphoreP_post(&gUartReadDoneSem);
 }
