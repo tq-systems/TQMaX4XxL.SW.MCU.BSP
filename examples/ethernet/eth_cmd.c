@@ -23,6 +23,7 @@
 #include "ti_drivers_config.h"
 #include "ti_drivers_open_close.h"
 #include "ti_board_open_close.h"
+#include "lwip/netif.h"
 /* own */
 #include "eth_cmd.h"
 
@@ -40,7 +41,7 @@ extern int enet_lwip_example(void *args);
 const CLI_Command_Definition_t ethCommandDef =
 {
     "eth",
-    "\r\neth [eth]:\r\n TODO\r\n\r\n",
+    "\r\neth [eth]:\r\n Returns the current IP address.\r\n\r\n",
     ethCommand,
     0
 };
@@ -109,7 +110,7 @@ static bool test(void)
  ******************************************************************************/
 
 /**
- * @brief This function handles the ethernet command
+ * @brief This function handles the ethernet command.
  *
  * @param pcWriteBuffer cli output string buffer
  * @param xWriteBufferLen length of the cli output string
@@ -118,11 +119,19 @@ static bool test(void)
  */
 BaseType_t ethCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
-//    test();
-    enet_lwip_example(NULL);
+    sprintf(pcWriteBuffer, "IP address %s\r\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
 
     return pdFALSE;
 }
 
+/**
+ * @brief This function handeles the ethernet task and start the eth example.
+ *
+ * @param args unused
+ */
+void ethTask(void *args)
+{
+    enet_lwip_example(NULL);
+}
 
 /*[EOF]************************************************************************/
