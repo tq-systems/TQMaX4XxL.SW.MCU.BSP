@@ -70,7 +70,7 @@ void freertos_main(void *args)
     gGpioTaskHandle = xTaskCreateStatic(gpioPollingTask, "GPIO Polling Task", GPIO_TASK_SIZE, NULL, GPIO_TASK_PRI, gGpioTaskStack, &gGpioTaskObj);
 
 
-//    gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
+    gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
 
     enet_lwip_example(NULL);
 

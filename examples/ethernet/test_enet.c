@@ -178,7 +178,7 @@ int enet_lwip_example(void *args)
     Enet_MacPort macPortList[1];
     uint8_t numMacPorts;
 
-    Drivers_open();
+//    Drivers_open();
     Board_driversOpen();
 
     Board_cpswMuxSel();
@@ -195,7 +195,7 @@ int enet_lwip_example(void *args)
     EnetAppUtils_enableClocks(enetType, instId);
 
     /* no stdio-buffering, please! */
-    setvbuf(stdout, NULL,_IONBF, 0);
+//    setvbuf(stdout, NULL,_IONBF, 0);
     main_loop(NULL);
     return 0;
 }
