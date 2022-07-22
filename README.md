@@ -17,4 +17,4 @@ This project requires:
 - Debug
 
 ## License
-! TODO add license
+BSD-3-Clause
