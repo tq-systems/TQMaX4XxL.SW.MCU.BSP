@@ -47,8 +47,8 @@
  * prototypes
  ******************************************************************************/
 
-BaseType_t ethCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString);
-void ethTask(void *args);
+BaseType_t ethCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
+void ethTask(void* args);
 
 /*******************************************************************************
  * global extern data

@@ -31,7 +31,7 @@
  * local defines
  ******************************************************************************/
 
-extern int enet_lwip_example(void *args);
+extern int enet_lwip_example(void* args);
 
 /*******************************************************************************
  * local macros
@@ -82,7 +82,7 @@ const CLI_Command_Definition_t ethCommandDef =
  * @param pcCommandString cli command input string
  * @return pdFALSE = eth cmd is complete
  */
-BaseType_t ethCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
+BaseType_t ethCommand(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString)
 {
     sprintf(pcWriteBuffer, "IP address %s\r\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
 
@@ -94,7 +94,7 @@ BaseType_t ethCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char
  *
  * @param args unused
  */
-void ethTask(void *args)
+void ethTask(void* args)
 {
     enet_lwip_example(NULL);
 }

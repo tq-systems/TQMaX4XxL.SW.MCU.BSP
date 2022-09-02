@@ -59,7 +59,7 @@
 uint8_t uartReceiveBuffer[APP_UART_RECEIVE_BUFSIZE];
 static SemaphoreP_Object gUartReadDoneSem;
 
-void cliTask( void *pvParameters )
+void cliTask( void* pvParameters )
 {
     /* The buffers and welcome message are declared static to keep them off the stack. */
     static char welcomeMessage[]                     = "TQMaX4XxL MCU-BSP.\r\n\r\n"
@@ -69,8 +69,8 @@ void cliTask( void *pvParameters )
     char             rxedChar                        = 0;
     uint8_t          inputIndex                      = 0;
     BaseType_t       moreDataToFollow                = pdFALSE;
-    UART_Transaction trans;
-    int32_t transferOK, status;
+    UART_Transaction trans                           = {0};
+    int32_t          status                          = 0;
 
     status = SemaphoreP_constructBinary(&gUartReadDoneSem, 0);
     DebugP_assert(SystemP_SUCCESS == status);
@@ -157,7 +157,13 @@ void cliTask( void *pvParameters )
     }
 }
 
-void uartCallback(UART_Handle handle, UART_Transaction *transaction)
+/**
+ * @brief UART read callback function
+ *
+ * @param handle UART handler
+ * @param transaction UART data structure
+ */
+void uartCallback(UART_Handle handle, UART_Transaction* transaction)
 {
     SemaphoreP_post(&gUartReadDoneSem);
 }

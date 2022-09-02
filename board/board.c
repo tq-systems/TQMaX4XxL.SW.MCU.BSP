@@ -37,8 +37,8 @@
 
 #define TMP100_SOC_ADDR         0x4A
 /* The delay values are set based on trial and error and not tuned per port of the evm */
-uint32_t txDelay = 250U;
-uint32_t rxDelay = 2000U;
+static uint32_t txDelay = 250U;
+static uint32_t rxDelay = 2000U;
 
 uint8_t Board_getSocTemperatureSensorAddr(void)
 {
