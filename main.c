@@ -44,8 +44,6 @@
 #define GPIO_TASK_PRI  (configMAX_PRIORITIES-1)
 #define ETH_TASK_PRI   (configMAX_PRIORITIES-1)
 
-
-//#define MAIN_TASK_SIZE (16384U/sizeof(configSTACK_DEPTH_TYPE)*2)
 #define MAIN_TASK_SIZE (512)
 #define GPIO_TASK_SIZE (256)
 #define CLI_TASK_SIZE  (16384U/sizeof(configSTACK_DEPTH_TYPE))
@@ -70,11 +68,9 @@ void uart_echo(void *args);
 extern void gpioPollingTask(void *pvParameters);
 extern void enet_lwip_example(void *args);
 
-
 void freertos_main(void *args)
 {
     gGpioTaskHandle = xTaskCreateStatic(gpioPollingTask, "GPIO Polling Task", GPIO_TASK_SIZE, NULL, GPIO_TASK_PRI, gGpioTaskStack, &gGpioTaskObj);
-
 
     gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
 

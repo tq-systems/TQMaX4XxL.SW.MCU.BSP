@@ -57,7 +57,7 @@
 #define MAX_INPUT_LENGTH         (50)
 
 uint8_t uartReceiveBuffer[APP_UART_RECEIVE_BUFSIZE];
-static SemaphoreP_Object gUartReadDoneSem;
+static SemaphoreP_Object uartReadDoneSem;
 
 void cliTask( void* pvParameters )
 {
@@ -72,7 +72,7 @@ void cliTask( void* pvParameters )
     UART_Transaction trans                           = {0};
     int32_t          status                          = 0;
 
-    status = SemaphoreP_constructBinary(&gUartReadDoneSem, 0);
+    status = SemaphoreP_constructBinary(&uartReadDoneSem, 0);
     DebugP_assert(SystemP_SUCCESS == status);
 
     UART_Transaction_init(&trans);
@@ -105,7 +105,7 @@ void cliTask( void* pvParameters )
         UART_read(gUartHandle[CONFIG_USART0], &trans);
 
         /* Wait for read completion */
-        SemaphoreP_pend(&gUartReadDoneSem, SystemP_WAIT_FOREVER);
+        SemaphoreP_pend(&uartReadDoneSem, SystemP_WAIT_FOREVER);
 
         if(rxedChar == '\n')
         {
@@ -165,5 +165,5 @@ void cliTask( void* pvParameters )
  */
 void uartCallback(UART_Handle handle, UART_Transaction* transaction)
 {
-    SemaphoreP_post(&gUartReadDoneSem);
+    SemaphoreP_post(&uartReadDoneSem);
 }

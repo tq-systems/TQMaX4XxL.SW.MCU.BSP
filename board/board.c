@@ -37,13 +37,8 @@
 
 #define TMP100_SOC_ADDR         0x4A
 /* The delay values are set based on trial and error and not tuned per port of the evm */
-static uint32_t txDelay = 250U;
-static uint32_t rxDelay = 2000U;
-
-uint8_t Board_getSocTemperatureSensorAddr(void)
-{
-    return (TMP100_SOC_ADDR);
-}
+#define TX_DELAY  250U
+#define RX_DELAY  2000U
 
 static Pinmux_PerCfg_t MDIOPinMuxMainDomainCfg[] = {
     /* MDIO0 pin config */
@@ -61,8 +56,19 @@ static Pinmux_PerCfg_t MDIOPinMuxMainDomainCfg[] = {
     {PINMUX_END, PINMUX_END}
 };
 
-/*
- * Board info
+/**
+ * @brief This function returns the I2C temperatur sensor address.
+ *
+ * @return temperature sensor address.
+ */
+uint8_t Board_getSocTemperatureSensorAddr(void)
+{
+    return (TMP100_SOC_ADDR);
+}
+
+/**
+ * @brief This function configures the pinmux based on the domain
+ *
  */
 void Board_cpswMuxSel(void)
 {
@@ -72,27 +78,33 @@ void Board_cpswMuxSel(void)
     return;
 }
 
-/*
- * Get ethernet type
+/**
+ * @brief This function returns the ethernet type.
+ *
+ * @return
  */
 uint32_t Board_getEthType(void)
 {
     return ENET_CPSW_3G;
 }
 
-/*
-* Tx and Rx Delay set
-*/
+/**
+ * @brief This function sets the ethernet tx and rx delay.
+ *
+ * @param boardPhyCfg
+ */
 void Board_TxRxDelaySet(const EnetBoard_PhyCfg *boardPhyCfg)
 {
    Dp83867_Cfg *extendedCfg = (Dp83867_Cfg *)boardPhyCfg->extendedCfg;
-   extendedCfg->txDelayInPs = txDelay;
-   extendedCfg->rxDelayInPs = rxDelay;
+   extendedCfg->txDelayInPs = TX_DELAY;
+   extendedCfg->rxDelayInPs = RX_DELAY;
    return;
 }
 
-/*
- * Get ethernet board id
+/**
+ * @brief This function returns the ethernet board id.
+ *
+ * @return ethernet board id
  */
 uint32_t Board_getEthBoardId(void)
 {
