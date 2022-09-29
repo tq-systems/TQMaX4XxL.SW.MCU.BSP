@@ -43,6 +43,8 @@ const mpu_armv73 = mpu_armv7.addInstance();
 const mpu_armv74 = mpu_armv7.addInstance();
 const mpu_armv75 = mpu_armv7.addInstance();
 const mpu_armv76 = mpu_armv7.addInstance();
+const enet_cpsw  = scripting.addModule("/networking/enet_cpsw/enet_cpsw", {}, false);
+const enet_cpsw1 = enet_cpsw.addInstance();
 
 /**
  * Write custom configuration values to the imported modules.
@@ -123,7 +125,8 @@ ospi1.xferLines    = "QUAD";
 ospi1.inputClkFreq = 83333333;
 
 uart1.$name            = "CONFIG_USART0";
-uart1.intrEnable       = "DISABLE";
+uart1.readMode         = "CALLBACK";
+uart1.readCallbackFxn  = "uartCallback";
 uart1.UART.$assign     = "USART0";
 uart1.UART.RXD.$assign = "ball.D15";
 uart1.UART.TXD.$assign = "ball.C16";
@@ -157,12 +160,21 @@ mpu_armv76.$name    = "CONFIG_MPU_REGION5";
 mpu_armv76.baseAddr = 0x80000000;
 mpu_armv76.size     = 31;
 
+enet_cpsw1.$name                 = "CONFIG_ENET_CPSW0";
+enet_cpsw1.TxPacketsCount        = 16;
+enet_cpsw1.RingsTypes            = 2;
+enet_cpsw1.phyAddr1              = 0;
+enet_cpsw1.phyAddr2              = 0;
+enet_cpsw1.PktPoolEnable         = false;
+enet_cpsw1.phyToMacInterfaceMode = "RGMII";
+enet_cpsw1.RxPacketsCount        = 32;
+
 /**
  * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
-gpio2.MCU_GPIO.$suggestSolution  = "MCU_GPIO0";
+gpio2.MCU_GPIO.$suggestSolution          = "MCU_GPIO0";
 gpio3.GPIO.$suggestSolution      = "GPIO0";
 gpio4.GPIO.$suggestSolution      = "GPIO0";
 gpio5.GPIO.$suggestSolution      = "GPIO0";
@@ -176,17 +188,30 @@ gpio12.GPIO.$suggestSolution     = "GPIO0";
 gpio13.GPIO.$suggestSolution     = "GPIO0";
 gpio14.GPIO.$suggestSolution     = "GPIO0";
 gpio15.MCU_GPIO.$suggestSolution = "MCU_GPIO0";
-i2c1.I2C.SCL.$suggestSolution    = "ball.A18";
-i2c1.I2C.SDA.$suggestSolution    = "ball.B18";
+i2c1.I2C.SCL.$suggestSolution            = "ball.A18";
+i2c1.I2C.SDA.$suggestSolution            = "ball.B18";
 mcan1.MCAN.RX.$suggestSolution   = "ball.B17";
 mcan1.MCAN.TX.$suggestSolution   = "ball.A17";
 mcan2.MCAN.RX.$suggestSolution   = "ball.D17";
 mcan2.MCAN.TX.$suggestSolution   = "ball.C17";
-mmcsd1.MMC0.$suggestSolution     = "MMC0";
-ospi1.OSPI.$suggestSolution      = "OSPI0";
-ospi1.OSPI.CLK.$suggestSolution  = "ball.N20";
-ospi1.OSPI.CSn0.$suggestSolution = "ball.L19";
-ospi1.OSPI.D3.$suggestSolution   = "ball.M21";
-ospi1.OSPI.D2.$suggestSolution   = "ball.M20";
-ospi1.OSPI.D1.$suggestSolution   = "ball.M18";
-ospi1.OSPI.D0.$suggestSolution   = "ball.M19";
+mmcsd1.MMC0.$suggestSolution             = "MMC0";
+ospi1.OSPI.$suggestSolution              = "OSPI0";
+ospi1.OSPI.CLK.$suggestSolution          = "ball.N20";
+ospi1.OSPI.CSn0.$suggestSolution         = "ball.L19";
+ospi1.OSPI.D3.$suggestSolution           = "ball.M21";
+ospi1.OSPI.D2.$suggestSolution           = "ball.M20";
+ospi1.OSPI.D1.$suggestSolution           = "ball.M18";
+ospi1.OSPI.D0.$suggestSolution           = "ball.M19";
+enet_cpsw1.RGMII.$suggestSolution        = "RGMII1";
+enet_cpsw1.RGMII.RD0.$suggestSolution    = "ball.W5";
+enet_cpsw1.RGMII.RD1.$suggestSolution    = "ball.Y5";
+enet_cpsw1.RGMII.RD2.$suggestSolution    = "ball.V6";
+enet_cpsw1.RGMII.RD3.$suggestSolution    = "ball.V5";
+enet_cpsw1.RGMII.RX_CTL.$suggestSolution = "ball.W6";
+enet_cpsw1.RGMII.RXC.$suggestSolution    = "ball.AA5";
+enet_cpsw1.RGMII.TD0.$suggestSolution    = "ball.V15";
+enet_cpsw1.RGMII.TD1.$suggestSolution    = "ball.V14";
+enet_cpsw1.RGMII.TD2.$suggestSolution    = "ball.W14";
+enet_cpsw1.RGMII.TD3.$suggestSolution    = "ball.AA14";
+enet_cpsw1.RGMII.TX_CTL.$suggestSolution = "ball.U15";
+enet_cpsw1.RGMII.TXC.$suggestSolution    = "ball.U14";

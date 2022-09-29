@@ -37,36 +37,44 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "CLI_task.h"
+#include "eth_cmd.h"
 
 #define MAIN_TASK_PRI  (configMAX_PRIORITIES-1)
-#define CLI_TASK_PRI   (configMAX_PRIORITIES-1)
+#define CLI_TASK_PRI   (configMAX_PRIORITIES-3)
 #define GPIO_TASK_PRI  (configMAX_PRIORITIES-1)
+#define ETH_TASK_PRI   (configMAX_PRIORITIES-1)
 
-
-#define MAIN_TASK_SIZE (16384U/sizeof(configSTACK_DEPTH_TYPE))
-#define CLI_TASK_SIZE  (16384U/sizeof(configSTACK_DEPTH_TYPE))
+#define MAIN_TASK_SIZE (512)
 #define GPIO_TASK_SIZE (256)
+#define CLI_TASK_SIZE  (16384U/sizeof(configSTACK_DEPTH_TYPE))
+#define ETH_TASK_SIZE  (512)
 
 StackType_t gMainTaskStack[MAIN_TASK_SIZE] __attribute__((aligned(32)));
 StackType_t gCliTaskStack[CLI_TASK_SIZE] __attribute__((aligned(32)));
 StackType_t gGpioTaskStack[GPIO_TASK_SIZE] __attribute__((aligned(32)));
+StackType_t gEthTaskStack[CLI_TASK_SIZE] __attribute__((aligned(32)));
 
 StaticTask_t gMainTaskObj;
 StaticTask_t gCliTaskObj;
 StaticTask_t gGpioTaskObj;
+StaticTask_t gEthTaskObj;
 
 TaskHandle_t gMainTaskHandle;
 TaskHandle_t gCliTaskHandle;
 TaskHandle_t gGpioTaskHandle;
+TaskHandle_t gEthTaskHandle;
 
 void uart_echo(void *args);
 extern void gpioPollingTask(void *pvParameters);
+extern void enet_lwip_example(void *args);
 
 void freertos_main(void *args)
 {
     gGpioTaskHandle = xTaskCreateStatic(gpioPollingTask, "GPIO Polling Task", GPIO_TASK_SIZE, NULL, GPIO_TASK_PRI, gGpioTaskStack, &gGpioTaskObj);
 
     gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
+
+    gEthTaskHandle = xTaskCreateStatic(ethTask, "ETH Task", ETH_TASK_SIZE, NULL, ETH_TASK_PRI, gEthTaskStack, &gEthTaskObj);
 
     vTaskDelete(NULL);
 }
@@ -85,6 +93,7 @@ int main()
                                         MAIN_TASK_PRI,   /* task priority, 0 is lowest priority, configMAX_PRIORITIES-1 is highest */
                                         gMainTaskStack,  /* pointer to stack base */
                                         &gMainTaskObj); /* pointer to statically allocated task object memory */
+
     configASSERT(gMainTaskHandle != NULL);
 
     /* Start the scheduler to start the tasks executing. */

@@ -49,6 +49,7 @@
 #include "qspi_nor_flash_cmd.h"
 #include "eeprom_cmd.h"
 #include "mcan_cmd.h"
+#include "eth_cmd.h"
 #include "lpddr4_cmd.h"
 #include "gpio_dig_cmd.h"
 
@@ -56,8 +57,9 @@
 #define MAX_INPUT_LENGTH         (50)
 
 uint8_t uartReceiveBuffer[APP_UART_RECEIVE_BUFSIZE];
+static SemaphoreP_Object uartReadDoneSem;
 
-void cliTask( void *pvParameters )
+void cliTask( void* pvParameters )
 {
     /* The buffers and welcome message are declared static to keep them off the stack. */
     static char welcomeMessage[]                     = "TQMaX4XxL MCU-BSP.\r\n\r\n"
@@ -67,7 +69,11 @@ void cliTask( void *pvParameters )
     char             rxedChar                        = 0;
     uint8_t          inputIndex                      = 0;
     BaseType_t       moreDataToFollow                = pdFALSE;
-    UART_Transaction trans;
+    UART_Transaction trans                           = {0};
+    int32_t          status                          = 0;
+
+    status = SemaphoreP_constructBinary(&uartReadDoneSem, 0);
+    DebugP_assert(SystemP_SUCCESS == status);
 
     UART_Transaction_init(&trans);
 
@@ -87,6 +93,7 @@ void cliTask( void *pvParameters )
     FreeRTOS_CLIRegisterCommand(&qspiNorFlashCommandDef);
     FreeRTOS_CLIRegisterCommand(&eepromCommandDef);
     FreeRTOS_CLIRegisterCommand(&mcanCommandDef);
+    FreeRTOS_CLIRegisterCommand(&ethCommandDef);
     FreeRTOS_CLIRegisterCommand(&lpddr4CommandDef);
     FreeRTOS_CLIRegisterCommand(&gpioDigCommandDef);
 
@@ -96,6 +103,9 @@ void cliTask( void *pvParameters )
         trans.buf   = &rxedChar;
         trans.count = APP_UART_RECEIVE_BUFSIZE;
         UART_read(gUartHandle[CONFIG_USART0], &trans);
+
+        /* Wait for read completion */
+        SemaphoreP_pend(&uartReadDoneSem, SystemP_WAIT_FOREVER);
 
         if(rxedChar == '\n')
         {
@@ -145,4 +155,15 @@ void cliTask( void *pvParameters )
             }
         }
     }
+}
+
+/**
+ * @brief UART read callback function
+ *
+ * @param handle UART handler
+ * @param transaction UART data structure
+ */
+void uartCallback(UART_Handle handle, UART_Transaction* transaction)
+{
+    SemaphoreP_post(&uartReadDoneSem);
 }
