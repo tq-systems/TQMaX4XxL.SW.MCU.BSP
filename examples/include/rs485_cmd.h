@@ -12,9 +12,8 @@
  * In case of any license issues please contact license@tq-group.com.
  *
  * -----------------------------------------------------------------------------
- * @brief <TODO short description of the file (only one line)>
+ * @brief This file contains the declaration of the RS485 command.
  *
- * <TODO Detailed description of the file>
  */
 
 #ifndef EXAMPLES_INCLUDE_RS485_CMD_H_

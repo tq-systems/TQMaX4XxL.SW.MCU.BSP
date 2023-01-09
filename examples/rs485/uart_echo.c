@@ -1,6 +1,9 @@
 /*
  *  Copyright (C) 2021 Texas Instruments Incorporated
  *
+ *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ *  Author Michael Bernhardt
+ *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
  *  are met:
@@ -37,13 +40,17 @@
 
 #include <string.h>
 #include <kernel/dpl/DebugP.h>
+#include <kernel/dpl/AddrTranslateP.h>
 #include "ti_drivers_config.h"
 #include "ti_drivers_open_close.h"
 #include "ti_board_open_close.h"
 #include "ti_drivers_config.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 #define APP_UART_BUFSIZE              (200U)
 #define APP_UART_RECEIVE_BUFSIZE      (8U)
+#define DELAY_TIME                    (pdMS_TO_TICKS(6))
 
 uint8_t gUartBuffer[APP_UART_BUFSIZE];
 uint8_t gUartReceiveBuffer[APP_UART_RECEIVE_BUFSIZE];
@@ -77,7 +84,6 @@ void uart_echo(void *args)
     int32_t          transferOK;
     int32_t          status;
     UART_Transaction trans;
-    int a = 0;
 
     rs485Rts.baseAdd   = (uint32_t) AddrTranslateP_getLocalAddr(RS485_RTS_BASE_ADDR);
     rs485Rts.pin       = RS485_RTS_PIN;
@@ -89,8 +95,6 @@ void uart_echo(void *args)
     status = SemaphoreP_constructBinary(&gUartReadDoneSem, 0);
     DebugP_assert(SystemP_SUCCESS == status);
 
-
-//    Drivers_open();
     Board_driversOpen();
 
     DebugP_log("[UART] Echo example started ...\r\n");
@@ -112,7 +116,7 @@ void uart_echo(void *args)
     /* Wait for write completion */
     SemaphoreP_pend(&gUartWriteDoneSem, SystemP_WAIT_FOREVER);
     DebugP_assert(gNumBytesWritten == strlen(trans.buf));
-    vTaskDelay(6);
+    vTaskDelay(DELAY_TIME);
     GPIO_pinWriteLow(rs485Rts.baseAdd, rs485Rts.pin);
 
 
@@ -138,7 +142,7 @@ void uart_echo(void *args)
     /* Wait for write completion */
     SemaphoreP_pend(&gUartWriteDoneSem, SystemP_WAIT_FOREVER);
     DebugP_assert(gNumBytesWritten == APP_UART_RECEIVE_BUFSIZE);
-    vTaskDelay(6);
+    vTaskDelay(DELAY_TIME);
     GPIO_pinWriteLow(rs485Rts.baseAdd, rs485Rts.pin);
 
     /* Send exit string */
@@ -162,7 +166,6 @@ void uart_echo(void *args)
     SemaphoreP_destruct(&gUartReadDoneSem);
 
     Board_driversClose();
-//    Drivers_close();
 
     return;
 }

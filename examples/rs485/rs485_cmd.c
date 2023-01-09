@@ -12,9 +12,8 @@
  * In case of any license issues please contact license@tq-group.com.
  *
  * -----------------------------------------------------------------------------
- * @brief <TODO short description of the file (only one line)>
+ * @brief This file contains the implementation of the RS485 command.
  *
- * <TODO Detailed description of the file>
  */
 
 /*******************************************************************************
@@ -27,6 +26,7 @@
 #include <stdbool.h>
 /* project */
 #include "projdefs.h"
+#include "utilities.h"
 /* own */
 #include "rs485_cmd.h"
 
@@ -77,16 +77,19 @@ void uart_echo(void *args);
  * global functions
  ******************************************************************************/
 
+/**
+ * @brief This function handles the command of the RS485.
+ *
+ * @param pcWriteBuffer cli output string buffer
+ * @param xWriteBufferLen length of the cli output string
+ * @param pcCommandString cli command input string
+ * @return pdFALSE = command is finished
+ */
 BaseType_t rs485Command(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString)
 {
-    bool       err                          = false;
-    char*      pNextNumber                  = NULL;
-    char*      pcParameter                  = {NULL};
-    BaseType_t xParameterStringLength       = 0;
-    uint8_t    dataBuf                      = 0;
-
-    /* get all parameter */
-    pcParameter = (char*) FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameterStringLength);
+    UNUSED_PARAM(pcWriteBuffer);
+    UNUSED_PARAM(xWriteBufferLen);
+    UNUSED_PARAM(pcCommandString);
 
     uart_echo(NULL);
 
