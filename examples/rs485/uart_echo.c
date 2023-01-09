@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2021 Texas Instruments Incorporated
  *
- *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ *  Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  *  Author Michael Bernhardt
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,6 @@ typedef struct
 } gpio_t;
 
 gpio_t rs485Rts;
-bool rtsFlag = false;
 
 #define APP_UART_ASSERT_ON_FAILURE(transferOK, transaction) \
     do { \
@@ -109,7 +108,6 @@ void uart_echo(void *args)
     trans.count = strlen(trans.buf);
 
     GPIO_pinWriteHigh(rs485Rts.baseAdd, rs485Rts.pin);
-    rtsFlag = true;
     transferOK = UART_write(gUartHandle[RS485], &trans);
     APP_UART_ASSERT_ON_FAILURE(transferOK, trans);
 
@@ -157,7 +155,7 @@ void uart_echo(void *args)
     /* Wait for write completion */
     SemaphoreP_pend(&gUartWriteDoneSem, SystemP_WAIT_FOREVER);
     DebugP_assert(gNumBytesWritten == strlen(trans.buf));
-    vTaskDelay(6);
+    vTaskDelay(DELAY_TIME);
     GPIO_pinWriteLow(rs485Rts.baseAdd, rs485Rts.pin);
 
     DebugP_log("All tests have passed!!\r\n");

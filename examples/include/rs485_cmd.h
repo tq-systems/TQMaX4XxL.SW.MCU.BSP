@@ -1,7 +1,7 @@
 /**
  * @file rs485_cmd.h
  * @author Copyright (c) 2023, TQ-Systems GmbH
- * @author TODO author of the file <TODO@tq-group.com>
+ * @author Michael Bernhardt
  * @date 2023-01-04
  *
  * This software code contained herein is licensed under the terms and

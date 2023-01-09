@@ -1,7 +1,7 @@
 /**
  * @file rs485_cmd.c
  * @author Copyright (c) 2023, TQ-Systems GmbH
- * @author TODO author of the file <TODO@tq-group.com>
+ * @author Michael Bernhardt
  * @date 2023-01-04
  *
  * This software code contained herein is licensed under the terms and
@@ -43,10 +43,10 @@
 /* The definition of the "ledblink" command. */
 const CLI_Command_Definition_t rs485CommandDef =
 {
-    "RS485",
+    "rs485",
     "\r\nrs485 [rs485]:\r\n Read or write data via RS485.\r\n\r\n",
     rs485Command,
-    -1
+    0
 };
 
 /*******************************************************************************
