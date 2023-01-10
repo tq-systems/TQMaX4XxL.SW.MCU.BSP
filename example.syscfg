@@ -8,6 +8,8 @@
 /**
  * Import the modules used in this configuration.
  */
+const adc        = scripting.addModule("/drivers/adc/adc", {}, false);
+const adc1       = adc.addInstance();
 const gpio       = scripting.addModule("/drivers/gpio/gpio", {}, false);
 const gpio1      = gpio.addInstance();
 const gpio2      = gpio.addInstance();
@@ -51,6 +53,10 @@ const enet_cpsw1 = enet_cpsw.addInstance();
 /**
  * Write custom configuration values to the imported modules.
  */
+adc1.$name                  = "CONFIG_ADC0";
+adc1.ADC.EXT_TRIGGER0.$used = false;
+adc1.ADC.EXT_TRIGGER1.$used = false;
+
 gpio1.pinDir                   = "OUTPUT";
 gpio1.useMcuDomainPeripherals  = true;
 gpio1.$name                    = "GPIO_USER_LED_1";
@@ -188,6 +194,15 @@ enet_cpsw1.RxPacketsCount        = 32;
  * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
  * re-solve from scratch.
  */
+adc1.ADC.$suggestSolution                = "ADC0";
+adc1.ADC.AIN0.$suggestSolution           = "ball.G20";
+adc1.ADC.AIN1.$suggestSolution           = "ball.F20";
+adc1.ADC.AIN2.$suggestSolution           = "ball.E21";
+adc1.ADC.AIN3.$suggestSolution           = "ball.D20";
+adc1.ADC.AIN4.$suggestSolution           = "ball.G21";
+adc1.ADC.AIN5.$suggestSolution           = "ball.F21";
+adc1.ADC.AIN6.$suggestSolution           = "ball.F19";
+adc1.ADC.AIN7.$suggestSolution           = "ball.E20";
 gpio2.MCU_GPIO.$suggestSolution          = "MCU_GPIO0";
 gpio3.GPIO.$suggestSolution              = "GPIO0";
 gpio4.GPIO.$suggestSolution              = "GPIO0";
