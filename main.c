@@ -38,6 +38,7 @@
 #include "task.h"
 #include "CLI_task.h"
 #include "eth_cmd.h"
+#include "spi_driver.h"
 
 #define MAIN_TASK_PRI  (configMAX_PRIORITIES-1)
 #define CLI_TASK_PRI   (configMAX_PRIORITIES-3)
@@ -70,11 +71,13 @@ extern void enet_lwip_example(void *args);
 
 void freertos_main(void *args)
 {
-    gGpioTaskHandle = xTaskCreateStatic(gpioPollingTask, "GPIO Polling Task", GPIO_TASK_SIZE, NULL, GPIO_TASK_PRI, gGpioTaskStack, &gGpioTaskObj);
+//    gGpioTaskHandle = xTaskCreateStatic(gpioPollingTask, "GPIO Polling Task", GPIO_TASK_SIZE, NULL, GPIO_TASK_PRI, gGpioTaskStack, &gGpioTaskObj);
+//
+//    gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
+//
+//    gEthTaskHandle = xTaskCreateStatic(ethTask, "ETH Task", ETH_TASK_SIZE, NULL, ETH_TASK_PRI, gEthTaskStack, &gEthTaskObj);
 
-    gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
-
-    gEthTaskHandle = xTaskCreateStatic(ethTask, "ETH Task", ETH_TASK_SIZE, NULL, ETH_TASK_PRI, gEthTaskStack, &gEthTaskObj);
+    testSpi();
 
     vTaskDelete(NULL);
 }
