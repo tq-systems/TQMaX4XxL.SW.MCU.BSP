@@ -27,6 +27,7 @@ const gpio13     = gpio.addInstance();
 const gpio14     = gpio.addInstance();
 const gpio15     = gpio.addInstance();
 const gpio16     = gpio.addInstance();
+const gpio17     = gpio.addInstance();
 const i2c        = scripting.addModule("/drivers/i2c/i2c", {}, false);
 const i2c1       = i2c.addInstance();
 const mcan       = scripting.addModule("/drivers/mcan/mcan", {}, false);
@@ -123,6 +124,10 @@ gpio16.$name                = "RS485_RTS";
 gpio16.pinDir               = "OUTPUT";
 gpio16.GPIO.gpioPin.$assign = "ball.T18";
 
+gpio17.$name                = "ADC_RST";
+gpio17.pinDir               = "OUTPUT";
+gpio17.GPIO.gpioPin.$assign = "ball.D16";
+
 i2c1.$name       = "CONFIG_I2C0";
 i2c1.I2C.$assign = "I2C0";
 
@@ -133,6 +138,8 @@ mcan2.$name        = "CONFIG_MCAN1";
 mcan2.MCAN.$assign = "MCAN1";
 
 mcspi1.$name                 = "CONFIG_MCSPI0";
+mcspi1.transferMode          = "CALLBACK";
+mcspi1.transferCallbackFxn   = "spiCallback";
 mcspi1.inputSelect           = "0";
 mcspi1.mcspiChannel[0].$name = "CONFIG_MCSPI_CH0";
 
@@ -224,6 +231,7 @@ gpio13.GPIO.$suggestSolution                = "GPIO0";
 gpio14.GPIO.$suggestSolution                = "GPIO0";
 gpio15.MCU_GPIO.$suggestSolution            = "MCU_GPIO0";
 gpio16.GPIO.$suggestSolution                = "GPIO0";
+gpio17.GPIO.$suggestSolution                = "GPIO1";
 i2c1.I2C.SCL.$suggestSolution               = "ball.A18";
 i2c1.I2C.SDA.$suggestSolution               = "ball.B18";
 mcan1.MCAN.RX.$suggestSolution              = "ball.B17";

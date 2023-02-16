@@ -20,7 +20,7 @@
  ******************************************************************************/
 
 /* runtime */
-
+#include "stdbool.h"
 /* project */
 #include "portmacro.h"
 #include "projdefs.h"
@@ -42,6 +42,21 @@
  * typedefs
  ******************************************************************************/
 
+typedef enum
+{
+    PIN_STATUS_LOW  = 0,
+    PIN_STATUS_HIGH = 1,
+} pinStatus_t;
+
+typedef enum
+{
+    DIG_OUT_1 = 0,
+    DIG_OUT_2,
+    DIG_OUT_3,
+    DIG_OUT_4,
+    ADC_RST,
+    DIG_OUT_MAX,
+} GpioOut_t;
 
 
 /*******************************************************************************
@@ -49,6 +64,8 @@
  ******************************************************************************/
 
 BaseType_t gpioDigCommand(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
+bool gpio_writePinOut(GpioOut_t gpio, pinStatus_t state);
+void gpioInit(void);
 
 /*******************************************************************************
  * global extern data

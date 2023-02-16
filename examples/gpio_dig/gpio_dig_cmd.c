@@ -59,15 +59,6 @@ enum
     DIG_IN_MAX
 };
 
-enum
-{
-    DIG_OUT_1 = 0,
-    DIG_OUT_2,
-    DIG_OUT_3,
-    DIG_OUT_4,
-    DIG_OUT_MAX,
-};
-
 /* The definition of the "digial GPIO" command. */
 const CLI_Command_Definition_t gpioDigCommandDef =
 {
@@ -85,17 +76,9 @@ const CLI_Command_Definition_t gpioDigCommandDef =
     -1
 };
 
-
-
 /*******************************************************************************
  * local typedefs
  ******************************************************************************/
-
-typedef enum
-{
-    PIN_STATUS_LOW  = 0,
-    PIN_STATUS_HIGH = 1,
-} pinStatus_t;
 
 typedef struct
 {
@@ -113,12 +96,12 @@ static digGpio_t userButton                = {0};
 static digGpio_t digIn[DIG_IN_MAX]         = {0};
 static digGpio_t digOut[DIG_OUT_MAX]       = {0};
 static digGpio_t digOutStatus[DIG_OUT_MAX] = {0};
+static bool      gpioIsInit                = false;
 
 /*******************************************************************************
  * forward declarations
  ******************************************************************************/
 
-static void gpioInit(void);
 static bool gpioSetStatus(const digGpio_t* const pGpio, const pinStatus_t pinStatus);
 
 /*******************************************************************************
@@ -153,11 +136,27 @@ static bool gpioSetStatus(const digGpio_t* const pGpio, const pinStatus_t pinSta
     return success;
 }
 
+/*******************************************************************************
+ * global functions
+ ******************************************************************************/
+
+bool gpio_writePinOut(GpioOut_t gpio, pinStatus_t pinStatus)
+{
+    bool retVal = false;
+
+    if ((gpio < DIG_OUT_MAX) && (pinStatus <= PIN_STATUS_HIGH) && (gpioIsInit == true))
+    {
+        retVal = gpioSetStatus(&digOut[gpio], pinStatus);
+    }
+
+    return retVal;
+}
+
 /**
  * @brief This function initializes all digital GPIOs.
  *
  */
-static void gpioInit(void)
+void gpioInit(void)
 {
     uint8_t  counter = 0;
 
@@ -213,6 +212,14 @@ static void gpioInit(void)
     digOutStatus[DIG_OUT_4].pin       = STATUS_OUT_4_PIN;
     digOutStatus[DIG_OUT_4].direction = STATUS_OUT_4_DIR;
 
+    digOut[ADC_RST].baseAdd         = (uint32_t)AddrTranslateP_getLocalAddr(ADC_RST_BASE_ADDR);
+    digOut[ADC_RST].pin             = ADC_RST_PIN;
+    digOut[ADC_RST].direction       = ADC_RST_DIR;
+
+    digOutStatus[ADC_RST].baseAdd   = (uint32_t)AddrTranslateP_getLocalAddr(ADC_RST_BASE_ADDR);
+    digOutStatus[ADC_RST].pin       = ADC_RST_PIN;
+    digOutStatus[ADC_RST].direction = ADC_RST_DIR;
+
     /* init GPIOs */
     GPIO_setDirMode(userButton.baseAdd, userButton.pin, userButton.direction);
 
@@ -226,11 +233,9 @@ static void gpioInit(void)
         GPIO_setDirMode(digOut[counter].baseAdd,       digOut[counter].pin,       digOut[counter].direction);
         GPIO_setDirMode(digOutStatus[counter].baseAdd, digOutStatus[counter].pin, digOutStatus[counter].direction);
     }
-}
 
-/*******************************************************************************
- * global functions
- ******************************************************************************/
+    gpioIsInit = true;
+}
 
 /**
  * @brief This function handles the digital GPIO command.
