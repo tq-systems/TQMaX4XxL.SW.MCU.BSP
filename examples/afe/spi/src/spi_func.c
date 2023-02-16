@@ -226,14 +226,14 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
     /*Write Data via SPI*/
     transferOK = MCSPI_transfer(gMcspiHandle[CONFIG_MCSPI0], &spiTransaction);
 
-    if (SystemP_SUCCESS != transferOK)
+    if((SystemP_SUCCESS != transferOK) || (MCSPI_TRANSFER_COMPLETED != spiTransaction.status))
     {
         DebugP_assert(FALSE); /* MCSPI transfer failed!! */
     }
 
     // Wait for transmission compled
-    while (!spi_transfer_completed)
-    { }
+//    while (!spi_transfer_completed)
+//    { }
 
     spi_transfer_completed = false;
 
@@ -352,14 +352,14 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
 
     transferOK = MCSPI_transfer(gMcspiHandle[CONFIG_MCSPI0], &spiTransaction);
 
-    if (SystemP_SUCCESS != transferOK)
+    if((SystemP_SUCCESS != transferOK) || (MCSPI_TRANSFER_COMPLETED != spiTransaction.status))
     {
         DebugP_assert(FALSE); /* MCSPI transfer failed!! */
     }
 
     // Wait for transmission compled
-    while (!spi_transfer_completed)
-    { }
+//    while (!spi_transfer_completed)
+//    { }
     spi_transfer_completed = false;
 
 //    Board_driversClose();

@@ -138,9 +138,6 @@ mcan2.$name        = "CONFIG_MCAN1";
 mcan2.MCAN.$assign = "MCAN1";
 
 mcspi1.$name                 = "CONFIG_MCSPI0";
-mcspi1.transferMode          = "CALLBACK";
-mcspi1.transferCallbackFxn   = "spiCallback";
-mcspi1.inputSelect           = "0";
 mcspi1.mcspiChannel[0].$name = "CONFIG_MCSPI_CH0";
 
 mmcsd1.$name = "CONFIG_MMCSD0";
