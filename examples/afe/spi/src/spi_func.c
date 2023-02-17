@@ -29,11 +29,10 @@
 
 /* project */
 #include <kernel/dpl/DebugP.h>
+#include <nafe13388Registers.h>
 #include "ti_drivers_config.h"
 #include "ti_drivers_open_close.h"
 #include "ti_board_open_close.h"
-#include "fsl_afe_registers.h"
-/* own */
 #include "spi_func.h"
 
 /*******************************************************************************
@@ -102,24 +101,12 @@ volatile bool spi_transfer_completed = false;
  * global functions
  ******************************************************************************/
 
-void spiCallback(MCSPI_Handle handle, MCSPI_Transaction *transaction)
-{
-    if (transaction->status == MCSPI_TRANSFER_COMPLETED)
-    {
-        spi_transfer_completed = true;
-    }
-    else
-    {
-        spi_transfer_completed = false;
-        DebugP_log("Error occurred during SPI transfer!\r\n");
-    }
-}
 
 status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_width)
 {
     status_t result = kStatus_NoTransferInProgress;
     uint8_t reg_addr_1, reg_addr_2;
-//    MCSPI_Transaction   spiTransaction;
+    MCSPI_Transaction   spiTransaction;
     int32_t             transferOK;
 
     /*DEV_AD-bit + RW_L-bit + RA12-RA7*/
@@ -131,15 +118,16 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
     LPSPI_AFE_txbuffer[0] = reg_addr_1;
     LPSPI_AFE_txbuffer[1] = reg_addr_2;
 
-//    Drivers_open();
-//    Board_driversOpen();
+    Drivers_open();
+    Board_driversOpen();
 
-//    MCSPI_Transaction_init(&spiTransaction);
-    spiTransaction.channel = gConfigMcspi0ChCfg[0].chNum;
+    MCSPI_Transaction_init(&spiTransaction);
+    spiTransaction.channel   = gConfigMcspi0ChCfg[0].chNum;
     spiTransaction.csDisable = TRUE;
-    spiTransaction.txBuf = (void*) LPSPI_AFE_txbuffer;
-    spiTransaction.rxBuf = (void*) LPSPI_AFE_rxbuffer;
-    spiTransaction.args = NULL;
+    spiTransaction.txBuf     = (void*) LPSPI_AFE_txbuffer;
+    spiTransaction.rxBuf     = (void*) LPSPI_AFE_rxbuffer;
+    spiTransaction.args      = NULL;
+    spiTransaction.dataSize  = 8;  /* transmit 8 bits per frame count */
 
     switch (reg_width)
     {
@@ -167,7 +155,7 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
             {
                 LPSPI_AFE_txbuffer[2] = (uint8_t) (reg_data >>8);
                 LPSPI_AFE_txbuffer[3] = (uint8_t) reg_data;
-                spiTransaction.dataSize = 4;
+                spiTransaction.count = 4;   /* transmit 4 Bytes */
             }
 
             break;
@@ -192,14 +180,14 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
 //                LPSPI_AFE_txbuffer[6] = (uint8_t) checksumCRC_TX[1];
 //                /*Provide 8 more SCLK*/
 //                LPSPI_AFE_txbuffer[7] = SPI_DUMMY_DATA;
-//                spiTransaction.dataSize = 8;
+//                spiTransaction.count = 8;
             }
             else
             {
                 LPSPI_AFE_txbuffer[2] = (uint8_t) (reg_data >> 16);
                 LPSPI_AFE_txbuffer[3] = (uint8_t) (reg_data >> 8);
                 LPSPI_AFE_txbuffer[4] = (uint8_t) reg_data;
-                spiTransaction.dataSize = 5;
+                spiTransaction.count = 5;
             }
             break;
         }
@@ -212,19 +200,6 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
         }
     }
 
-    spi_transfer_completed = false;
-
-    if(spiTransaction.dataSize < 8)
-    {
-        spiTransaction.count = APP_MCSPI_MSGSIZE;
-    }
-    else
-    {
-        spiTransaction.count = APP_MCSPI_MSGSIZE / (spiTransaction.dataSize / 8);
-    }
-
-    spiTransaction.dataSize = 8;
-    spiTransaction.count = 4;
     /*Write Data via SPI*/
     transferOK = MCSPI_transfer(gMcspiHandle[CONFIG_MCSPI0], &spiTransaction);
 
@@ -233,14 +208,8 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
         DebugP_assert(FALSE); /* MCSPI transfer failed!! */
     }
 
-    // Wait for transmission compled
-//    while (!spi_transfer_completed)
-//    { }
-
-    spi_transfer_completed = false;
-
-//    Board_driversClose();
-//    Drivers_close();
+    Board_driversClose();
+    Drivers_close();
 
     return result;
 }
@@ -259,7 +228,7 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
     status_t result = 0;
     uint8_t reg_addr_1, reg_addr_2;
     uint16_t reg_addrShifted;
-//    MCSPI_Transaction   spiTransaction;
+    MCSPI_Transaction   spiTransaction;
     int32_t             transferOK;
 
     // AFE Communication Protocol
@@ -273,14 +242,15 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
     LPSPI_AFE_txbuffer[1] = (uint8_t)reg_addrShifted;
 
 
-//    Drivers_open();
-//    Board_driversOpen();
+    Drivers_open();
+    Board_driversOpen();
 
-    spiTransaction.channel = gConfigMcspi0ChCfg[0].chNum;
+    spiTransaction.channel   = gConfigMcspi0ChCfg[0].chNum;
     spiTransaction.csDisable = TRUE;
-    spiTransaction.txBuf = (void*) LPSPI_AFE_txbuffer;
-    spiTransaction.rxBuf = (void*) LPSPI_AFE_rxbuffer;
-    spiTransaction.args = NULL;
+    spiTransaction.txBuf     = (void*) LPSPI_AFE_txbuffer;
+    spiTransaction.rxBuf     = (void*) LPSPI_AFE_rxbuffer;
+    spiTransaction.args      = NULL;
+    spiTransaction.dataSize  = 8; /* transmit 8 bits per frame count */
 
     /*Check Register Typ of AFE*/
     switch (reg_width)
@@ -303,7 +273,7 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
             {
                LPSPI_AFE_txbuffer[2] = SPI_DUMMY_DATA;
                LPSPI_AFE_txbuffer[3] = SPI_DUMMY_DATA;
-               spiTransaction.dataSize = 4;
+               spiTransaction.count = 4;  // transmit 4 Bytes
             }
             break;
         }
@@ -327,7 +297,7 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
                LPSPI_AFE_txbuffer[2] = SPI_DUMMY_DATA;
                LPSPI_AFE_txbuffer[3] = SPI_DUMMY_DATA;
                LPSPI_AFE_txbuffer[4] = SPI_DUMMY_DATA;
-               spiTransaction.dataSize = 5;
+               spiTransaction.count = 5;
             }
             break;
         }
@@ -340,24 +310,6 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
         }
     }
 
-    spi_transfer_completed = false;
-
-    spiTransaction.dataSize = 8;
-
-    /*Read Data via SPI*/
-    /*Write Data via SPI*/
-    if(spiTransaction.dataSize < 8)
-    {
-        spiTransaction.count = APP_MCSPI_MSGSIZE ;
-    }
-    else
-    {
-        spiTransaction.count = APP_MCSPI_MSGSIZE / (spiTransaction.dataSize / 8);
-    }
-
-
-    spiTransaction.count = 4;
-
     transferOK = MCSPI_transfer(gMcspiHandle[CONFIG_MCSPI0], &spiTransaction);
 
     if((SystemP_SUCCESS != transferOK) || (MCSPI_TRANSFER_COMPLETED != spiTransaction.status))
@@ -365,13 +317,8 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
         DebugP_assert(FALSE); /* MCSPI transfer failed!! */
     }
 
-    // Wait for transmission compled
-//    while (!spi_transfer_completed)
-//    { }
-    spi_transfer_completed = false;
-
-//    Board_driversClose();
-//    Drivers_close();
+    Board_driversClose();
+    Drivers_close();
 
     return result;
 }

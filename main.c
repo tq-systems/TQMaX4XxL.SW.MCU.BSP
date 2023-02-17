@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <kernel/dpl/DebugP.h>
+#include <nafe13388.h>
 #include "ti_drivers_config.h"
 #include "ti_board_config.h"
 #include "FreeRTOS.h"
@@ -39,7 +40,6 @@
 #include "CLI_task.h"
 #include "eth_cmd.h"
 #include "spi_driver.h"
-#include "Mba117xL_AFE.h"
 
 #define MAIN_TASK_PRI  (configMAX_PRIORITIES-1)
 //#define CLI_TASK_PRI   (configMAX_PRIORITIES-3)
@@ -80,11 +80,10 @@ void freertos_main(void *args)
 
 //    testSpi();
 
-    spi_init();
+//    spi_init();
     gpioInit();
     AFE_Enable();
     AFE_Init();
-//    AFE_GpioInit();
     AFE_ReadDieTemp();
 //    AFE_GpioRead(AFE_GPIO0);
 

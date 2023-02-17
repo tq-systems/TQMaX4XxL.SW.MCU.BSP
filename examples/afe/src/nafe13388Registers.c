@@ -30,7 +30,7 @@
 //#include "peripherals.h"
 //#include "fsl_lpspi.h"
 /* own */
-#include "fsl_afe_registers.h"
+#include <nafe13388Registers.h>
 /*******************************************************************************
  * local defines
  ******************************************************************************/
@@ -117,12 +117,12 @@ void Init_CH_RegisterAdr(void)
 {
     for (uint8_t i = 0; i < 16; i++)
     {
-        CHANNEL_REG.DATA[i] = 0x40 + i;
-        CHANNEL_REG.GAIN_COEF[i] = 0x50 + i;
+        CHANNEL_REG.DATA[i]        = 0x40 + i;
+        CHANNEL_REG.GAIN_COEF[i]   = 0x50 + i;
         CHANNEL_REG.OFFSET_COEF[i] = 0x60 + i;
-        CHANNEL_REG.OPT_COEF[i] = 0x80 + i;
-        CHANNEL_REG.OVR_THRS[i] = 0x90 + i;
-        CHANNEL_REG.UDR_THRS[i] = 0xA0 + i;
+        CHANNEL_REG.OPT_COEF[i]    = 0x80 + i;
+        CHANNEL_REG.OVR_THRS[i]    = 0x90 + i;
+        CHANNEL_REG.UDR_THRS[i]    = 0xA0 + i;
     }
 }
 
