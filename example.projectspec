@@ -101,7 +101,13 @@
         <file path="examples/emmc/mmcsd_raw_io.c"                   targetDirectory="examples/mmcsd_raw_io"    action="copy"></file>
         <file path="examples/i2c_temperature/eepromm_cmd.c"         targetDirectory="examples/eeprom"          action="copy"></file>
         <file path="examples/lpddr4/lpddr4_cmd.c"                   targetDirectory="examples/lpddr4"          action="copy"></file>
-        <file path="examples/mcan/mcan_cmd.c"                       targetDirectory="examples/mcan"            action="copy"></file>
+        <file path="examples/mcan/mcan_cmd.c"                       targetDirectory="examples/mcan"            action="copy"></file>        
+        <file path="examples/afe/src/afe_cmd.c"                     targetDirectory="examples/afe/src"         action="copy"></file>
+        <file path="examples/afe/src/afe.c"                         targetDirectory="examples/afe/src"         action="copy"></file>
+        <file path="examples/afe/src/afe_registers.c"               targetDirectory="examples/afe/src"         action="copy"></file>
+        <file path="examples/afe/src/afe_comms.c"                   targetDirectory="examples/afe/src"         action="copy"></file>
+        <file path="examples/afe/driver/src/crcDriver.h"            targetDirectory="examples/afe/driver/src"  action="copy"></file>
+        <file path="examples/afe/driver/src/spiDriver.h"            targetDirectory="examples/afe/driver/src"  action="copy"></file>
         <file path="examples/include/gpio_led_blink_cmd.h"          targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/i2c_temperature_cmd.h"         targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/i2c_scan_cmd.h"                targetDirectory="examples/include"         action="copy"></file>
@@ -110,6 +116,12 @@
         <file path="examples/include/emmc_cmd.h"                    targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/lpddr4_cmd.h"                  targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/include/mcan_cmd.h"                    targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/afe/inc/afe_cmd.h"                     targetDirectory="examples/afe/inc"         action="copy"></file>
+        <file path="examples/afe/inc/afe.h"                         targetDirectory="examples/afe/inc"         action="copy"></file>
+        <file path="examples/afe/inc/afe_registers.h"               targetDirectory="examples/afe/inc"         action="copy"></file>
+        <file path="examples/afe/inc/afe_comms.h"                   targetDirectory="examples/afe/inc"         action="copy"></file>
+        <file path="examples/afe/driver/inc/crcDriver.h"            targetDirectory="examples/afe/driver/inc"  action="copy"></file>
+        <file path="examples/afe/driver/inc/spiDriver.h"            targetDirectory="examples/afe/driver/inc"  action="copy"></file>
 
         <file path="FreeRTOS/FreeRTOSConfig.h"   targetDirectory="FreeRTOS"       action="copy"></file>
         <file path="FreeRTOS/CLI/CLI_task.c"     targetDirectory="FreeRTOS/CLI"   action="copy"></file>
