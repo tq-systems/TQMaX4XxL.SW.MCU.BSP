@@ -835,6 +835,7 @@ typedef struct afe_sys_config_tag
  *
  */
 void Init_CH_RegisterAdr(void);
+
 /*******************************************************************************
  * global extern data
  ******************************************************************************/
@@ -842,6 +843,7 @@ extern const CH_CONFIG_t LOGIC_CH_CONTROL;
 extern const GPIO_REG_t GPIO_CONTROL;
 extern const SYS_REG_t SYS_CONTROL;
 extern const MONITORING_REG_t ALARM_CONTROL;
+extern CHANNEL_TypDef_t CHANNEL_REG;
 
 
 #endif /* AFE_DRIVER_INC_FSL_AFE_REGISTERS_H_ */

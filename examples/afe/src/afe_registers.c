@@ -27,10 +27,10 @@
 /* project */
 
 /* module */
-//#include "peripherals.h"
-//#include "fsl_lpspi.h"
+
 /* own */
-#include <nafe13388Registers.h>
+#include "afe_registers.h"
+
 /*******************************************************************************
  * local defines
  ******************************************************************************/
@@ -60,7 +60,7 @@ const CH_CONFIG_t LOGIC_CH_CONTROL =
 /*Init GPIO Registers with static Register-Address*/
 const GPIO_REG_t GPIO_CONTROL =
 {
-        .GPI_DATA = 0x0029,                 /*Read only Register*/
+        .GPI_DATA     = 0x0029,            /*Read only Register*/
         .GPIO_CONFIG0 = 0x002A,
         .GPIO_CONFIG1 = 0x002B,
         .GPIO_CONFIG2 = 0x002C,
@@ -107,10 +107,9 @@ const MONITORING_REG_t ALARM_CONTROL =
 /*******************************************************************************
  * global functions
  ******************************************************************************/
+
 /**
- * @brief Init_CH_RegisterAdr
- *
- * <Initalizes Channel Register Struct with Register-Addresses>
+ * @brief Initalizes Channel Register Struct with Register-Addresses
  *
  */
 void Init_CH_RegisterAdr(void)
@@ -118,11 +117,11 @@ void Init_CH_RegisterAdr(void)
     for (uint8_t i = 0; i < 16; i++)
     {
         CHANNEL_REG.DATA[i]        = 0x40 + i;
-        CHANNEL_REG.GAIN_COEF[i]   = 0x50 + i;
-        CHANNEL_REG.OFFSET_COEF[i] = 0x60 + i;
-        CHANNEL_REG.OPT_COEF[i]    = 0x80 + i;
-        CHANNEL_REG.OVR_THRS[i]    = 0x90 + i;
-        CHANNEL_REG.UDR_THRS[i]    = 0xA0 + i;
+        CHANNEL_REG.OVR_THRS[i]    = 0x50 + i;
+        CHANNEL_REG.UDR_THRS[i]    = 0x60 + i;
+        CHANNEL_REG.GAIN_COEF[i]   = 0x80 + i;
+        CHANNEL_REG.OFFSET_COEF[i] = 0x90 + i;
+        CHANNEL_REG.OPT_COEF[i]    = 0xA0 + i;
     }
 }
 

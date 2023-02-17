@@ -10,8 +10,6 @@
  * local includes
  ******************************************************************************/
 /* FreeRTOS kernel includes. */
-#include <nafe13388.h>
-#include <nafe13388Registers.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -23,11 +21,13 @@
 #include <string.h>
 /* module */
 #include "gpio_dig_cmd.h"
+#include <afe.h>
+#include <afe_registers.h>
+#include <afe_comm.h>
 
 /* own */
-#include "spi_func.h"
-//#include "fsl_afe13388.h"
 #include "math.h"
+
 /*******************************************************************************
  * local defines
  ******************************************************************************/
@@ -66,24 +66,15 @@ SYS_REG_t AFE_SystemInit;
  * global functions
  ******************************************************************************/
 
-
-
-/*******************************************************************************
- * Enable AFE with POR
- ******************************************************************************/
+/**
+ * @brief Enable AFE with POR
+ *
+ */
 void AFE_Enable(void)
 {
     uint16_t reg_read_value = 0;
 
     /*System Power On Reset*/
-//    GPIO_pinWriteHigh(pGpio->baseAdd, pGpio->pin);
-//    GPIO_WritePinOutput(RST_GPIO, RST_PIN, 0);
-//    SDK_DelayAtLeastUs(100, SystemCoreClock);
-//    GPIO_WritePinOutput(RST_GPIO, RST_PIN, 1);
-//
-//    //Crystal Start Up Time 15ms
-//    SDK_DelayAtLeastUs(20000, SystemCoreClock);
-
     gpio_writePinOut(ADC_RST, PIN_STATUS_LOW);
     vTaskDelay(pdMS_TO_TICKS(1));
     gpio_writePinOut(ADC_RST, PIN_STATUS_HIGH);
@@ -98,40 +89,43 @@ void AFE_Enable(void)
         if (crc_enabled == true)
         {
             /*Fill variabel with actual register value*/
-            reg_read_value =  ((uint16_t)LPSPI_AFE_rxbuffer[4] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[5];
+            reg_read_value =  ((uint16_t)AFE_rxBuffer[4] << 8) | (uint16_t)AFE_rxBuffer[5];
         }
         else
         {
             /*Fill variabel with actual register value*/
-            reg_read_value =  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[3];
+            reg_read_value =  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3];
         }
 
         /*Masking Chip ready bit*/
         reg_read_value &= SYS_STATUS0_CHIP_READY_MASK;
     }
 
-//	SDK_DelayAtLeastUs(250000, SystemCoreClock);
     vTaskDelay(pdMS_TO_TICKS(25));
 
     DebugP_log("[ OK ]\tAFE13388 Chip Ready\r\n");
 }
 
-/*******************************************************************************
- * Initialise AFE
- ******************************************************************************/
+/********************************************************************************/
+
+/**
+ * @brief Initialise AFE
+ *
+ */
 void AFE_Init(void)
 {
 	uint16_t serial0;
 	uint16_t serial1;
 
+	Init_CH_RegisterAdr();
+
 	// Read NAFE Informations
 	// Serial0
-
     AFE_SPI_Read(0x7C, reg_16bit);
-    serial0 =  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[3];
+    serial0 =  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3];
 	// Serial1
     AFE_SPI_Read(0x7D, reg_16bit);
-    serial1 =  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[3];
+    serial1 =  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3];
 
     DebugP_log("\t - Serial %X%X\r\n", serial0, serial1);
 
@@ -360,9 +354,15 @@ void AFE_Init(void)
 
 	AFE_GpioInit();
 }
-/*******************************************************************************
- * Read ADC Voltages
- ******************************************************************************/
+
+/********************************************************************************/
+
+/**
+ * @brief Read ADC Voltages
+ *
+ * @param channel AFE channel AI
+ * @return adc voltage
+ */
 float AFE_ReadAdcVoltage(uint8_t channel)
 {
 	uint16_t status0_regValue;
@@ -434,25 +434,20 @@ float AFE_ReadAdcVoltage(uint8_t channel)
 	// Start OneShot Conversion of Single Channel
 	AFE_SPI_Send_InstCMD(CMD_SS);
 
-	// CM7 GPIO9.13 not IRQ capable !! Issue MBA117xL
-	// Pin Polling may fail in Debug Session
-	//while((GPIO_ReadPinInput(ADC_DATA_RDY_GPIO, ADC_DATA_RDY_PIN) != 1))
-	//{}
-
 	// SPI Polling
 	// Wait until SINGLE_CH_ACTIVE = 0 -> Idle Mode / ADC finished
-//	SDK_DelayAtLeastUs(50, SystemCoreClock);
+	vTaskDelay(pdMS_TO_TICKS(1));
 	status0_regValue = 0xFFFF;
+
     while( (status0_regValue & SYS_STATUS0_SINGLE_CH_ACTIVE_MASK) != 0x0)
     {
         AFE_SPI_Read(SYS_CONTROL.SYS_STATUS0, reg_16bit);
-        status0_regValue =  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[3];
+        status0_regValue =  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3];
     }
 
 	// Read Data from correspondig DATA Register
 	AFE_SPI_Read((0x40 + channel), reg_24bit);
-	result = ((LPSPI_AFE_rxbuffer[2] << 16) |  (LPSPI_AFE_rxbuffer[3] << 8) | LPSPI_AFE_rxbuffer[4] );
-
+	result = ((AFE_rxBuffer[2] << 16) |  (AFE_rxBuffer[3] << 8) | AFE_rxBuffer[4] );
 
 	if (channel != AFE_CH_HVDD)
 	{
@@ -477,22 +472,23 @@ float AFE_ReadAdcVoltage(uint8_t channel)
 			voltage = (((result * 4) / pow(2,24)) + 0.25) * 32 ;
 	}
 
-
-
 	return voltage;
 
 }
 
-/*******************************************************************************
- * Read Die Temperature
- ******************************************************************************/
+/********************************************************************************/
+
+/**
+ * @brief Read Die Temperature
+ *
+ */
 void AFE_ReadDieTemp(void)
 {
 	float temperature;
 	uint16_t reg_read_value;
 
-    AFE_SPI_Read(DIE_TEMP_REG, reg_16bit);
-    reg_read_value =  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[3];
+    AFE_SPI_Read(ALARM_CONTROL.DIE_TEMP, reg_16bit);
+    reg_read_value =  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3];
 
    // Check Sign
     if ((reg_read_value & 0x8000) == 0)
@@ -511,9 +507,12 @@ void AFE_ReadDieTemp(void)
 
 }
 
-/*******************************************************************************
- * GPIO Initialisation
- ******************************************************************************/
+/********************************************************************************/
+
+/**
+ * @brief Initialisation AFE GPIOs
+ *
+ */
 void AFE_GpioInit(void)
 {
 
@@ -545,8 +544,13 @@ void AFE_GpioInit(void)
 
 
 /*******************************************************************************
- * GPOs Set
- ******************************************************************************/
+
+/**
+ * @brief Set AFE GPIOs
+ *
+ * @param port AFE GPIO Port
+ * @param value value to be set
+ */
 void AFE_GpioSet(uint8_t port, bool value)
 {
 	uint16_t regValue;
@@ -556,13 +560,12 @@ void AFE_GpioSet(uint8_t port, bool value)
 
     if (crc_enabled)
     {
-    	regValue = ((LPSPI_AFE_rxbuffer[5] << 8) |  LPSPI_AFE_rxbuffer[5]);
+    	regValue = ((AFE_rxBuffer[5] << 8) |  AFE_rxBuffer[5]);
     }
     else
     {
-		regValue = ((LPSPI_AFE_rxbuffer[2] << 8) |  LPSPI_AFE_rxbuffer[3]);
+		regValue = ((AFE_rxBuffer[2] << 8) |  AFE_rxBuffer[3]);
     }
-
 
 	switch(port)
 	{
@@ -611,14 +614,16 @@ void AFE_GpioSet(uint8_t port, bool value)
 	}
 
 	AFE_SPI_Write(GPIO_CONTROL.GPO_DATA, regValue, reg_16bit);
-
 }
 
-
-
 /*******************************************************************************
- * GPIO read
- ******************************************************************************/
+
+/**
+ * @brief Read AFE GPIO
+ *
+ * @param port AFE GPIO Port
+ * @return GPIO value
+ */
 uint8_t AFE_GpioRead(uint8_t port)
 {
 	uint16_t regValue;
@@ -629,11 +634,11 @@ uint8_t AFE_GpioRead(uint8_t port)
 
     if (crc_enabled)
     {
-    	regValue = ((LPSPI_AFE_rxbuffer[4] << 8) |  LPSPI_AFE_rxbuffer[5]);
+    	regValue = ((AFE_rxBuffer[4] << 8) |  AFE_rxBuffer[5]);
     }
     else
     {
-		regValue = ((LPSPI_AFE_rxbuffer[2] << 8) |  LPSPI_AFE_rxbuffer[3]);
+		regValue = ((AFE_rxBuffer[2] << 8) |  AFE_rxBuffer[3]);
     }
 
 	returnValue = AFE_GPIO_LOW;
@@ -679,6 +684,14 @@ uint8_t AFE_GpioRead(uint8_t port)
 /*******************************************************************************
  * RTOS Functions
  ******************************************************************************/
+/**
+ * @brief
+ *
+ * @param pcWriteBuffer
+ * @param xWriteBufferLen
+ * @param pcCommandString
+ * @return
+ */
 BaseType_t AFE_read_all (char *pcWriteBuffer, size_t xWriteBufferLen, const char *pcCommandString)
 {
     BaseType_t retVal = pdFALSE;
@@ -694,28 +707,27 @@ BaseType_t AFE_read_all (char *pcWriteBuffer, size_t xWriteBufferLen, const char
     DebugP_log("AFE AI4P (X38.7A) =  %.2fV   (Input Range 0...2V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI4P) );
     DebugP_log("AFE AI5N (X38.8A) =  %.2fV   (Input Range 0...2V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI4N) );
 
+    AFE_SPI_Read(SERIAL0_REG_ADD, reg_16bit);
+    DebugP_log("PN2 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3]);
 
-    AFE_SPI_Read(SERIAL0_REG, reg_16bit);
-    DebugP_log("PN2 = 0x%X\r\n",  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[3]);
+    AFE_SPI_Read(SERIAL1_REG_ADD, reg_16bit);
+    DebugP_log("PN1 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3]);
 
-    AFE_SPI_Read(SERIAL1_REG, reg_16bit);
-    DebugP_log("PN1 = 0x%X\r\n",  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[3]);
-
-    AFE_SPI_Read(PROD_REV_REG, reg_16bit);
-    DebugP_log("PN0 = 0x%X\r\n",  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[3]);
+    AFE_SPI_Read(PROD_REV_REG_ADD, reg_16bit);
+    DebugP_log("PN0 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3]);
 
     //24 Bit Register
-    AFE_SPI_Read(OPT_COEF_14_REG, reg_24bit);
-    DebugP_log("SERIAL1 = 0x%X\r\n",  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 16) | ((uint16_t)LPSPI_AFE_rxbuffer[3] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[4]);
+    AFE_SPI_Read(CHANNEL_REG.OPT_COEF[14], reg_24bit);
+    DebugP_log("SERIAL1 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 16) | ((uint16_t)AFE_rxBuffer[3] << 8) | (uint16_t)AFE_rxBuffer[4]);
 
-    AFE_SPI_Read(OPT_COEF_15_REG, reg_24bit);
-    DebugP_log("SERIAL0 = 0x%X\r\n",  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 16) | ((uint16_t)LPSPI_AFE_rxbuffer[3] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[4]);
+    AFE_SPI_Read(CHANNEL_REG.OPT_COEF[15], reg_24bit);
+    DebugP_log("SERIAL0 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 16) | ((uint16_t)AFE_rxBuffer[3] << 8) | (uint16_t)AFE_rxBuffer[4]);
 
-    AFE_SPI_Read(OPT_COEF_0_REG, reg_24bit);
-    DebugP_log("OPT_COEF0 = 0x%X\r\n",  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 16) | ((uint16_t)LPSPI_AFE_rxbuffer[3] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[4]);
+    AFE_SPI_Read(CHANNEL_REG.OPT_COEF[0], reg_24bit);
+    DebugP_log("OPT_COEF0 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 16) | ((uint16_t)AFE_rxBuffer[3] << 8) | (uint16_t)AFE_rxBuffer[4]);
 
-    AFE_SPI_Read(DIE_TEMP_REG, reg_16bit);
-    DebugP_log("DIE_TEMP = 0x%X\r\n",  ((uint16_t)LPSPI_AFE_rxbuffer[2] << 8) | (uint16_t)LPSPI_AFE_rxbuffer[3]);
+    AFE_SPI_Read(ALARM_CONTROL.DIE_TEMP, reg_16bit);
+    DebugP_log("DIE_TEMP = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3]);
 
     return retVal;
 }
