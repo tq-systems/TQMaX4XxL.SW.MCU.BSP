@@ -81,6 +81,14 @@ const CLI_Command_Definition_t afeCommandDef =
  * global functions
  ******************************************************************************/
 
+/**
+ * @brief This function handles the command of the AFE access.
+ *
+ * @param pcWriteBuffer cli output string buffer
+ * @param xWriteBufferLen length of the cli output string
+ * @param pcCommandString cli command input string
+ * @return pdFALSE = command is finished
+ */
 BaseType_t afeCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
     uint32_t counter                  = 0;

@@ -62,11 +62,18 @@
  * global functions
  ******************************************************************************/
 
+/**
+ * @brief This function computes the CRC
+ *
+ * @param p_buf pointer to buffer
+ * @param size buffer size
+ * @return crc
+ */
 uint32_t crc_compute(uint8_t* p_buf, uint8_t size)
 {
     uint32_t crc = 0;
 
-    // TODO CRC calculation
+    /*TODO CRC not supported */
 
     return crc;
 }
