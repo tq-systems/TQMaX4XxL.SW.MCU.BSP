@@ -84,9 +84,9 @@ void freertos_main(void *args)
     gpioInit();
     AFE_Enable();
     AFE_Init();
-    AFE_GpioInit();
+//    AFE_GpioInit();
     AFE_ReadDieTemp();
-    AFE_GpioRead(AFE_GPIO0);
+//    AFE_GpioRead(AFE_GPIO0);
 
     Board_driversClose();
     Drivers_close();

@@ -223,6 +223,8 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
         spiTransaction.count = APP_MCSPI_MSGSIZE / (spiTransaction.dataSize / 8);
     }
 
+    spiTransaction.dataSize = 8;
+    spiTransaction.count = 4;
     /*Write Data via SPI*/
     transferOK = MCSPI_transfer(gMcspiHandle[CONFIG_MCSPI0], &spiTransaction);
 
@@ -269,6 +271,7 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
     /*Assemble of first SPI frame for AFE*/
     LPSPI_AFE_txbuffer[0] = (uint8_t)(reg_addrShifted >> 8);
     LPSPI_AFE_txbuffer[1] = (uint8_t)reg_addrShifted;
+
 
 //    Drivers_open();
 //    Board_driversOpen();
@@ -339,6 +342,8 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
 
     spi_transfer_completed = false;
 
+    spiTransaction.dataSize = 8;
+
     /*Read Data via SPI*/
     /*Write Data via SPI*/
     if(spiTransaction.dataSize < 8)
@@ -349,6 +354,9 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
     {
         spiTransaction.count = APP_MCSPI_MSGSIZE / (spiTransaction.dataSize / 8);
     }
+
+
+    spiTransaction.count = 4;
 
     transferOK = MCSPI_transfer(gMcspiHandle[CONFIG_MCSPI0], &spiTransaction);
 
@@ -477,7 +485,7 @@ status_t AFE_SPI_Send_InstCMD(uint16_t cmd_value)
         }
         else
         {
-            spiTransaction.dataSize = 2;
+            spiTransaction.dataSize = 0;
         }
     }
 

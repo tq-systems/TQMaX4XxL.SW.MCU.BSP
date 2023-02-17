@@ -38,7 +38,7 @@
  ******************************************************************************/
 
 /*SPI defines for ADC NAFE13388*/
-#define LPSPI1_BUFFER_SIZE         180
+#define LPSPI1_BUFFER_SIZE         18
 #define LPSPI_AFE_transfer         LPSPI1_transfer
 #define LPSPI_AFE                  LPSPI1_PERIPHERAL
 #define LPSPI_AFE_handle           LPSPI1_handle

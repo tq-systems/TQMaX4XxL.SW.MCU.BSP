@@ -137,8 +137,11 @@ mcan1.MCAN.$assign = "MCAN0";
 mcan2.$name        = "CONFIG_MCAN1";
 mcan2.MCAN.$assign = "MCAN1";
 
-mcspi1.$name                 = "CONFIG_MCSPI0";
-mcspi1.mcspiChannel[0].$name = "CONFIG_MCSPI_CH0";
+mcspi1.$name                       = "CONFIG_MCSPI0";
+mcspi1.mcspiChannel[0].$name       = "CONFIG_MCSPI_CH0";
+mcspi1.mcspiChannel[0].advanced    = true;
+mcspi1.mcspiChannel[0].frameFormat = "POL0_PHA1";
+mcspi1.mcspiChannel[0].bitRate     = 24000000;
 
 mmcsd1.$name = "CONFIG_MMCSD0";
 
