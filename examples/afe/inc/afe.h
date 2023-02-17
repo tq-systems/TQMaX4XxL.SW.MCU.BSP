@@ -1,14 +1,22 @@
+
+/* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * Mba117xL_AFE.h
+ * @file afe.h
+ * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @author forstner
  *
- *  Created on: 09.02.2022
- *      Author: forstner
+ * @date 2022-02-09
+ *
+ * -----------------------------------------------------------------------------
+ * @brief This file contains the declaration of the AFE.
+ *
  */
 
 #ifndef AFE_13388_INC_MBA117XL_AFE_H_
 #define AFE_13388_INC_MBA117XL_AFE_H_
 
 #include <stdio.h>
+#include "stdint.h"
 #include <stdbool.h>
 
 /*******************************************************************************
@@ -81,10 +89,10 @@ void AFE_GpioSet(uint8_t port, bool value);
 uint8_t AFE_GpioRead(uint8_t port);
 void AFE_Enable(void);
 void AFE_Init(void);
-void AFE_ReadDieTemp(void);
+float AFE_ReadDieTemp(void);
 float AFE_ReadAdcVoltage(uint8_t channel);
 
-BaseType_t AFE_read_all (char *pcWriteBuffer, size_t xWriteBufferLen, const char *pcCommandString);
-
+//BaseType_t AFE_read_all (char *pcWriteBuffer, size_t xWriteBufferLen, const char *pcCommandString);
+//BaseType_t afeCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString );
 
 #endif /* AFE_13388_INC_MBA117XL_AFE_H_ */

@@ -78,10 +78,8 @@ void freertos_main(void *args)
 
     gEthTaskHandle = xTaskCreateStatic(ethTask, "ETH Task", ETH_TASK_SIZE, NULL, ETH_TASK_PRI, gEthTaskStack, &gEthTaskObj);
 
-//    gpioInit();
     AFE_Enable();
     AFE_Init();
-    AFE_ReadDieTemp();
 
     vTaskDelete(NULL);
 }

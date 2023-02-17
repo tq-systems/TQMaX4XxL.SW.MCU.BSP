@@ -1,8 +1,13 @@
+/* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * MBa117xL_AFE.c
+ * @file afe_registers.c
+ * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @author forstner
  *
- *  Created on: 09.02.2022
- *      Author: forstner
+ * @date 2022-02-09 *
+ * -----------------------------------------------------------------------------
+ * @brief This file contains the implementation of the AFE.
+ *
  */
 
 
@@ -22,10 +27,8 @@
 /* module */
 #include "gpio_dig_cmd.h"
 #include <afe.h>
+#include <afe_comms.h>
 #include <afe_registers.h>
-#include <afe_comm.h>
-
-/* own */
 #include "math.h"
 
 /*******************************************************************************
@@ -482,7 +485,7 @@ float AFE_ReadAdcVoltage(uint8_t channel)
  * @brief Read Die Temperature
  *
  */
-void AFE_ReadDieTemp(void)
+float AFE_ReadDieTemp(void)
 {
 	float temperature;
 	uint16_t reg_read_value;
@@ -504,7 +507,7 @@ void AFE_ReadDieTemp(void)
     	DebugP_log("\t - Temperature -%.1f%cC\r\n", temperature, (uint8_t)176);
     }
 
-
+    return temperature;
 }
 
 /********************************************************************************/
@@ -543,7 +546,7 @@ void AFE_GpioInit(void)
 }
 
 
-/*******************************************************************************
+/*******************************************************************************/
 
 /**
  * @brief Set AFE GPIOs
@@ -616,7 +619,7 @@ void AFE_GpioSet(uint8_t port, bool value)
 	AFE_SPI_Write(GPIO_CONTROL.GPO_DATA, regValue, reg_16bit);
 }
 
-/*******************************************************************************
+/*******************************************************************************/
 
 /**
  * @brief Read AFE GPIO

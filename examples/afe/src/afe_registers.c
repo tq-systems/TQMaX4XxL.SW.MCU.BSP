@@ -1,20 +1,15 @@
-/**
- * @file fsl_afe_registers.c
- * @author Copyright (c) 2021, TQ-Systems GmbH
- * @author Bernhard Herz author of the file <bernhard.herz@tq-group.com>
+/* SPDX-License-Identifier: BSD-3-Clause */
+/*
+ * @file afe_registers.c
+ * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @author Bernhard Herz
+ * @author Michael Bernhardt
+ *
  * @date 2021-10-11
  *
- * This software code contained herein is licensed under the terms and
- * conditions of the TQ-Systems Software License Agreement Version 1.0.2.
- * You may obtain a copy of the TQ-Systems Software License Agreement in the
- * folder TQS (TQ-Systems Software Licenses) at the following website:
- * https://www.tq-group.com/Software-Lizenzbedingungen
- * In case of any license issues please contact license@tq-group.com.
- *
  * -----------------------------------------------------------------------------
- * @brief <TODO short description of the file (only one line)>
+ * @brief This file contains the implementation of the register access.
  *
- * <TODO Detailed description of the file>
  */
 
 

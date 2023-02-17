@@ -1,13 +1,13 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * @file afe_registers.c
+ * @file afe_cmd.c
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
  * @date 2023-02-17
  *
  * -----------------------------------------------------------------------------
- * @brief This file contains the SPI driver implementation.
+ * @brief This file contains the implementation of the CLI AFE command.
  *
  */
 
@@ -18,11 +18,9 @@
 /* runtime */
 
 /* project */
-#include "ti_drivers_config.h"
-#include "ti_drivers_open_close.h"
-#include "ti_board_open_close.h"
+#include "afe.h"
 /* own */
-#include "spiDriver.h"
+#include "afe_cmd.h"
 
 /*******************************************************************************
  * local defines
@@ -34,6 +32,14 @@
  * local macros
  ******************************************************************************/
 
+/* The definition of the "eMMC" command. */
+const CLI_Command_Definition_t afeCommandDef =
+{
+    "afe",
+    "\r\nafe [afe]:\r\n AFE access.\r\n\r\n",
+    afeCommand,
+    -1
+};
 
 
 /*******************************************************************************
@@ -64,41 +70,43 @@
  * global functions
  ******************************************************************************/
 
-/**
- * @brief This function transmit and receive data from SPI bus.
- *
- * @param p_txBuf Pointer to the transmit buffer, must be large enough for tx and rx data
- * @param p_rxBuf Pointer to the receive buffer, must be large enough for tx and rx data
- * @param size data size in byte
- * @return true = success
- */
-bool spi_transmit(uint8_t* p_txBuf, uint8_t* p_rxBuf, uint8_t size)
+BaseType_t afeCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString )
 {
-    MCSPI_Transaction   spiTransaction = {0};
-    int32_t             transferOK     = SystemP_SUCCESS;
-    bool                retVal         = true;
+    uint32_t counter                  = 0;
+    uint8_t  i                        = 0;
+    float val = 0;
+    uint8_t gpio = 0;
+    char*      pcParameter[3] = {NULL};
+    BaseType_t xParameterStringLength  = 0;
 
-    Drivers_mcspiOpen();
-
-    MCSPI_Transaction_init(&spiTransaction);
-    spiTransaction.channel   = gConfigMcspi0ChCfg[0].chNum;
-    spiTransaction.csDisable = TRUE;
-    spiTransaction.txBuf     = (void*) p_txBuf;
-    spiTransaction.rxBuf     = (void*) p_rxBuf;
-    spiTransaction.args      = NULL;
-    spiTransaction.dataSize  = 8;       /* transmit 8 bits per frame count */
-    spiTransaction.count     = size;    /* frame counter */
-
-    transferOK = MCSPI_transfer(gMcspiHandle[CONFIG_MCSPI0], &spiTransaction);
-
-    if((SystemP_SUCCESS != transferOK) || (MCSPI_TRANSFER_COMPLETED != spiTransaction.status))
+    /* get all parameter */
+    for (counter = 0; counter < 3; counter++)
     {
-        retVal = false;
+        pcParameter[counter] = (char*) FreeRTOS_CLIGetParameter(pcCommandString, counter + 1, &xParameterStringLength);
     }
 
-    Drivers_mcspiClose();
+    if (!strcmp(pcParameter[0], "adc"))
+    {
+        val = AFE_ReadAdcVoltage(*pcParameter[1] -'0');
+        sprintf(&pcWriteBuffer[0], "Voltage %.1fV\r\n\n", val);
+    }
+    else if(!strcmp(pcParameter[0], "temp"))
+    {
+        val = AFE_ReadDieTemp();
+        sprintf(&pcWriteBuffer[0], "Temperature %.1f%cC\r\n\n", val, (uint8_t)176);
+    }
+    else if(!strcmp(pcParameter[0], "gpio"))
+    {
+        AFE_GpioSet(*pcParameter[1] -'0', *pcParameter[2] -'0');
+        sprintf(&pcWriteBuffer[0], "OK \r\n\n");
+    }
+    else if(!strcmp(pcParameter[0], "set"))
+    {
+        gpio = AFE_GpioRead(*pcParameter[1] -'0');
+        sprintf(&pcWriteBuffer[0], "GPIO %d \r\n\n", gpio);
+    }
 
-    return retVal;
+    return pdFALSE;
 }
 
 /*[EOF]************************************************************************/

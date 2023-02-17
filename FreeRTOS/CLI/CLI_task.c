@@ -54,6 +54,7 @@
 #include "gpio_dig_cmd.h"
 #include "rs485_cmd.h"
 #include "adc_cmd.h"
+#include "afe_cmd.h"
 
 #define APP_UART_RECEIVE_BUFSIZE (1)
 #define MAX_INPUT_LENGTH         (50)
@@ -100,6 +101,7 @@ void cliTask( void* pvParameters )
     FreeRTOS_CLIRegisterCommand(&gpioDigCommandDef);
     FreeRTOS_CLIRegisterCommand(&rs485CommandDef);
     FreeRTOS_CLIRegisterCommand(&adcCommandDef);
+    FreeRTOS_CLIRegisterCommand(&afeCommandDef);
 
     while(1)
     {

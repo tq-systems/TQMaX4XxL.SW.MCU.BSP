@@ -1,22 +1,15 @@
-/**
- * @file fsl_afe_registers.h
- * @author Copyright (c) 2021, TQ-Systems GmbH
- * @author Bernhard Herz author of the file <bernhard.herz@tq-group.com>
+/* SPDX-License-Identifier: BSD-3-Clause */
+/*
+ * @file afe_cmd.h
+ * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @author Bernhard Herz
+ *
  * @date 2021-10-11
  *
- * This software code contained herein is licensed under the terms and
- * conditions of the TQ-Systems Software License Agreement Version 1.0.2.
- * You may obtain a copy of the TQ-Systems Software License Agreement in the
- * folder TQS (TQ-Systems Software Licenses) at the following website:
- * https://www.tq-group.com/Software-Lizenzbedingungen
- * In case of any license issues please contact license@tq-group.com.
- *
  * -----------------------------------------------------------------------------
- * @brief <Includes Commands and Registers for Driver NAFE13388>
+ * @brief This file contains the declaration of the AFE registers.
  *
- * <TODO Detailed description of the file>
  */
-
 
 #ifndef AFE_DRIVER_INC_FSL_AFE_REGISTERS_H_
 #define AFE_DRIVER_INC_FSL_AFE_REGISTERS_H_
