@@ -18,14 +18,10 @@
  * includes
  ******************************************************************************/
 /* runtime */
-//#include <stdio.h>
 #include <stdint.h>
-//#include "fsl_common.h"
 /* project */
 
 /* module */
-//#include "MIMXRT1176_cm7.h"
-//#include "fsl_debug_console.h"
 
 /*******************************************************************************
  * defines

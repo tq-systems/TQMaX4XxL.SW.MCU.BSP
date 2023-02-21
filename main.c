@@ -38,7 +38,6 @@
 #include "task.h"
 #include "CLI_task.h"
 #include "eth_cmd.h"
-#include "spi_driver.h"
 #include "afe.h"
 
 #define MAIN_TASK_PRI  (configMAX_PRIORITIES-1)
@@ -46,7 +45,7 @@
 #define GPIO_TASK_PRI  (configMAX_PRIORITIES-1)
 #define ETH_TASK_PRI   (configMAX_PRIORITIES-1)
 
-#define MAIN_TASK_SIZE (512*2)
+#define MAIN_TASK_SIZE (512)
 #define GPIO_TASK_SIZE (256)
 #define CLI_TASK_SIZE  (16384U/sizeof(configSTACK_DEPTH_TYPE))
 #define ETH_TASK_SIZE  (512)

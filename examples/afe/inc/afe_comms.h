@@ -43,10 +43,6 @@
  * typedefs
  ******************************************************************************/
 
-/**
- * @enum afe_reg_typ
- * AFE Register width typs
- */
 typedef enum afe_reg_typ_tag
 {
     reg_16bit,

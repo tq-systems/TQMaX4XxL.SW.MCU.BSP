@@ -86,9 +86,10 @@ volatile bool spi_transfer_completed = false;
  */
 status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_width)
 {
-    status_t result = NO_TRANSFER_IN_PROGRESS;
-    uint8_t reg_addr_1, reg_addr_2;
-    uint8_t dataSize = 0;
+    status_t result    = NO_TRANSFER_IN_PROGRESS;
+    uint8_t reg_addr_1 = 0;
+    uint8_t reg_addr_2 = 0;
+    uint8_t dataSize   = 0;
 
     /*DEV_AD-bit + RW_L-bit + RA12-RA7*/
     reg_addr_1 = (uint8_t) (((reg_addr >> 8) | WRITE_REG_OFFSET) >> 8);
@@ -206,6 +207,7 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
     AFE_txBuffer[1] = (uint8_t)reg_addrShifted;
 
 
+
     /*Check Register Typ of AFE*/
     switch (reg_width)
     {
@@ -271,7 +273,7 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
     else
     {
         result = FAIL;
-    };
+    }
 
     return result;
 }

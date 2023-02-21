@@ -187,7 +187,7 @@ uint32_t crc_compute(uint8_t* p_buf, uint8_t length)
         else
         {
             computedCRC = 0;
-            j           = 1U;
+            j = 1U;
             for (i = 0; i < 32U; i++)
             {
                 computedCRC = (computedCRC << 1);

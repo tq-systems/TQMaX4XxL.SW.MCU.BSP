@@ -91,7 +91,7 @@ bool spi_transmit(uint8_t* p_txBuf, uint8_t* p_rxBuf, uint8_t size)
 
     transferOK = MCSPI_transfer(gMcspiHandle[CONFIG_MCSPI0], &spiTransaction);
 
-    if((SystemP_SUCCESS != transferOK) || (MCSPI_TRANSFER_COMPLETED != spiTransaction.status))
+    if ((SystemP_SUCCESS != transferOK) || (MCSPI_TRANSFER_COMPLETED != spiTransaction.status))
     {
         retVal = false;
     }

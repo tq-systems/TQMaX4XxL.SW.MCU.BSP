@@ -109,7 +109,9 @@ const MONITORING_REG_t ALARM_CONTROL =
  */
 void Init_CH_RegisterAdr(void)
 {
-    for (uint8_t i = 0; i < 16; i++)
+    uint8_t i = 0;
+
+    for (i = 0; i < 16; i++)
     {
         CHANNEL_REG.DATA[i]        = 0x40 + i;
         CHANNEL_REG.OVR_THRS[i]    = 0x50 + i;

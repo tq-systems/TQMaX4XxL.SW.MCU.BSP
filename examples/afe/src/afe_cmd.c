@@ -17,6 +17,7 @@
 
 /* runtime */
 #include "string.h"
+#include "stdlib.h"
 /* project */
 #include "afe.h"
 /* own */
@@ -26,13 +27,13 @@
  * local defines
  ******************************************************************************/
 
-
+#define MAX_CLI_PARAM  3U
 
 /*******************************************************************************
  * local macros
  ******************************************************************************/
 
-/* The definition of the "eMMC" command. */
+/* The definition of the "AFE" command. */
 const CLI_Command_Definition_t afeCommandDef =
 {
     "afe",
@@ -98,16 +99,16 @@ BaseType_t afeCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char
     BaseType_t xParameterStringLength = 0;
 
     /* get all parameter */
-    for (counter = 0; counter < 3; counter++)
+    for (counter = 0; counter < MAX_CLI_PARAM; counter++)
     {
         pcParameter[counter] = (char*) FreeRTOS_CLIGetParameter(pcCommandString, counter + 1, &xParameterStringLength);
     }
 
-    if (!strncmp(pcParameter[0], "adc", 3))
+    if (!strncmp(pcParameter[0], "adc", strlen("adc")))
     {
         if (pcParameter[1] != NULL)
         {
-            val = AFE_ReadAdcVoltage(*pcParameter[1] - '0');
+            val = AFE_ReadAdcVoltage(strtoul(pcParameter[1], NULL, 10));
             sprintf(&pcWriteBuffer[0], "Voltage %.1fV\r\n\n", val);
         }
     }
@@ -116,20 +117,19 @@ BaseType_t afeCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char
         val = AFE_ReadDieTemp();
         sprintf(&pcWriteBuffer[0], "Temperature %.1f%cC\r\n\n", val, (uint8_t)176);
     }
-    else if (!strncmp(pcParameter[0], "gpio", 4))
+    else if (!strncmp(pcParameter[0], "gpio", strlen("gpio")))
     {
         if (pcParameter[1] != NULL)
         {
-            gpio = AFE_GpioRead(*pcParameter[1] - '0');
+            gpio = AFE_GpioRead(strtoul(pcParameter[1], NULL, 10));
             sprintf(&pcWriteBuffer[0], "GPIO %d \r\n\n", gpio);
         }
-
     }
-    else if (!strncmp(pcParameter[0], "set", 3))
+    else if (!strncmp(pcParameter[0], "set",  strlen("set")))
     {
         if ((pcParameter[1] != NULL) && (pcParameter[2] != NULL))
         {
-            AFE_GpioSet(*pcParameter[1] - '0', *pcParameter[2] - '0');
+            AFE_GpioSet(strtoul(pcParameter[1], NULL, 10), strtoul(pcParameter[2], NULL, 10));
             sprintf(&pcWriteBuffer[0], "OK \r\n\n");
         }
     }

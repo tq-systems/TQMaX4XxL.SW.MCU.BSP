@@ -47,7 +47,7 @@
  * prototypes
  ******************************************************************************/
 
-BaseType_t afeCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char *pcCommandString );
+BaseType_t afeCommand(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
 
 /*******************************************************************************
  * global extern data

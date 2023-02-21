@@ -132,230 +132,227 @@ void AFE_Init(void)
 
     DebugP_log("\t - Serial %X%X\r\n", serial0, serial1);
 
+    AFE_SystemInit.SYS_CONFIG0 = SYS_CONFIG0_REF_SEL(0)    |
+                                 SYS_CONFIG0_CK_SRC_SEL(0) |
+                                 SYS_CONFIG0_CRC_EN(0)     |
+                                 SYS_CONFIG0_ADC_SYNC(0)   |
+                                 SYS_CONFIG0_DRDY_PWDT(1);
 
+    DebugP_log("[ OK ]\tAFE13388 Init\r\n");
 
-	AFE_SystemInit.SYS_CONFIG0 =	SYS_CONFIG0_REF_SEL(0) 		|
-									SYS_CONFIG0_CK_SRC_SEL(0) 	|
-									SYS_CONFIG0_CRC_EN(0)		|
-									SYS_CONFIG0_ADC_SYNC(0)   	|
-									SYS_CONFIG0_DRDY_PWDT(1);
+    DebugP_log("\t - AFE_CONFIG0 0x%x\r\n", AFE_SystemInit.SYS_CONFIG0);
 
-	DebugP_log("[ OK ]\tAFE13388 Init\r\n");
+    // SPI Write
+    AFE_SPI_Write(SYS_CONTROL.SYS_CONFIG0, AFE_SystemInit.SYS_CONFIG0, reg_16bit);
 
-	DebugP_log("\t - AFE_CONFIG0 0x%x\r\n", AFE_SystemInit.SYS_CONFIG0);
+    //------------------------------------------------------------------------------------------------------
+    // Channel 0
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *             Type                 Gain             Nominal Input Range
+     *    AI1P:    Unipolar SE          0.2V/V                +10V
+     */
+    AFE_ChannelInit[0].CH_CONFIG0 = CH_CONFIG0_HV_AIP(1)   |
+                                    CH_CONFIG0_HV_AIN(0)   |
+                                    CH_CONFIG0_CH_GAIN(0)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[0].CH_CONFIG1 = 0x38;       // DATA_RATE 7
+    AFE_ChannelInit[0].CH_CONFIG2 = 0x0;        // TBD
+    AFE_ChannelInit[0].CH_CONFIG3 = 0x0;        // TBD
+    AFE_ChannelInit[0].CH_CONFIG4 = 0x0;        // Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 1
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *             Type                 Gain              Nominal Input Range
+     *    AI1N:    Unipolar SE          0.2V/V             +10V
+     */
+    AFE_ChannelInit[1].CH_CONFIG0 = CH_CONFIG0_HV_AIP(0)   |
+                                    CH_CONFIG0_HV_AIN(1)   |
+                                    CH_CONFIG0_CH_GAIN(0)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[1].CH_CONFIG1 = 0x38;   // DATA_RATE 7
+    AFE_ChannelInit[1].CH_CONFIG2 = 0x0;    // TBD
+    AFE_ChannelInit[1].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[1].CH_CONFIG4 = 0x0;    // Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 2
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *             Type                 Gain               Nominal Input Range
+     *    AI2P:    Unipolar SE          0.2V/V              +10V
+     */
+    AFE_ChannelInit[2].CH_CONFIG0 = CH_CONFIG0_HV_AIP(2)   |
+                                    CH_CONFIG0_HV_AIN(0)   |
+                                    CH_CONFIG0_CH_GAIN(0)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[2].CH_CONFIG1 = 0x38;   // DATA_RATE 7
+    AFE_ChannelInit[2].CH_CONFIG2 = 0x0;    // TBD
+    AFE_ChannelInit[2].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[2].CH_CONFIG4 = 0x0;    // Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 3
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *             Type                 Gain                Nominal Input Range
+     *    AI2N:    Unipolar SE          0.2V/V              +10V
+     */
+    AFE_ChannelInit[3].CH_CONFIG0 = CH_CONFIG0_HV_AIP(0)   |
+                                    CH_CONFIG0_HV_AIN(2)   |
+                                    CH_CONFIG0_CH_GAIN(0)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[3].CH_CONFIG1 = 0x38;    // DATA_RATE 7
+    AFE_ChannelInit[3].CH_CONFIG2 = 0x0;     // TBD
+    AFE_ChannelInit[3].CH_CONFIG3 = 0x0;     // TBD
+    AFE_ChannelInit[3].CH_CONFIG4 = 0x0;     // Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 4
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *              Type                Gain                Nominal Input Range
+     *    AI3P:     Unipolar SE         1V/V                +2.0V
+     */
+    AFE_ChannelInit[4].CH_CONFIG0 = CH_CONFIG0_HV_AIP(3)   |
+                                    CH_CONFIG0_HV_AIN(0)   |
+                                    CH_CONFIG0_CH_GAIN(3)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[4].CH_CONFIG1 = 0x38;   // DATA_RATE 7
+    AFE_ChannelInit[4].CH_CONFIG2 = 0x0;    // TBD
+    AFE_ChannelInit[4].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[4].CH_CONFIG4 = 0x0;    // Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 5
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *              Type                Gain                Nominal Input Range
+     *    AI3N:    Unipolar SE          1V/V                +2.0V
+     */
+    AFE_ChannelInit[5].CH_CONFIG0 = CH_CONFIG0_HV_AIP(0)   |
+                                    CH_CONFIG0_HV_AIN(3)   |
+                                    CH_CONFIG0_CH_GAIN(3)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[5].CH_CONFIG1 = 0x38;   // DATA_RATE 7
+    AFE_ChannelInit[5].CH_CONFIG2 = 0x0;    // TBD
+    AFE_ChannelInit[5].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[5].CH_CONFIG4 = 0x0;    // Multichannel Disabled
 
-	// SPI Write
-	AFE_SPI_Write(SYS_CONTROL.SYS_CONFIG0, AFE_SystemInit.SYS_CONFIG0, reg_16bit);
+    //------------------------------------------------------------------------------------------------------
+    // Channel 6
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *              Type                Gain                Nominal Input Range
+     *    AI4P:    Unipolar SE          1V/V                +2.0V
+     */
+    AFE_ChannelInit[6].CH_CONFIG0 = CH_CONFIG0_HV_AIP(4)   |
+                                    CH_CONFIG0_HV_AIN(0)   |
+                                    CH_CONFIG0_CH_GAIN(3)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[6].CH_CONFIG1 = 0x38;   // DATA_RATE 7
+    AFE_ChannelInit[6].CH_CONFIG2 = 0x0;    // TBD
+    AFE_ChannelInit[6].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[6].CH_CONFIG4 = 0x0;    // Multichannel Disabled
 
-	//------------------------------------------------------------------------------------------------------
-	// Channel 0
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    			Type				 Gain			Nominal Input Range
-	 *    AI1P:    Unipolar SE			0.2V/V				+10V
-	 */
-	AFE_ChannelInit[0].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(1)		|
-									CH_CONFIG0_HV_AIN(0)		|
-									CH_CONFIG0_CH_GAIN(0) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[0].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[0].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[0].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[0].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-	//------------------------------------------------------------------------------------------------------
-	// Channel 1
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    			Type				 Gain			Nominal Input Range
-	 *    AI1N:    Unipolar SE			0.2V/V				+10V
-	 */
-	AFE_ChannelInit[1].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(0)		|
-									CH_CONFIG0_HV_AIN(1)		|
-									CH_CONFIG0_CH_GAIN(0) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[1].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[1].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[1].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[1].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-	//------------------------------------------------------------------------------------------------------
-	// Channel 2
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    			Type				 Gain			Nominal Input Range
-	 *    AI2P:    Unipolar SE			0.2V/V				+10V
-	 */
-	AFE_ChannelInit[2].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(2)		|
-									CH_CONFIG0_HV_AIN(0)		|
-									CH_CONFIG0_CH_GAIN(0) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[2].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[2].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[2].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[2].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-	//------------------------------------------------------------------------------------------------------
-	// Channel 3
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    			Type				 Gain			Nominal Input Range
-	 *    AI2N:    Unipolar SE			0.2V/V				+10V
-	 */
-	AFE_ChannelInit[3].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(0)		|
-									CH_CONFIG0_HV_AIN(2)		|
-									CH_CONFIG0_CH_GAIN(0) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[3].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[3].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[3].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[3].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-	//------------------------------------------------------------------------------------------------------
-	// Channel 4
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    			Type				 Gain			Nominal Input Range
-	 *    AI3P:    Unipolar SE			1V/V				+2.0V
-	 */
-	AFE_ChannelInit[4].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(3)		|
-									CH_CONFIG0_HV_AIN(0)		|
-									CH_CONFIG0_CH_GAIN(3) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[4].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[4].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[4].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[4].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-	//------------------------------------------------------------------------------------------------------
-	// Channel 5
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    			Type				 Gain			Nominal Input Range
-	 *    AI3N:    Unipolar SE			1V/V				+2.0V
-	 */
-	AFE_ChannelInit[5].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(0)		|
-									CH_CONFIG0_HV_AIN(3)		|
-									CH_CONFIG0_CH_GAIN(3) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[5].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[5].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[5].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[5].CH_CONFIG4 =	0x0;		// Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 7
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *              Type                Gain                Nominal Input Range
+     *    AI4N:    Unipolar SE          1V/V                +2.0V
+     */
+    AFE_ChannelInit[7].CH_CONFIG0 = CH_CONFIG0_HV_AIP(0)   |
+                                    CH_CONFIG0_HV_AIN(4)   |
+                                    CH_CONFIG0_CH_GAIN(3)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[7].CH_CONFIG1 = 0x38;   // DATA_RATE 7
+    AFE_ChannelInit[7].CH_CONFIG2 = 0x0;    // TBD
+    AFE_ChannelInit[7].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[7].CH_CONFIG4 = 0x0;    // Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 8
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *                  Type
+     *    REFCAL_H:    Internal
+     */
+    AFE_ChannelInit[8].CH_CONFIG0 = CH_CONFIG0_HV_AIP(5)   |
+                                    CH_CONFIG0_HV_AIN(0)   |
+                                    CH_CONFIG0_CH_GAIN(3)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[8].CH_CONFIG1 = 0x38;   // DATA_RATE 7
+    AFE_ChannelInit[8].CH_CONFIG2 = 0x0;    // TBD
+    AFE_ChannelInit[8].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[8].CH_CONFIG4 = 0x0;    // Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 9
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *                  Type
+     *    REFCAL_L:     Internal
+     */
+    AFE_ChannelInit[9].CH_CONFIG0 = CH_CONFIG0_HV_AIP(6)   |
+                                    CH_CONFIG0_HV_AIN(0)   |
+                                    CH_CONFIG0_CH_GAIN(3)  |
+                                    CH_CONFIG0_LVSIG_IN(0) |
+                                    CH_CONFIG0_HV_SEL(1);
+    AFE_ChannelInit[9].CH_CONFIG1 = 0x38;   // DATA_RATE 7
+    AFE_ChannelInit[9].CH_CONFIG2 = 0x0;    // TBD
+    AFE_ChannelInit[9].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[9].CH_CONFIG4 = 0x0;    // Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 10
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *                  Type
+     *    GPIO 0-1:     Internal
+     */
+    AFE_ChannelInit[10].CH_CONFIG0 = CH_CONFIG0_HV_AIP(0)   |
+                                     CH_CONFIG0_HV_AIN(0)   |
+                                     CH_CONFIG0_CH_GAIN(3)  |
+                                     CH_CONFIG0_LVSIG_IN(1) |
+                                     CH_CONFIG0_HV_SEL(0);
+    AFE_ChannelInit[10].CH_CONFIG1 = 0x38;  // DATA_RATE 7
+    AFE_ChannelInit[10].CH_CONFIG2 = 0x0;   // TBD
+    AFE_ChannelInit[10].CH_CONFIG3 = 0x0;   // TBD
+    AFE_ChannelInit[10].CH_CONFIG4 = 0x0;   // Multichannel Disabled
+    //------------------------------------------------------------------------------------------------------
+    // Channel 11
+    //------------------------------------------------------------------------------------------------------
+    /*
+     * Channel Configuration
+     *              Type
+     *   HVDD:      Internal
+     */
+    AFE_ChannelInit[11].CH_CONFIG0 = CH_CONFIG0_HV_AIP(0)   |
+                                     CH_CONFIG0_HV_AIN(0)   |
+                                     CH_CONFIG0_CH_GAIN(3)  |
+                                     CH_CONFIG0_LVSIG_IN(4) |
+                                     CH_CONFIG0_HV_SEL(0);
+    AFE_ChannelInit[11].CH_CONFIG1 = 0x38;  // DATA_RATE 7
+    AFE_ChannelInit[11].CH_CONFIG2 = 0x0;   // TBD
+    AFE_ChannelInit[11].CH_CONFIG3 = 0x0;   // TBD
+    AFE_ChannelInit[11].CH_CONFIG4 = 0x0;   // Multichannel Disabled
 
-	//------------------------------------------------------------------------------------------------------
-	// Channel 6
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    			Type				 Gain			Nominal Input Range
-	 *    AI4P:    Unipolar SE			1V/V				+2.0V
-	 */
-	AFE_ChannelInit[6].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(4)		|
-									CH_CONFIG0_HV_AIN(0)		|
-									CH_CONFIG0_CH_GAIN(3) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[6].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[6].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[6].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[6].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-
-	//------------------------------------------------------------------------------------------------------
-	// Channel 7
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    			Type				 Gain			Nominal Input Range
-	 *    AI4N:    Unipolar SE			1V/V				+2.0V
-	 */
-	AFE_ChannelInit[7].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(0)		|
-									CH_CONFIG0_HV_AIN(4)		|
-									CH_CONFIG0_CH_GAIN(3) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[7].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[7].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[7].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[7].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-	//------------------------------------------------------------------------------------------------------
-	// Channel 8
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    				Type
-	 *    REFCAL_H:    Internal
-	 */
-	AFE_ChannelInit[8].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(5)		|
-									CH_CONFIG0_HV_AIN(0)		|
-									CH_CONFIG0_CH_GAIN(3) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[8].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[8].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[8].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[8].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-	//------------------------------------------------------------------------------------------------------
-	// Channel 9
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    				Type
-	 *    REFCAL_L:    Internal
-	 */
-	AFE_ChannelInit[9].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(6)		|
-									CH_CONFIG0_HV_AIN(0)		|
-									CH_CONFIG0_CH_GAIN(3) 		|
-									CH_CONFIG0_LVSIG_IN(0)		|
-									CH_CONFIG0_HV_SEL(1);
-	AFE_ChannelInit[9].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[9].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[9].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[9].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-	//------------------------------------------------------------------------------------------------------
-	// Channel 10
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    				Type
-	 *    GPIO 0-1:    Internal
-	 */
-	AFE_ChannelInit[10].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(0)		|
-										CH_CONFIG0_HV_AIN(0)		|
-										CH_CONFIG0_CH_GAIN(3) 		|
-										CH_CONFIG0_LVSIG_IN(1)		|
-										CH_CONFIG0_HV_SEL(0);
-	AFE_ChannelInit[10].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[10].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[10].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[10].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-	//------------------------------------------------------------------------------------------------------
-	// Channel 11
-	//------------------------------------------------------------------------------------------------------
-	/*
-	 * Channel Configuration
-	 *    				Type
-	 *   HVDD:   	 Internal
-	 */
-	AFE_ChannelInit[11].CH_CONFIG0 =	CH_CONFIG0_HV_AIP(0)		|
-										CH_CONFIG0_HV_AIN(0)		|
-										CH_CONFIG0_CH_GAIN(3) 		|
-										CH_CONFIG0_LVSIG_IN(4)		|
-										CH_CONFIG0_HV_SEL(0);
-	AFE_ChannelInit[11].CH_CONFIG1 =	0x38;		// DATA_RATE 7
-	AFE_ChannelInit[11].CH_CONFIG2 =	0x0;		// TBD
-	AFE_ChannelInit[11].CH_CONFIG3 =	0x0;		// TBD
-	AFE_ChannelInit[11].CH_CONFIG4 =	0x0;		// Multichannel Disabled
-
-
-	AFE_GpioInit();
+    AFE_GpioInit();
 }
 
 /********************************************************************************/
@@ -368,79 +365,79 @@ void AFE_Init(void)
  */
 float AFE_ReadAdcVoltage(uint8_t channel)
 {
-	uint16_t status0_regValue;
-	uint32_t result;
-	float voltage;
-	float gain;
+    uint16_t status0_regValue;
+    uint32_t result;
+    float voltage;
+    float gain;
 
-	switch(channel)
-	{
-	case AFE_CH_AI1P: 		/*CMD_Pointer set to CH0*/
-							AFE_SPI_Send_InstCMD(CMD_CH0);
-							gain = 0.2;
-							break;
-	case AFE_CH_AI1N: 		/*CMD_Pointer set to CH1*/
-							AFE_SPI_Send_InstCMD(CMD_CH1);
-							gain = 0.2;
-							break;
-	case AFE_CH_AI2P: 		/*CMD_Pointer set to CH2*/
-							AFE_SPI_Send_InstCMD(CMD_CH2);
-							gain = 0.2;
-							break;
-	case AFE_CH_AI2N: 		/*CMD_Pointer set to CH3*/
-							AFE_SPI_Send_InstCMD(CMD_CH3);
-							gain = 0.2;
-							break;
-	case AFE_CH_AI3P: 		/*CMD_Pointer set to CH4*/
-							AFE_SPI_Send_InstCMD(CMD_CH4);
-							gain = 1;
-							break;
-	case AFE_CH_AI3N: 		/*CMD_Pointer set to CH5*/
-							AFE_SPI_Send_InstCMD(CMD_CH5);
-							gain = 1;
-							break;
-	case AFE_CH_AI4P: 		/*CMD_Pointer set to CH6*/
-							AFE_SPI_Send_InstCMD(CMD_CH6);
-							gain = 1;
-							break;
-	case AFE_CH_AI4N: 		/*CMD_Pointer set to CH7*/
-							AFE_SPI_Send_InstCMD(CMD_CH7);
-							gain = 1;
-							break;
-	case AFE_CH_REFCAL_H: 	/*CMD_Pointer set to CH8*/
-							AFE_SPI_Send_InstCMD(CMD_CH8);
-							gain = 1;
-							break;
-	case AFE_CH_REFCAL_L: 	/*CMD_Pointer set to CH9*/
-							AFE_SPI_Send_InstCMD(CMD_CH9);
-							gain = 1;
-							break;
-	case AFE_CH_GPIO01: 	/*CMD_Pointer set to CH10*/
-							AFE_SPI_Send_InstCMD(CMD_CH10);
-							gain = 2.5;  // 10 / 4V
-							break;
-	case AFE_CH_HVDD: 		/*CMD_Pointer set to CH11*/
-							AFE_SPI_Send_InstCMD(CMD_CH11);
-							break;
-	default: 				/*CMD_Pointer set to CH0*/
-							AFE_SPI_Send_InstCMD(CMD_CH0);
-							gain = 0.2;
-							break;
-	}
+    switch (channel)
+    {
+    case AFE_CH_AI1P: /*CMD_Pointer set to CH0*/
+        AFE_SPI_Send_InstCMD(CMD_CH0);
+        gain = 0.2;
+        break;
+    case AFE_CH_AI1N: /*CMD_Pointer set to CH1*/
+        AFE_SPI_Send_InstCMD(CMD_CH1);
+        gain = 0.2;
+        break;
+    case AFE_CH_AI2P: /*CMD_Pointer set to CH2*/
+        AFE_SPI_Send_InstCMD(CMD_CH2);
+        gain = 0.2;
+        break;
+    case AFE_CH_AI2N: /*CMD_Pointer set to CH3*/
+        AFE_SPI_Send_InstCMD(CMD_CH3);
+        gain = 0.2;
+        break;
+    case AFE_CH_AI3P: /*CMD_Pointer set to CH4*/
+        AFE_SPI_Send_InstCMD(CMD_CH4);
+        gain = 1;
+        break;
+    case AFE_CH_AI3N: /*CMD_Pointer set to CH5*/
+        AFE_SPI_Send_InstCMD(CMD_CH5);
+        gain = 1;
+        break;
+    case AFE_CH_AI4P: /*CMD_Pointer set to CH6*/
+        AFE_SPI_Send_InstCMD(CMD_CH6);
+        gain = 1;
+        break;
+    case AFE_CH_AI4N: /*CMD_Pointer set to CH7*/
+        AFE_SPI_Send_InstCMD(CMD_CH7);
+        gain = 1;
+        break;
+    case AFE_CH_REFCAL_H: /*CMD_Pointer set to CH8*/
+        AFE_SPI_Send_InstCMD(CMD_CH8);
+        gain = 1;
+        break;
+    case AFE_CH_REFCAL_L: /*CMD_Pointer set to CH9*/
+        AFE_SPI_Send_InstCMD(CMD_CH9);
+        gain = 1;
+        break;
+    case AFE_CH_GPIO01: /*CMD_Pointer set to CH10*/
+        AFE_SPI_Send_InstCMD(CMD_CH10);
+        gain = 2.5;  // 10 / 4V
+        break;
+    case AFE_CH_HVDD: /*CMD_Pointer set to CH11*/
+        AFE_SPI_Send_InstCMD(CMD_CH11);
+        break;
+    default: /*CMD_Pointer set to CH0*/
+        AFE_SPI_Send_InstCMD(CMD_CH0);
+        gain = 0.2;
+        break;
+    }
 
-	// Write Channel Config
-	AFE_SPI_Write(LOGIC_CH_CONTROL.CH_CONFIG0, AFE_ChannelInit[channel].CH_CONFIG0, reg_16bit);
-	AFE_SPI_Write(LOGIC_CH_CONTROL.CH_CONFIG1, AFE_ChannelInit[channel].CH_CONFIG1, reg_16bit);
-	AFE_SPI_Write(LOGIC_CH_CONTROL.CH_CONFIG2, AFE_ChannelInit[channel].CH_CONFIG2, reg_16bit);
-	AFE_SPI_Write(LOGIC_CH_CONTROL.CH_CONFIG3, AFE_ChannelInit[channel].CH_CONFIG3, reg_16bit);
+    // Write Channel Config
+    AFE_SPI_Write(LOGIC_CH_CONTROL.CH_CONFIG0, AFE_ChannelInit[channel].CH_CONFIG0, reg_16bit);
+    AFE_SPI_Write(LOGIC_CH_CONTROL.CH_CONFIG1, AFE_ChannelInit[channel].CH_CONFIG1, reg_16bit);
+    AFE_SPI_Write(LOGIC_CH_CONTROL.CH_CONFIG2, AFE_ChannelInit[channel].CH_CONFIG2, reg_16bit);
+    AFE_SPI_Write(LOGIC_CH_CONTROL.CH_CONFIG3, AFE_ChannelInit[channel].CH_CONFIG3, reg_16bit);
 
-	// Start OneShot Conversion of Single Channel
-	AFE_SPI_Send_InstCMD(CMD_SS);
+    // Start OneShot Conversion of Single Channel
+    AFE_SPI_Send_InstCMD(CMD_SS);
 
-	// SPI Polling
-	// Wait until SINGLE_CH_ACTIVE = 0 -> Idle Mode / ADC finished
-	vTaskDelay(pdMS_TO_TICKS(1));
-	status0_regValue = 0xFFFF;
+    // SPI Polling
+    // Wait until SINGLE_CH_ACTIVE = 0 -> Idle Mode / ADC finished
+    vTaskDelay(pdMS_TO_TICKS(1));
+    status0_regValue = 0xFFFF;
 
     while( (status0_regValue & SYS_STATUS0_SINGLE_CH_ACTIVE_MASK) != 0x0)
     {
@@ -448,34 +445,34 @@ float AFE_ReadAdcVoltage(uint8_t channel)
         status0_regValue =  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3];
     }
 
-	// Read Data from correspondig DATA Register
-	AFE_SPI_Read((0x40 + channel), reg_24bit);
-	result = ((AFE_rxBuffer[2] << 16) |  (AFE_rxBuffer[3] << 8) | AFE_rxBuffer[4] );
+    // Read Data from correspondig DATA Register
+    AFE_SPI_Read((0x40 + channel), reg_24bit);
+    result = ((AFE_rxBuffer[2] << 16) | (AFE_rxBuffer[3] << 8) | AFE_rxBuffer[4]);
 
-	if (channel != AFE_CH_HVDD)
-	{
-			// Check Sign
-			if ((result & 0x800000) == 0)
-			{
-				voltage = ((float)result * 10) / (pow(2,24) * gain);
-			}
-			else
-			{
-				/*
-				result = ((~result) & 0x00FFFFFF);
-				result += 1;
-				voltage = ((float)result * 10) / (pow(2,24) * gain);
-				PRINTF("voltage = -%.3fV\r\n",  voltage);*/
+    if (channel != AFE_CH_HVDD)
+    {
+        // Check Sign
+        if ((result & 0x800000) == 0)
+        {
+            voltage = ((float) result * 10) / (pow(2, 24) * gain);
+        }
+        else
+        {
+            /*
+             result = ((~result) & 0x00FFFFFF);
+             result += 1;
+             voltage = ((float)result * 10) / (pow(2,24) * gain);
+             PRINTF("voltage = -%.3fV\r\n",  voltage);*/
 
-				voltage = 0;
-			}
-	}
-	else
-	{
-			voltage = (((result * 4) / pow(2,24)) + 0.25) * 32 ;
-	}
+            voltage = 0;
+        }
+    }
+    else
+    {
+        voltage = (((result * 4) / pow(2, 24)) + 0.25) * 32;
+    }
 
-	return voltage;
+    return voltage;
 
 }
 
@@ -487,8 +484,8 @@ float AFE_ReadAdcVoltage(uint8_t channel)
  */
 float AFE_ReadDieTemp(void)
 {
-	float temperature;
-	uint16_t reg_read_value;
+    float temperature;
+    uint16_t reg_read_value;
 
     AFE_SPI_Read(ALARM_CONTROL.DIE_TEMP, reg_16bit);
     reg_read_value =  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3];
@@ -501,10 +498,10 @@ float AFE_ReadDieTemp(void)
     }
     else
     {
-    	reg_read_value = (~reg_read_value);
-    	reg_read_value += 1;
-    	temperature = (float)reg_read_value / 64;
-    	DebugP_log("\t - Temperature -%.1f%cC\r\n", temperature, (uint8_t)176);
+        reg_read_value = (~reg_read_value);
+        reg_read_value += 1;
+        temperature = (float) reg_read_value / 64;
+        DebugP_log("\t - Temperature -%.1f%cC\r\n", temperature, (uint8_t)176);
     }
 
     return temperature;
@@ -519,30 +516,29 @@ float AFE_ReadDieTemp(void)
 void AFE_GpioInit(void)
 {
 
-	/* MBa117xL:
-	 * GPIO0 = analog Input
-	 * GPIO1 = analog Input
-	 * GPIO2 = not used / configured as Output
-	 * GPIO3 = not used / configured as Output
-	 * GPIO4 = not used / configured as Output
-	 * GPIO5 = not used / configured as Output
-	 * GPIO6 = not used / configured as Input
-	 * GPIO7 = not used / configured as Input
-	 * GPIO8 = not used / configured as Input
-	 * GPIO9 = not used / configured as Input
-	 */
+    /* GPIO0 = analog Input
+     * GPIO1 = analog Input
+     * GPIO2 = not used / configured as Output
+     * GPIO3 = not used / configured as Output
+     * GPIO4 = not used / configured as Output
+     * GPIO5 = not used / configured as Output
+     * GPIO6 = not used / configured as Input
+     * GPIO7 = not used / configured as Input
+     * GPIO8 = not used / configured as Input
+     * GPIO9 = not used / configured as Input
+     */
 
-	// Default all GPO Data 0
-	AFE_SPI_Write(GPIO_CONTROL.GPO_DATA, 0, reg_16bit);
+    // Default all GPO Data 0
+    AFE_SPI_Write(GPIO_CONTROL.GPO_DATA, 0, reg_16bit);
 
-	// Connect all Pin to Pads
-	AFE_SPI_Write(GPIO_CONTROL.GPIO_CONFIG1, 0xFFC0, reg_16bit);
+    // Connect all Pin to Pads
+    AFE_SPI_Write(GPIO_CONTROL.GPIO_CONFIG1, 0xFFC0, reg_16bit);
 
-	// GPO Driving Enable for GPO2...GPO5
-	AFE_SPI_Write(GPIO_CONTROL.GPIO_CONFIG0, 0x0F00, reg_16bit);
+    // GPO Driving Enable for GPO2...GPO5
+    AFE_SPI_Write(GPIO_CONTROL.GPIO_CONFIG0, 0x0F00, reg_16bit);
 
-	// GPI Read Enable for GPI06...GPI09
-	AFE_SPI_Write(GPIO_CONTROL.GPIO_CONFIG2, 0xF000, reg_16bit);
+    // GPI Read Enable for GPI06...GPI09
+    AFE_SPI_Write(GPIO_CONTROL.GPIO_CONFIG2, 0xF000, reg_16bit);
 }
 
 
@@ -556,10 +552,10 @@ void AFE_GpioInit(void)
  */
 void AFE_GpioSet(uint8_t port, bool value)
 {
-	uint16_t regValue;
+    uint16_t regValue;
 
-	// read actual Data Register Value
-	AFE_SPI_Read(GPIO_CONTROL.GPO_DATA, reg_16bit);
+    // read actual Data Register Value
+    AFE_SPI_Read(GPIO_CONTROL.GPO_DATA, reg_16bit);
 
     if (crc_enabled)
     {
@@ -570,53 +566,125 @@ void AFE_GpioSet(uint8_t port, bool value)
 		regValue = ((AFE_rxBuffer[2] << 8) |  AFE_rxBuffer[3]);
     }
 
-	switch(port)
-	{
-	case AFE_GPIO0:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x40;
-		else						regValue &= 0xFFBF;
-		break;
-	case AFE_GPIO1:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x80;
-		else						regValue &= 0xFF7F;
-		break;
-	case AFE_GPIO2:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x100;
-		else						regValue &= 0xFEFF;
-		break;
-	case AFE_GPIO3:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x200;
-		else						regValue &= 0xFDFF;
-		break;
-	case AFE_GPIO4:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x400;
-		else						regValue &= 0xFBFF;
-		break;
-	case AFE_GPIO5:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x800;
-		else						regValue &= 0xF7FF;
-		break;
-	case AFE_GPIO6:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x1000;
-		else						regValue &= 0xEFFF;
-		break;
-	case AFE_GPIO7:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x2000;
-		else						regValue &= 0xDFFF;
-		break;
-	case AFE_GPIO8:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x4000;
-		else						regValue &= 0xBFFF;
-		break;
-	case AFE_GPIO9:
-		if(value == AFE_GPIO_HIGH)	regValue |= 0x8000;
-		else						regValue &= 0x7FFF;
-		break;
-	default: break;
+    switch (port)
+    {
+    case AFE_GPIO0:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x40;
+        }
+        else
+        {
+            regValue &= 0xFFBF;
+        }
+        break;
 
-	}
+    case AFE_GPIO1:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x80;
+        }
+        else
+        {
+            regValue &= 0xFF7F;
+        }
+        break;
 
-	AFE_SPI_Write(GPIO_CONTROL.GPO_DATA, regValue, reg_16bit);
+    case AFE_GPIO2:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x100;
+        }
+        else
+        {
+            regValue &= 0xFEFF;
+        }
+        break;
+
+    case AFE_GPIO3:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x200;
+        }
+        else
+        {
+            regValue &= 0xFDFF;
+        }
+        break;
+
+    case AFE_GPIO4:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x400;
+        }
+        else
+        {
+            regValue &= 0xFBFF;
+        }
+        break;
+
+    case AFE_GPIO5:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x800;
+        }
+        else
+        {
+            regValue &= 0xF7FF;
+        }
+        break;
+
+    case AFE_GPIO6:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x1000;
+        }
+        else
+        {
+            regValue &= 0xEFFF;
+        }
+        break;
+
+    case AFE_GPIO7:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x2000;
+        }
+        else
+        {
+            regValue &= 0xDFFF;
+        }
+        break;
+
+    case AFE_GPIO8:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x4000;
+        }
+        else
+        {
+            regValue &= 0xBFFF;
+        }
+        break;
+
+    case AFE_GPIO9:
+        if (value == AFE_GPIO_HIGH)
+        {
+            regValue |= 0x8000;
+        }
+        else
+        {
+            regValue &= 0x7FFF;
+        }
+        break;
+
+    default:
+        /* do nothing */
+        break;
+
+    }
+
+    AFE_SPI_Write(GPIO_CONTROL.GPO_DATA, regValue, reg_16bit);
 }
 
 /*******************************************************************************/
@@ -629,11 +697,11 @@ void AFE_GpioSet(uint8_t port, bool value)
  */
 uint8_t AFE_GpioRead(uint8_t port)
 {
-	uint16_t regValue;
-	uint8_t returnValue;
+    uint16_t regValue;
+    uint8_t returnValue;
 
-	// read Data Register Value
-	AFE_SPI_Read(GPIO_CONTROL.GPI_DATA, reg_16bit);
+    // read Data Register Value
+    AFE_SPI_Read(GPIO_CONTROL.GPI_DATA, reg_16bit);
 
     if (crc_enabled)
     {
@@ -644,42 +712,84 @@ uint8_t AFE_GpioRead(uint8_t port)
 		regValue = ((AFE_rxBuffer[2] << 8) |  AFE_rxBuffer[3]);
     }
 
-	returnValue = AFE_GPIO_LOW;
+    returnValue = AFE_GPIO_LOW;
 
-	switch(port)
-	{
-	case AFE_GPIO0:
-		if ((regValue & 0x40) > 0)		returnValue = AFE_GPIO_HIGH;
-		break;
-	case AFE_GPIO1:
-		if ((regValue & 0x80) > 0)		returnValue = AFE_GPIO_HIGH;
-		break;
-	case AFE_GPIO2:
-		if ((regValue & 0x100) > 0)		returnValue = AFE_GPIO_HIGH;
-		break;
-	case AFE_GPIO3:
-		if ((regValue & 0x200) > 0)		returnValue = AFE_GPIO_HIGH;
-		break;
-	case AFE_GPIO4:
-		if ((regValue & 0x400) > 0)		returnValue = AFE_GPIO_HIGH;
-		break;
-	case AFE_GPIO5:
-		if ((regValue & 0x800) > 0)		returnValue = AFE_GPIO_HIGH;
-		break;
-	case AFE_GPIO6:
-		if ((regValue & 0x1000) > 0)	returnValue = AFE_GPIO_HIGH;
-		break;
-	case AFE_GPIO7:
-		if ((regValue & 0x2000) > 0)	returnValue = AFE_GPIO_HIGH;
-		break;
-	case AFE_GPIO8:
-		if ((regValue & 0x4000) > 0)	returnValue = AFE_GPIO_HIGH;
-		break;
-	case AFE_GPIO9:
-		if ((regValue & 0x8000) > 0)	returnValue = AFE_GPIO_HIGH;
-		break;
-	default: break;
-	}
+    switch (port)
+    {
+    case AFE_GPIO0:
+        if ((regValue & 0x40) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    case AFE_GPIO1:
+        if ((regValue & 0x80) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    case AFE_GPIO2:
+        if ((regValue & 0x100) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    case AFE_GPIO3:
+        if ((regValue & 0x200) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    case AFE_GPIO4:
+        if ((regValue & 0x400) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    case AFE_GPIO5:
+        if ((regValue & 0x800) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    case AFE_GPIO6:
+        if ((regValue & 0x1000) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    case AFE_GPIO7:
+        if ((regValue & 0x2000) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    case AFE_GPIO8:
+        if ((regValue & 0x4000) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    case AFE_GPIO9:
+        if ((regValue & 0x8000) > 0)
+        {
+            returnValue = AFE_GPIO_HIGH;
+        }
+        break;
+
+    default:
+        /* do nothing */
+        break;
+    }
 
 	return returnValue;
 }
