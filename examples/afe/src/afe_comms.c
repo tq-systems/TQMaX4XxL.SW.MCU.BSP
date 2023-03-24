@@ -206,8 +206,6 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
     AFE_txBuffer[0] = (uint8_t)(reg_addrShifted >> 8);
     AFE_txBuffer[1] = (uint8_t)reg_addrShifted;
 
-
-
     /*Check Register Typ of AFE*/
     switch (reg_width)
     {
@@ -375,7 +373,7 @@ status_t AFE_SPI_Send_InstCMD(uint16_t cmd_value)
         }
         else
         {
-            dataSize = 0;
+            dataSize = 2;
         }
     }
 
