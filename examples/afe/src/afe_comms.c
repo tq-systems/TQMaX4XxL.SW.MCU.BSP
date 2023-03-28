@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * @file afe_comms.c
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @copyright Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
  * @date 2023-02-14
@@ -32,7 +32,7 @@
  * local defines
  ******************************************************************************/
 
-#define APP_MCSPI_MSGSIZE       (100U)
+
 
 /*******************************************************************************
  * local macros
@@ -57,7 +57,6 @@ uint8_t SPI_rxBuffer[BUFFER_SIZE];
 /*Flag that represent STATUS_EN bit of SYS_CONFIG0 Register*/
 static bool status_en_enabled     = false;
 static uint32_t checksumCRC_TX[2] = {0};
-static uint32_t checksumCRC_RX[2] = {0};
 
 /*******************************************************************************
  * forward declarations
@@ -77,12 +76,12 @@ volatile bool spi_transfer_completed = false;
  ******************************************************************************/
 
 /**
- * @brief This function writs data to the AFE via SPI
+ * @brief This function writes data to the AFE via SPI
  *
  * @param reg_addr AFE register address
  * @param reg_data AFE data to be write
  * @param reg_width AFE Register width typs
- * @return status of status_t
+ * @return status
  */
 status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_width)
 {
@@ -103,7 +102,6 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
     switch (reg_width)
     {
         case reg_16bit:
-        {
             /*check crc_enabled flag (Is active if CRC_EN bit is set to 1)*/
             if (crc_enabled == true)
             {
@@ -130,9 +128,8 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
             }
 
             break;
-        }
+
         case reg_24bit:
-        {
             /*check crc_enabled flag (Is active if CRC_EN bit is set to 1)*/
             if (crc_enabled == true)
             {
@@ -161,17 +158,14 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
                 dataSize = 5;
             }
             break;
-        }
+
         default:
-        {
             DebugP_log("Invalid Register typ entered!\r\n");
             result = INVALID_ARGUMENT;
             return result;
-            break;
-        }
     }
 
-    if (spi_transmit(AFE_txBuffer, AFE_rxBuffer, dataSize))
+    if (spi_transfer(AFE_txBuffer, AFE_rxBuffer, dataSize))
     {
         result = SUCCESS;
     }
@@ -184,11 +178,11 @@ status_t AFE_SPI_Write(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_w
 }
 
 /**
- * @brief Reads Register data via SPI Interrupt based
+ * @brief Reads Register data via SPI
  *
- * @param reg_addr[in]          Register to read from
- * @param data_len[in]          Amount of uint16_t data to read
- * @return status of status_t
+ * @param reg_addr[in]   Register to read from
+ * @param reg_width[in]  Amount of register data to read
+ * @return status
  */
 status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
 {
@@ -210,7 +204,6 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
     switch (reg_width)
     {
         case reg_16bit:
-        {
             /*check crc_enabled flag (Is active if CRC_EN bit is set to 1)*/
             if (crc_enabled == true)
             {
@@ -230,10 +223,8 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
                dataSize = 4;  // transmit 4 Bytes
             }
             break;
-        }
 
         case reg_24bit:
-        {
             /*check crc_enabled flag (Is active if CRC_EN bit is set to 1)*/
             if (crc_enabled == true)
             {
@@ -254,17 +245,14 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
                dataSize = 5;
             }
             break;
-        }
+
         default:
-        {
             DebugP_log("Invalid Register typ entered!\r\n");
             result = INVALID_ARGUMENT;
             return result;
-            break;
-        }
     }
 
-    if (spi_transmit(AFE_txBuffer, AFE_rxBuffer, dataSize))
+    if (spi_transfer(AFE_txBuffer, AFE_rxBuffer, dataSize))
     {
         result = SUCCESS;
     }
@@ -277,12 +265,12 @@ status_t AFE_SPI_Read(uint16_t reg_addr, afe_reg_typ_t reg_width)
 }
 
 /**
- * @brief Reads Data form Register and sends or'ed (data | old_value) to Register
+ * @brief This function sets bits in the selected register
  *
- * @param *reg_data[in;out]     Data to write into Registers at reg_addr
- * @param reg_addr[in]          Register to write on
- * @param data_len[in]          Amount of uint16_t data to send (Buffer length)
- * @return status of status_t
+ * @param *reg_data[in;out]     Data to write into Registers
+ * @param reg_addr[in]          Register address
+ * @param data_len[in]          Amount of register data to send (Buffer length)
+ * @return status
  */
 status_t AFE_SPI_RW(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_width)
 {
@@ -316,7 +304,7 @@ status_t AFE_SPI_RW(uint16_t reg_addr, uint32_t reg_data, afe_reg_typ_t reg_widt
  * @brief Sends Instructions CMD via SPI to the AFE
  *
  * @param cmd_value AFE command
- * @return status of status_t
+ * @return status
  */
 status_t AFE_SPI_Send_InstCMD(uint16_t cmd_value)
 {
@@ -377,7 +365,7 @@ status_t AFE_SPI_Send_InstCMD(uint16_t cmd_value)
         }
     }
 
-    if (spi_transmit(AFE_txBuffer, AFE_rxBuffer, dataSize))
+    if (spi_transfer(AFE_txBuffer, AFE_rxBuffer, dataSize))
     {
         result = SUCCESS;
     }

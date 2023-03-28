@@ -117,8 +117,8 @@ void AFE_Enable(void)
  */
 void AFE_Init(void)
 {
-	uint16_t serial0;
-	uint16_t serial1;
+	uint16_t serial0 = 0;
+	uint16_t serial1 = 0;
 
 	Init_CH_RegisterAdr();
 
@@ -159,8 +159,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[0].CH_CONFIG1 = 0x38;       // DATA_RATE 7
-    AFE_ChannelInit[0].CH_CONFIG2 = 0x0;        // TBD
-    AFE_ChannelInit[0].CH_CONFIG3 = 0x0;        // TBD
+    AFE_ChannelInit[0].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[0].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[0].CH_CONFIG4 = 0x0;        // Multichannel Disabled
     //------------------------------------------------------------------------------------------------------
     // Channel 1
@@ -176,8 +176,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[1].CH_CONFIG1 = 0x38;   // DATA_RATE 7
-    AFE_ChannelInit[1].CH_CONFIG2 = 0x0;    // TBD
-    AFE_ChannelInit[1].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[1].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[1].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[1].CH_CONFIG4 = 0x0;    // Multichannel Disabled
     //------------------------------------------------------------------------------------------------------
     // Channel 2
@@ -193,8 +193,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[2].CH_CONFIG1 = 0x38;   // DATA_RATE 7
-    AFE_ChannelInit[2].CH_CONFIG2 = 0x0;    // TBD
-    AFE_ChannelInit[2].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[2].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[2].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[2].CH_CONFIG4 = 0x0;    // Multichannel Disabled
     //------------------------------------------------------------------------------------------------------
     // Channel 3
@@ -210,8 +210,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[3].CH_CONFIG1 = 0x38;    // DATA_RATE 7
-    AFE_ChannelInit[3].CH_CONFIG2 = 0x0;     // TBD
-    AFE_ChannelInit[3].CH_CONFIG3 = 0x0;     // TBD
+    AFE_ChannelInit[3].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[3].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[3].CH_CONFIG4 = 0x0;     // Multichannel Disabled
     //------------------------------------------------------------------------------------------------------
     // Channel 4
@@ -227,8 +227,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[4].CH_CONFIG1 = 0x38;   // DATA_RATE 7
-    AFE_ChannelInit[4].CH_CONFIG2 = 0x0;    // TBD
-    AFE_ChannelInit[4].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[4].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[4].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[4].CH_CONFIG4 = 0x0;    // Multichannel Disabled
     //------------------------------------------------------------------------------------------------------
     // Channel 5
@@ -244,8 +244,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[5].CH_CONFIG1 = 0x38;   // DATA_RATE 7
-    AFE_ChannelInit[5].CH_CONFIG2 = 0x0;    // TBD
-    AFE_ChannelInit[5].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[5].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[5].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[5].CH_CONFIG4 = 0x0;    // Multichannel Disabled
 
     //------------------------------------------------------------------------------------------------------
@@ -262,8 +262,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[6].CH_CONFIG1 = 0x38;   // DATA_RATE 7
-    AFE_ChannelInit[6].CH_CONFIG2 = 0x0;    // TBD
-    AFE_ChannelInit[6].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[6].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[6].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[6].CH_CONFIG4 = 0x0;    // Multichannel Disabled
 
     //------------------------------------------------------------------------------------------------------
@@ -280,8 +280,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[7].CH_CONFIG1 = 0x38;   // DATA_RATE 7
-    AFE_ChannelInit[7].CH_CONFIG2 = 0x0;    // TBD
-    AFE_ChannelInit[7].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[7].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[7].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[7].CH_CONFIG4 = 0x0;    // Multichannel Disabled
     //------------------------------------------------------------------------------------------------------
     // Channel 8
@@ -297,8 +297,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[8].CH_CONFIG1 = 0x38;   // DATA_RATE 7
-    AFE_ChannelInit[8].CH_CONFIG2 = 0x0;    // TBD
-    AFE_ChannelInit[8].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[8].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[8].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[8].CH_CONFIG4 = 0x0;    // Multichannel Disabled
     //------------------------------------------------------------------------------------------------------
     // Channel 9
@@ -314,8 +314,8 @@ void AFE_Init(void)
                                     CH_CONFIG0_LVSIG_IN(0) |
                                     CH_CONFIG0_HV_SEL(1);
     AFE_ChannelInit[9].CH_CONFIG1 = 0x38;   // DATA_RATE 7
-    AFE_ChannelInit[9].CH_CONFIG2 = 0x0;    // TBD
-    AFE_ChannelInit[9].CH_CONFIG3 = 0x0;    // TBD
+    AFE_ChannelInit[9].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[9].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[9].CH_CONFIG4 = 0x0;    // Multichannel Disabled
     //------------------------------------------------------------------------------------------------------
     // Channel 10
@@ -331,8 +331,8 @@ void AFE_Init(void)
                                      CH_CONFIG0_LVSIG_IN(1) |
                                      CH_CONFIG0_HV_SEL(0);
     AFE_ChannelInit[10].CH_CONFIG1 = 0x38;  // DATA_RATE 7
-    AFE_ChannelInit[10].CH_CONFIG2 = 0x0;   // TBD
-    AFE_ChannelInit[10].CH_CONFIG3 = 0x0;   // TBD
+    AFE_ChannelInit[10].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[10].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[10].CH_CONFIG4 = 0x0;   // Multichannel Disabled
     //------------------------------------------------------------------------------------------------------
     // Channel 11
@@ -348,8 +348,8 @@ void AFE_Init(void)
                                      CH_CONFIG0_LVSIG_IN(4) |
                                      CH_CONFIG0_HV_SEL(0);
     AFE_ChannelInit[11].CH_CONFIG1 = 0x38;  // DATA_RATE 7
-    AFE_ChannelInit[11].CH_CONFIG2 = 0x0;   // TBD
-    AFE_ChannelInit[11].CH_CONFIG3 = 0x0;   // TBD
+    AFE_ChannelInit[11].CH_CONFIG2 = 0x0;
+    AFE_ChannelInit[11].CH_CONFIG3 = 0x0;
     AFE_ChannelInit[11].CH_CONFIG4 = 0x0;   // Multichannel Disabled
 
     AFE_GpioInit();
@@ -365,10 +365,10 @@ void AFE_Init(void)
  */
 float AFE_ReadAdcVoltage(uint8_t channel)
 {
-    uint16_t status0_regValue;
-    uint32_t result;
-    float voltage;
-    float gain;
+    uint16_t status0_regValue = 0;
+    uint32_t result = 0;
+    float voltage = 0;
+    float gain = 0;
 
     switch (channel)
     {
@@ -458,12 +458,6 @@ float AFE_ReadAdcVoltage(uint8_t channel)
         }
         else
         {
-            /*
-             result = ((~result) & 0x00FFFFFF);
-             result += 1;
-             voltage = ((float)result * 10) / (pow(2,24) * gain);
-             PRINTF("voltage = -%.3fV\r\n",  voltage);*/
-
             voltage = 0;
         }
     }
@@ -481,11 +475,12 @@ float AFE_ReadAdcVoltage(uint8_t channel)
 /**
  * @brief Read Die Temperature
  *
+ * @return DIE temperature
  */
 float AFE_ReadDieTemp(void)
 {
-    float temperature;
-    uint16_t reg_read_value;
+    float temperature = 0;
+    uint16_t reg_read_value = 0;
 
     AFE_SPI_Read(ALARM_CONTROL.DIE_TEMP, reg_16bit);
     reg_read_value =  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3];
@@ -552,18 +547,18 @@ void AFE_GpioInit(void)
  */
 void AFE_GpioSet(uint8_t port, bool value)
 {
-    uint16_t regValue;
+    uint16_t regValue = 0;
 
     // read actual Data Register Value
     AFE_SPI_Read(GPIO_CONTROL.GPO_DATA, reg_16bit);
 
     if (crc_enabled)
     {
-    	regValue = ((AFE_rxBuffer[5] << 8) |  AFE_rxBuffer[5]);
+        regValue = ((AFE_rxBuffer[5] << 8) | AFE_rxBuffer[5]);
     }
     else
     {
-		regValue = ((AFE_rxBuffer[2] << 8) |  AFE_rxBuffer[3]);
+        regValue = ((AFE_rxBuffer[2] << 8) | AFE_rxBuffer[3]);
     }
 
     switch (port)
@@ -697,8 +692,8 @@ void AFE_GpioSet(uint8_t port, bool value)
  */
 uint8_t AFE_GpioRead(uint8_t port)
 {
-    uint16_t regValue;
-    uint8_t returnValue;
+    uint16_t regValue = 0;
+    uint8_t returnValue = 0;
 
     // read Data Register Value
     AFE_SPI_Read(GPIO_CONTROL.GPI_DATA, reg_16bit);
@@ -709,7 +704,7 @@ uint8_t AFE_GpioRead(uint8_t port)
     }
     else
     {
-		regValue = ((AFE_rxBuffer[2] << 8) |  AFE_rxBuffer[3]);
+        regValue = ((AFE_rxBuffer[2] << 8) |  AFE_rxBuffer[3]);
     }
 
     returnValue = AFE_GPIO_LOW;
@@ -791,58 +786,5 @@ uint8_t AFE_GpioRead(uint8_t port)
         break;
     }
 
-	return returnValue;
+    return returnValue;
 }
-
-/*******************************************************************************
- * RTOS Functions
- ******************************************************************************/
-/**
- * @brief
- *
- * @param pcWriteBuffer
- * @param xWriteBufferLen
- * @param pcCommandString
- * @return
- */
-BaseType_t AFE_read_all (char *pcWriteBuffer, size_t xWriteBufferLen, const char *pcCommandString)
-{
-    BaseType_t retVal = pdFALSE;
-
-    DebugP_log("\r\n\n");
-    DebugP_log("AFE AI1P (X38.1A) =  %.2fV   (Input Range 0...10V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI1P) );
-    DebugP_log("AFE AI1N (X38.2A) =  %.2fV   (Input Range 0...10V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI1N) );
-    DebugP_log("AFE AI2P (X38.3A) =  %.2fV   (Input Range 0...10V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI2P) );
-    DebugP_log("AFE AI2N (X38.4A) =  %.2fV   (Input Range 0...10V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI2N) );
-    DebugP_log("\r\n");
-    DebugP_log("AFE AI3P (X38.5A) =  %.2fV   (Input Range 0...2V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI3P) );
-    DebugP_log("AFE AI3N (X38.6A) =  %.2fV   (Input Range 0...2V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI3N) );
-    DebugP_log("AFE AI4P (X38.7A) =  %.2fV   (Input Range 0...2V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI4P) );
-    DebugP_log("AFE AI5N (X38.8A) =  %.2fV   (Input Range 0...2V)\r\n",AFE_ReadAdcVoltage(AFE_CH_AI4N) );
-
-    AFE_SPI_Read(SERIAL0_REG_ADD, reg_16bit);
-    DebugP_log("PN2 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3]);
-
-    AFE_SPI_Read(SERIAL1_REG_ADD, reg_16bit);
-    DebugP_log("PN1 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3]);
-
-    AFE_SPI_Read(PROD_REV_REG_ADD, reg_16bit);
-    DebugP_log("PN0 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3]);
-
-    //24 Bit Register
-    AFE_SPI_Read(CHANNEL_REG.OPT_COEF[14], reg_24bit);
-    DebugP_log("SERIAL1 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 16) | ((uint16_t)AFE_rxBuffer[3] << 8) | (uint16_t)AFE_rxBuffer[4]);
-
-    AFE_SPI_Read(CHANNEL_REG.OPT_COEF[15], reg_24bit);
-    DebugP_log("SERIAL0 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 16) | ((uint16_t)AFE_rxBuffer[3] << 8) | (uint16_t)AFE_rxBuffer[4]);
-
-    AFE_SPI_Read(CHANNEL_REG.OPT_COEF[0], reg_24bit);
-    DebugP_log("OPT_COEF0 = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 16) | ((uint16_t)AFE_rxBuffer[3] << 8) | (uint16_t)AFE_rxBuffer[4]);
-
-    AFE_SPI_Read(ALARM_CONTROL.DIE_TEMP, reg_16bit);
-    DebugP_log("DIE_TEMP = 0x%X\r\n",  ((uint16_t)AFE_rxBuffer[2] << 8) | (uint16_t)AFE_rxBuffer[3]);
-
-    return retVal;
-}
-
-

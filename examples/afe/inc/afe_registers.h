@@ -61,7 +61,7 @@
  */
 #define CMD_ABORT            0x0010        /*Abort current channel conversion*/         /* + rev.B: Return to inital waiting state*/
 #define CMD_END              0x0011        /*Complete current channel conversion*/      /* + rev.B: Return to inital waiting state*/
-#define CMD_CLEAR_ALRM       0x0012        /*Clear global Alarm*/                       //ToDo //Bits at 0x33
+#define CMD_CLEAR_ALRM       0x0012        /*Clear global Alarm, cleares GLOBAL ALARM INTERRUPT bits at 0x33*/
 #define CMD_CLEAR_DATA       0x0013        /*Clear CH_DATA0-15 Registers*/
 #define CMD_RESET            0x0014        /*HW reset = RSTB pulled Low(*/
 #define CMD_CLEAR_REG        0x0015        /*Clear user accessible registers without clock source selection*/
@@ -119,20 +119,16 @@
 
 /**
  * @def SERIAL0_REGISTER
- * <TODO short description of the purpose of this define>
  */
 #define SERIAL0             0x007C          /*Read only Register*/
 
 /**
  * @def SERIAL1_REGISTER
- * <TODO short description of the purpose of this define>
  */
 #define SERIAL1             0x007D          /*Read only Register*/
 
 /**
- * @def PROD_REV_REGISTER
- * <TODO short description of the purpose of this define>
- */
+ * @def PROD_REV_REGISTER */
 #define PROD_REV            0x007E          /*Read only Register*/
 
 /*
@@ -236,21 +232,21 @@
 #define CH_CONFIG1_CH_CAL_GAIN_OFFSET_SHIFT                            (12)
 /*! CH_CAL_GAIN_OFFSET
  *  Selection 1 of 16 calibrated gain and offset coefficient pairs in the Calibrated Channel
- */ //ToDO
+ */
 #define CH_CONFIG1_CH_CAL_GAIN_OFFSET(x)    (((uint16_t)(((uint16_t)(x)) << CH_CONFIG1_CH_CAL_GAIN_OFFSET_SHIFT)) & CH_CONFIG1_CH_CAL_GAIN_OFFSET_MASK)
 
 
 /*Bit Masking Channel Over-/Under-range Threshold*/
 #define CH_CONFIG1_CH_THRS_MASK                                        (0x0F00U)
 #define CH_CONFIG1_CH_THRS_SHIFT                                       (8)
-//ToDO Comments with TABLE_ADC_RANGE_THRS
+
 #define CH_CONFIG1_CH_THRS(x)               (((uint16_t)(((uint16_t)(x)) << CH_CONFIG1_CH_THRS_SHIFT)) & CH_CONFIG1_CH_THRS_MASK)
 
 
 /*Bit Masking ADC_DATA_RATE*/
 #define CH_CONFIG1_ADC_DATA_RAT_MASK                                   (0x00F8U)
 #define CH_CONFIG1_ADC_DATA_RAT_SHIFT                                  (2)
-//ToDO Comments with TABLE_ADC_RATE
+
 #define CH_CONFIG1_CH_THRS_OFFSET(x)        (((uint16_t)(((uint16_t)(x)) << CH_CONFIG1_CH_CAL_GAIN_OFFSET_SHIFT)) & CH_CONFIG1_CH_CAL_GAIN_OFFSET_MASK)
 
 
@@ -277,7 +273,7 @@
 /*Bit Masking Channel Delay*/
 #define CH_CONFIG2_CH_DELAY_MASK                                       (0xF000U)
 #define CH_CONFIG2_CH_DELAY_SHIFT                                      (12)
-/*! ToDO Programmable Delay Table
+/*! Programmable Delay Table
  *  0b0000..Writing 0 to this field results in an
  *  0b0001..
  */
@@ -327,9 +323,8 @@
 /*Bit Masking Channel Delay*/
 #define CH_CONFIG2_CH_DELAY_MASK                                       (0xFC00U)
 #define CH_CONFIG2_CH_DELAY_SHIFT                                      (10)
-/*! ToDO Programmable Delay Table
- *  0b000000..Writing 0 to this field results in an
- *  0b000001..
+/*! Programmable Delay Table 0b000000.
+ * Writing 0 to this field results in an 0b000001.
  */
 #define CH_CONFIG2_CH_DELAY(x)              (((uint16_t)(((uint16_t)(x)) << CH_CONFIG2_CH_DELAY_SHIFT)) & CH_CONFIG2_CH_DELAY_MASK)
 
@@ -382,19 +377,12 @@
 /*Bit Masking Excitation V/I Source Magnitude*/
 #define CH_CONFIG3_VIEX_MAG_MASK                                       (0x3C00U)
 #define CH_CONFIG3_VIEX_MAG_SHIFT                                      (9)
-/*! VIEX_VI ToDO
+/*! VIEX_VI
  *  0b0..Writing 0 to this field
  *  0b1..Write 1 -->
  */
 #define CH_CONFIG3_VIEX_MAG(x)                (((uint16_t)(((uint16_t)(x)) << CH_CONFIG3_VIEX_MAG_SHIFT)) & CH_CONFIG3_VIEX_MAG_MASK)
 
-
-/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-/*ToDO NAFE13388 rev.A Mistake at Datasheet Register Map p.119????*/
-/*
- * If VIEX_CHOP and CH_CHOP are both set,this particular bit is ignored
- * Refer to CH_CONFIG2 Register!
- */
 /*Bit Masking Enable Excitation V/I Source Polarity chopping*/
 #define CH_CONFIG3_VIEX_CHOP_MASK                                      (0x0040U)
 #define CH_CONFIG3_VIEX_CHOP_SHIFT                                     (5)
@@ -704,7 +692,7 @@
 /*For detail Discription refer to Register Map NAFE13388.v43 p.118*/
 
 /**
- * @struct __CH_CHONFIG_t
+ * @struct __CH_CONFIG_t
  * <Configuration/ Status Register for MUX/ PGA/ SINC/ ADC / OVR| UDR CH Range>
  */
 typedef struct __CH_CONFIG_t
@@ -714,10 +702,8 @@ typedef struct __CH_CONFIG_t
     uint16_t CH_CONFIG2;                /*Config ADC + Delay*/
     uint16_t CH_CONFIG3;                /*Config Excitation V/I Source*/
     uint16_t CH_CONFIG4;                /*Enable CH Config ADC Multi Channel*/
-
     uint16_t CH_STATUS0;                /*Channel over range register*/
     uint16_t CH_STATUS1;                /*Channel under range register*/
-
 } CH_CONFIG_t;
 
 
@@ -730,7 +716,6 @@ typedef struct __CRC_REG_t
     uint16_t CRC_CONF_REGS;             /*CRC result of all configuration*/
     uint16_t CRC_COEF_REGS;             /*CRC result of all user coeffiecient*/
     uint16_t CRC_TRIM_REGS;             /*CRC result of factroy trim OTP */
-
 } CRC_REG_t;
 
 /**
@@ -746,7 +731,6 @@ typedef struct __GPIO_REG_t
     uint16_t GPI_EDGE_POS;              /*GPI Pos. Edge -> Clear after readback or CMD_CLEAR_ALARM*/
     uint16_t GPI_EDGE_NEG;              /*GPI Neg. Edge -> Clear after readback or CMD_CLEAR_ALARM*/
     uint16_t GPO_DATA;                  /*GPIO output data GPIO9-15 is bit6*/
-
 } GPIO_REG_t;
 
 /**
@@ -757,12 +741,10 @@ typedef struct __SYS_REG_t
 {
     uint16_t SYS_CONFIG0;               /*System configuration Register*/
     uint16_t SYS_STATUS0;               /*System status Register*/
-
 } SYS_REG_t;
 
 /**
- * @struct __MONITORING_REG
- * <TODO short explanation of the purpose of this struct>
+ * @struct ____MONITORING_REG_tag
  */
 typedef struct __MONITORING_REG_tag
 {
@@ -770,7 +752,6 @@ typedef struct __MONITORING_REG_tag
     uint16_t GLOBAL_ALARM_INTERRUPT;    /*ALARM INT Register*/
     uint16_t DIE_TEMP;                  /*16bit Temp read only 2's complement*/
     uint16_t THRS_TEMP;                 /*Threshold Temperature Register*/
-
 } MONITORING_REG_t;
 
 
@@ -786,24 +767,19 @@ typedef struct __CHANNEL_TypDef_t
     uint16_t GAIN_COEF[16];             /*Calibrated gain coeffient 0..15 [23:0] Register*/
     uint16_t OFFSET_COEF[16];           /*Calibrated offset coeffient 0..15 [23:0] Register*/
     uint16_t OPT_COEF[16];              /*Extra Register for Temp storing coefficients*/
-
 } CHANNEL_TypDef_t;
 
 /**
- * @struct afe_ch_config
- * <TODO short explanation of the purpose of this struct>
+ * @struct afe_ch_config_tag
  */
 typedef struct afe_ch_config_tag
 {
     uint8_t hv_aip;
     uint8_t test2;
-
-
 } afe_ch_config_t;
 
 /**
- * @struct afe_sys_config
- * <TODO short explanation of the purpose of this struct>
+ * @struct afe_sys_config_tag
  */
 typedef struct afe_sys_config_tag
 {
@@ -811,7 +787,6 @@ typedef struct afe_sys_config_tag
     uint8_t value2;
     uint8_t value3;
     uint8_t value4;
-
 } afe_sys_config_t;
 
 /*******************************************************************************
@@ -833,7 +808,6 @@ extern const GPIO_REG_t GPIO_CONTROL;
 extern const SYS_REG_t SYS_CONTROL;
 extern const MONITORING_REG_t ALARM_CONTROL;
 extern CHANNEL_TypDef_t CHANNEL_REG;
-
 
 #endif /* AFE_DRIVER_INC_FSL_AFE_REGISTERS_H_ */
 

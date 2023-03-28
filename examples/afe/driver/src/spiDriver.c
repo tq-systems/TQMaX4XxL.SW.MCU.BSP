@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * @file afe_registers.c
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @copyright Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
  * @date 2023-02-17
@@ -72,7 +72,7 @@
  * @param size data size in byte
  * @return true = success
  */
-bool spi_transmit(uint8_t* p_txBuf, uint8_t* p_rxBuf, uint8_t size)
+bool spi_transfer(uint8_t* p_txBuf, uint8_t* p_rxBuf, uint8_t size)
 {
     MCSPI_Transaction   spiTransaction = {0};
     int32_t             transferOK     = SystemP_SUCCESS;

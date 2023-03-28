@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * @file afe_comms.h
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @copyright Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
  * @date 2023-02-14
@@ -29,7 +29,6 @@
 #define BUFFER_SIZE          18
 #define AFE_txBuffer         SPI_txBuffer
 #define AFE_rxBuffer         SPI_rxBuffer
-#define AFE_BUFFER_SIZE      BUFFER_SIZE
 
 #define SPI_DUMMY_DATA       0x00
 

@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * @file gpio_dig_cmd.c
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @copyright Copyright (c) 2022 TQ-y GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
  * @date 2022-07-15
@@ -59,7 +59,7 @@ enum
     DIG_IN_MAX
 };
 
-/* The definition of the "digial GPIO" command. */
+/* The definition of the "digital GPIO" command. */
 const CLI_Command_Definition_t gpioDigCommandDef =
 {
     "gpio",
@@ -140,6 +140,13 @@ static bool gpioSetStatus(const digGpio_t* const pGpio, const pinStatus_t pinSta
  * global functions
  ******************************************************************************/
 
+/**
+ * @brief This function sets the GPIO output to high or low.
+ *
+ * @param gpio GPIO to be set
+ * @param pinStatus Status of the GPIO, false = low, true = high
+ * @return success
+ */
 bool gpio_writePinOut(GpioOut_t gpio, pinStatus_t pinStatus)
 {
     bool retVal = false;

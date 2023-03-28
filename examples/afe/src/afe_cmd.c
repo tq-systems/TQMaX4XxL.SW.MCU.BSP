@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * @file afe_cmd.c
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @copyright Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
  * @date 2023-02-17
@@ -112,7 +112,7 @@ BaseType_t afeCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char
             sprintf(&pcWriteBuffer[0], "Voltage %.1fV\r\n\n", val);
         }
     }
-    else if (!strcmp(pcParameter[0], "temp"))
+    else if (!strncmp(pcParameter[0], "temp", strlen("temp")))
     {
         val = AFE_ReadDieTemp();
         sprintf(&pcWriteBuffer[0], "Temperature %.1f%cC\r\n\n", val, (uint8_t)176);

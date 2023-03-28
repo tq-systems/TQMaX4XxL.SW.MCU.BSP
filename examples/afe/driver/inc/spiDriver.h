@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * @file spiDriver.h
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @copyright Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
  * @date 2023-02-17
@@ -45,7 +45,7 @@
  * prototypes
  ******************************************************************************/
 
-bool spi_transmit(uint8_t* p_txBuf, uint8_t* p_rxBuf, uint8_t size);
+bool spi_transfer(uint8_t* p_txBuf, uint8_t* p_rxBuf, uint8_t size);
 
 /*******************************************************************************
  * global extern data

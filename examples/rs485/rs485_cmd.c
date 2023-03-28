@@ -1,15 +1,10 @@
-/**
+/* SPDX-License-Identifier: BSD-3-Clause */
+/*
  * @file rs485_cmd.c
- * @author Copyright (c) 2023, TQ-Systems GmbH
+ * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
+
  * @date 2023-01-04
- *
- * This software code contained herein is licensed under the terms and
- * conditions of the TQ-Systems Software License Agreement Version 1.0.2.
- * You may obtain a copy of the TQ-Systems Software License Agreement in the
- * folder TQS (TQ-Systems Software Licenses) at the following website:
- * https://www.tq-group.com/Software-Lizenzbedingungen
- * In case of any license issues please contact license@tq-group.com.
  *
  * -----------------------------------------------------------------------------
  * @brief This file contains the implementation of the RS485 command.
