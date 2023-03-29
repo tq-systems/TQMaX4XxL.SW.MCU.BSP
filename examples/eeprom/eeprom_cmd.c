@@ -53,7 +53,7 @@
  * local macros
  ******************************************************************************/
 
-/* The definition of the "ledblink" command. */
+/* The definition of the "EEPROM" command. */
 const CLI_Command_Definition_t eepromCommandDef =
 {
     "eeprom",

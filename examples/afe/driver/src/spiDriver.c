@@ -1,13 +1,13 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * @file rs485_cmd.c
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @file afe_registers.c
+ * @copyright Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
-
- * @date 2023-01-04
+ *
+ * @date 2023-02-17
  *
  * -----------------------------------------------------------------------------
- * @brief This file contains the implementation of the RS485 command.
+ * @brief This file contains the SPI driver implementation.
  *
  */
 
@@ -16,14 +16,13 @@
  ******************************************************************************/
 
 /* runtime */
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
+
 /* project */
-#include "projdefs.h"
-#include "utilities.h"
+#include "ti_drivers_config.h"
+#include "ti_drivers_open_close.h"
+#include "ti_board_open_close.h"
 /* own */
-#include "rs485_cmd.h"
+#include "spiDriver.h"
 
 /*******************************************************************************
  * local defines
@@ -35,14 +34,7 @@
  * local macros
  ******************************************************************************/
 
-/* The definition of the "ledblink" command. */
-const CLI_Command_Definition_t rs485CommandDef =
-{
-    "rs485",
-    "\r\nrs485 [rs485]:\r\n Read or write data via RS485.\r\n\r\n",
-    rs485Command,
-    0
-};
+
 
 /*******************************************************************************
  * local typedefs
@@ -60,7 +52,7 @@ const CLI_Command_Definition_t rs485CommandDef =
  * forward declarations
  ******************************************************************************/
 
-void uart_echo(void *args);
+
 
 /*******************************************************************************
  * local static functions
@@ -73,22 +65,40 @@ void uart_echo(void *args);
  ******************************************************************************/
 
 /**
- * @brief This function handles the command of the RS485.
+ * @brief This function transmit and receive data from SPI bus.
  *
- * @param pcWriteBuffer cli output string buffer
- * @param xWriteBufferLen length of the cli output string
- * @param pcCommandString cli command input string
- * @return pdFALSE = command is finished
+ * @param p_txBuf Pointer to the transmit buffer, must be large enough for tx and rx data
+ * @param p_rxBuf Pointer to the receive buffer, must be large enough for tx and rx data
+ * @param size data size in byte
+ * @return true = success
  */
-BaseType_t rs485Command(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString)
+bool spi_transfer(uint8_t* p_txBuf, uint8_t* p_rxBuf, uint8_t size)
 {
-    UNUSED_PARAM(pcWriteBuffer);
-    UNUSED_PARAM(xWriteBufferLen);
-    UNUSED_PARAM(pcCommandString);
+    MCSPI_Transaction   spiTransaction = {0};
+    int32_t             transferOK     = SystemP_SUCCESS;
+    bool                retVal         = true;
 
-    uart_echo(NULL);
+    Drivers_mcspiOpen();
 
-    return pdFALSE;
+    MCSPI_Transaction_init(&spiTransaction);
+    spiTransaction.channel   = gConfigMcspi0ChCfg[0].chNum;
+    spiTransaction.csDisable = TRUE;
+    spiTransaction.txBuf     = (void*) p_txBuf;
+    spiTransaction.rxBuf     = (void*) p_rxBuf;
+    spiTransaction.args      = NULL;
+    spiTransaction.dataSize  = 8;       /* transmit 8 bits per frame count */
+    spiTransaction.count     = size;    /* frame counter */
+
+    transferOK = MCSPI_transfer(gMcspiHandle[CONFIG_MCSPI0], &spiTransaction);
+
+    if ((SystemP_SUCCESS != transferOK) || (MCSPI_TRANSFER_COMPLETED != spiTransaction.status))
+    {
+        retVal = false;
+    }
+
+    Drivers_mcspiClose();
+
+    return retVal;
 }
 
 /*[EOF]************************************************************************/

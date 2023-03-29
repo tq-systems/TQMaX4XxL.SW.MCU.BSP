@@ -1,29 +1,26 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * @file rs485_cmd.h
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @file crcDriver.h
+ * @copyright Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
- * @date 2023-01-04
+ * @date 2023-02-17
  *
  * -----------------------------------------------------------------------------
- * @brief This file contains the declaration of the RS485 command.
+ * @brief This file contains the declaration of the CRC calculation.
  *
  */
 
-#ifndef EXAMPLES_INCLUDE_RS485_CMD_H_
-#define EXAMPLES_INCLUDE_RS485_CMD_H_
+#ifndef EXAMPLES_AFE_DRIVER_INC_CRCDRIVER_H_
+#define EXAMPLES_AFE_DRIVER_INC_CRCDRIVER_H_
 
 /*******************************************************************************
  * includes
  ******************************************************************************/
 
 /* runtime */
-
+#include <stdint.h>
 /* project */
-#include "portmacro.h"
-#include "FreeRTOS_CLI.h"
-
 
 /*******************************************************************************
  * defines
@@ -47,16 +44,16 @@
  * prototypes
  ******************************************************************************/
 
-BaseType_t rs485Command(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
+uint32_t crc_compute(uint8_t* p_buf, uint8_t size);
 
 /*******************************************************************************
  * global extern data
  ******************************************************************************/
 
-extern const CLI_Command_Definition_t rs485CommandDef;
+
 
 /******************************************************************************/
 
-#endif /* EXAMPLES_INCLUDE_RS485_CMD_H_ */
+#endif /* EXAMPLES_AFE_DRIVER_INC_CRCDRIVER_H_ */
 
 /*[EOF]************************************************************************/

@@ -1,62 +1,84 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * @file rs485_cmd.h
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @file crcDriver.c
+ * @copyright Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
- * @date 2023-01-04
+ * @date 2023-02-14
  *
  * -----------------------------------------------------------------------------
- * @brief This file contains the declaration of the RS485 command.
+ * @brief This file contains the implementation of the CRC calculation.
  *
  */
 
-#ifndef EXAMPLES_INCLUDE_RS485_CMD_H_
-#define EXAMPLES_INCLUDE_RS485_CMD_H_
-
 /*******************************************************************************
- * includes
+ * local includes
  ******************************************************************************/
 
 /* runtime */
 
 /* project */
-#include "portmacro.h"
-#include "FreeRTOS_CLI.h"
-
+#include "utilities.h"
+/* own */
+#include "crcDriver.h"
 
 /*******************************************************************************
- * defines
+ * local defines
  ******************************************************************************/
 
 
 
 /*******************************************************************************
- * macros
+ * local macros
  ******************************************************************************/
 
 
 
 /*******************************************************************************
- * typedefs
+ * local typedefs
  ******************************************************************************/
 
 
 
 /*******************************************************************************
- * prototypes
+ * local static data
  ******************************************************************************/
 
-BaseType_t rs485Command(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
+
 
 /*******************************************************************************
- * global extern data
+ * forward declarations
  ******************************************************************************/
 
-extern const CLI_Command_Definition_t rs485CommandDef;
 
-/******************************************************************************/
 
-#endif /* EXAMPLES_INCLUDE_RS485_CMD_H_ */
+/*******************************************************************************
+ * local static functions
+ ******************************************************************************/
+
+
+
+/*******************************************************************************
+ * global functions
+ ******************************************************************************/
+
+/**
+ * @brief This function computes the CRC
+ *
+ * @param p_buf pointer to buffer
+ * @param length buffer length
+ * @return crc
+ */
+uint32_t crc_compute(uint8_t* p_buf, uint8_t length)
+{
+    UNUSED_PARAM(p_buf);
+    UNUSED_PARAM(length);
+
+    uint32_t computedCRC = 0;
+
+    /* CRC function not implemented */
+
+    return computedCRC;
+}
 
 /*[EOF]************************************************************************/

@@ -38,6 +38,7 @@
 #include "task.h"
 #include "CLI_task.h"
 #include "eth_cmd.h"
+#include "afe.h"
 
 #define MAIN_TASK_PRI  (configMAX_PRIORITIES-1)
 #define CLI_TASK_PRI   (configMAX_PRIORITIES-3)
@@ -75,6 +76,9 @@ void freertos_main(void *args)
     gCliTaskHandle = xTaskCreateStatic(cliTask, "CLI Task", CLI_TASK_SIZE, NULL, CLI_TASK_PRI, gCliTaskStack, &gCliTaskObj);
 
     gEthTaskHandle = xTaskCreateStatic(ethTask, "ETH Task", ETH_TASK_SIZE, NULL, ETH_TASK_PRI, gEthTaskStack, &gEthTaskObj);
+
+    AFE_Enable();
+    AFE_Init();
 
     vTaskDelete(NULL);
 }

@@ -1,18 +1,18 @@
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
- * @file rs485_cmd.h
- * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ * @file afe_cmd.h
+ * @copyright Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  * @author Michael Bernhardt
  *
- * @date 2023-01-04
+ * @date 2023-02-17
  *
  * -----------------------------------------------------------------------------
- * @brief This file contains the declaration of the RS485 command.
+ * @brief This file contains the declaration of the AFE command.
  *
  */
 
-#ifndef EXAMPLES_INCLUDE_RS485_CMD_H_
-#define EXAMPLES_INCLUDE_RS485_CMD_H_
+#ifndef EXAMPLES_AFE_INC_AFE_CMD_H_
+#define EXAMPLES_AFE_INC_AFE_CMD_H_
 
 /*******************************************************************************
  * includes
@@ -22,8 +22,8 @@
 
 /* project */
 #include "portmacro.h"
+#include "projdefs.h"
 #include "FreeRTOS_CLI.h"
-
 
 /*******************************************************************************
  * defines
@@ -47,16 +47,16 @@
  * prototypes
  ******************************************************************************/
 
-BaseType_t rs485Command(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
+BaseType_t afeCommand(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
 
 /*******************************************************************************
  * global extern data
  ******************************************************************************/
 
-extern const CLI_Command_Definition_t rs485CommandDef;
+extern const CLI_Command_Definition_t afeCommandDef;
 
 /******************************************************************************/
 
-#endif /* EXAMPLES_INCLUDE_RS485_CMD_H_ */
+#endif /* EXAMPLES_AFE_INC_AFE_CMD_H_ */
 
 /*[EOF]************************************************************************/
