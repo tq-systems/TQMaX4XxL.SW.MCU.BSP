@@ -78,12 +78,12 @@ static void App_adcStart(uint32_t baseAddr);
 static void App_adcStop(uint32_t baseAddr);
 static void App_adcDeInit(uint32_t baseAddr);
 
-void adc_singleshot_main(void *args)
+int32_t adc_singleshot_main(void *args)
 {
     uint32_t baseAddr = CONFIG_ADC0_BASE_ADDR;
     HwiP_Params hwiPrms;
     uint32_t loopcnt, fifoData, fifoWordCnt, stepID, voltageLvl;
-    int32_t status;
+    int32_t status = SystemP_SUCCESS;
 
     uint32_t* adcVal = args;
 
@@ -93,7 +93,11 @@ void adc_singleshot_main(void *args)
     DebugP_log("ADC Single Shot Test Started ...\r\n");
 
     status = SemaphoreP_constructBinary(&gAdcSyncSemObject, 0);
-    DebugP_assert(SystemP_SUCCESS == status);
+
+    if (SystemP_SUCCESS != status)
+    {
+        return status;
+    }
 
     /* Register & enable interrupt */
     HwiP_Params_init(&hwiPrms);
@@ -101,7 +105,10 @@ void adc_singleshot_main(void *args)
     hwiPrms.callback = &App_adcISR;
     hwiPrms.priority = 1U;
     status = HwiP_construct(&gAdcHwiObject, &hwiPrms);
-    DebugP_assert(SystemP_SUCCESS == status);
+    if (SystemP_SUCCESS != status)
+    {
+        return status;
+    }
 
     /* Initialize, Configure and Start the ADC module */
     App_adcInit(baseAddr);
@@ -138,6 +145,8 @@ void adc_singleshot_main(void *args)
     DebugP_log("All tests have passed!!\r\n");
 
     Board_driversClose();
+
+    return status;
 }
 
 void App_adcISR(void *handle)
