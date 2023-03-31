@@ -117,13 +117,12 @@ static uint32_t          gMcanRxBaseAddr;
 /* Static Function Declarations */
 static void    App_mcanIntrISR(void *arg);
 static void    App_mcanConfig(void);
-static void    App_mcanInitMsgRamConfigParams(
-               MCAN_MsgRAMConfigParams *msgRAMConfigParams);
+static int32_t App_mcanInitMsgRamConfigParams(MCAN_MsgRAMConfigParams* msgRAMConfigParams);
 static void    App_mcanEnableIntr(void);
 static void    App_mcanConfigTxMsg(MCAN_TxBufElement *txMsg);
 extern int32_t IpcNotify_syncAll(uint32_t timeout);
 
-void mcan_tx_interrupt_main(void *args, uint64_t mcanAdd)
+int32_t mcan_tx_interrupt_main(void *args, uint64_t mcanAdd)
 {
     int32_t                 status = SystemP_SUCCESS;
     HwiP_Params             hwiPrms;
@@ -141,7 +140,10 @@ void mcan_tx_interrupt_main(void *args, uint64_t mcanAdd)
 
     /* Construct Tx Semaphore objects */
     status = SemaphoreP_constructBinary(&gMcanTxDoneSem, 0);
-    DebugP_assert(SystemP_SUCCESS == status);
+    if (status != SystemP_SUCCESS)
+    {
+        return status;
+    }
 
     /* Register interrupt */
     HwiP_Params_init(&hwiPrms);
@@ -155,7 +157,10 @@ void mcan_tx_interrupt_main(void *args, uint64_t mcanAdd)
     }
     hwiPrms.callback    = &App_mcanIntrISR;
     status              = HwiP_construct(&gMcanTxHwiObject, &hwiPrms);
-    DebugP_assert(status == SystemP_SUCCESS);
+    if (status != SystemP_SUCCESS)
+    {
+        return status;
+    }
 
     /* Assign MCAN instance address */
     gMcanRxBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(mcanAdd);
@@ -181,14 +186,20 @@ void mcan_tx_interrupt_main(void *args, uint64_t mcanAdd)
         /* Enable Transmission interrupt for the selected buf num,
          * If FIFO is used, then need to send FIFO start index until FIFO count */
         status = MCAN_txBufTransIntrEnable(gMcanRxBaseAddr, bufNum, (uint32_t)TRUE);
-        DebugP_assert(status == CSL_PASS);
+        if (status != CSL_PASS)
+        {
+            return status;
+        }
 
         /* Write message to Msg RAM */
         MCAN_writeMsgRam(gMcanRxBaseAddr, MCAN_MEM_TYPE_BUF, bufNum, &txMsg);
 
         /* Add request for transmission, This function will trigger transmission */
         status = MCAN_txBufAddReq(gMcanRxBaseAddr, bufNum);
-        DebugP_assert(status == CSL_PASS);
+        if (status != CSL_PASS)
+        {
+            return status;
+        }
 
         /* Wait for Tx completion */
         SemaphoreP_pend(&gMcanTxDoneSem, 100);
@@ -201,7 +212,7 @@ void mcan_tx_interrupt_main(void *args, uint64_t mcanAdd)
              (MCAN_ERR_CODE_NO_CHANGE != protStatus.dlec)) &&
             (0U != protStatus.pxe))
         {
-             DebugP_assert(FALSE);
+             return SystemP_FAILURE;
         }
     }
 
@@ -218,7 +229,7 @@ void mcan_tx_interrupt_main(void *args, uint64_t mcanAdd)
 
     memcpy(args, &txMsg, sizeof(txMsg));
 
-    return;
+    return status;
 }
 
 static void App_mcanConfig(void)
@@ -303,10 +314,9 @@ static void App_mcanEnableIntr(void)
     return;
 }
 
-static void App_mcanInitMsgRamConfigParams(MCAN_MsgRAMConfigParams
-                                           *msgRAMConfigParams)
+static int32_t App_mcanInitMsgRamConfigParams(MCAN_MsgRAMConfigParams* msgRAMConfigParams)
 {
-    int32_t status;
+    int32_t status = CSL_PASS;
 
     MCAN_initMsgRamConfigParams(msgRAMConfigParams);
 
@@ -325,9 +335,8 @@ static void App_mcanInitMsgRamConfigParams(MCAN_MsgRAMConfigParams
     msgRAMConfigParams->rxFIFO1OpMode = MCAN_RX_FIFO_OPERATION_MODE_BLOCKING;
 
     status = MCAN_calcMsgRamParamsStartAddr(msgRAMConfigParams);
-    DebugP_assert(status == CSL_PASS);
 
-    return;
+    return status;
 }
 
 static void App_mcanIntrISR(void *arg)
