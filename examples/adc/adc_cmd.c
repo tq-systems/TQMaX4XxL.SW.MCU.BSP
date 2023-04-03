@@ -85,7 +85,7 @@ BaseType_t adcCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char
     uint32_t adcValue[APP_ADC_NUM_CH] = {0};
     uint32_t counter                  = 0;
     uint8_t  i                        = 0;
-    int32_t status                    = SystemP_SUCCESS;
+    int32_t  status                   = SystemP_SUCCESS;
 
     status = adc_singleshot_main(adcValue);
 
