@@ -60,7 +60,7 @@ const CLI_Command_Definition_t adcCommandDef =
  * forward declarations
  ******************************************************************************/
 
-void adc_singleshot_main(void *args);
+extern int32_t adc_singleshot_main(void* args);
 
 /*******************************************************************************
  * local static functions
@@ -85,14 +85,22 @@ BaseType_t adcCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char
     uint32_t adcValue[APP_ADC_NUM_CH] = {0};
     uint32_t counter                  = 0;
     uint8_t  i                        = 0;
+    int32_t  status                   = SystemP_SUCCESS;
 
-    adc_singleshot_main(adcValue);
+    status = adc_singleshot_main(adcValue);
 
-    counter += sprintf(&pcWriteBuffer[counter], "Step ID\tVoltage Level\r\n");
-    counter += sprintf(&pcWriteBuffer[counter], "-------\t-------------\r\n");
-    for(i = 0; i < APP_ADC_NUM_CH; i++)
+    if (SystemP_SUCCESS == status)
     {
-        counter += sprintf(&pcWriteBuffer[counter], "%d\t%d mV\r\n", i, adcValue[i]);
+        counter += sprintf(&pcWriteBuffer[counter], "Step ID\tVoltage Level\r\n");
+        counter += sprintf(&pcWriteBuffer[counter], "-------\t-------------\r\n");
+        for (i = 0; i < APP_ADC_NUM_CH; i++)
+        {
+            counter += sprintf(&pcWriteBuffer[counter], "%d\t%d mV\r\n", i, adcValue[i]);
+        }
+    }
+    else
+    {
+        counter += sprintf(&pcWriteBuffer[counter], "[ADC] Failure %i\r\n", status);
     }
 
     return pdFALSE;

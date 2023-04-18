@@ -122,17 +122,16 @@ void mcan_enableTransceiver(void);
 /* Static Function Declarations */
 static void    App_mcanIntrISR(void *arg);
 static void    App_mcanConfig(void);
-static void    App_mcanInitMsgRamConfigParams(
-               MCAN_MsgRAMConfigParams *msgRAMConfigParams);
+static int32_t App_mcanInitMsgRamConfigParams(MCAN_MsgRAMConfigParams* msgRAMConfigParams);
 static void    App_mcanEnableIntr(void);
-static void    App_mcanCompareMsg(MCAN_RxBufElement *rxMsg);
+static bool    App_mcanCompareMsg(MCAN_RxBufElement *rxMsg);
 static void    App_mcanInitStdFilterElemParams(
                                   MCAN_StdMsgIDFilterElement *stdFiltElem,
                                   uint32_t bufNum);
 static void    App_mcanInitExpectedRxData(void);
 extern int32_t IpcNotify_syncAll(uint32_t timeout);
 
-void mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
+int32_t mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
 {
     int32_t                 status = SystemP_SUCCESS;
     HwiP_Params             hwiPrms;
@@ -151,7 +150,10 @@ void mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
 
     /* Construct Rx Semaphore objects */
     status = SemaphoreP_constructBinary(&gMcanRxDoneSem, 0);
-    DebugP_assert(SystemP_SUCCESS == status);
+    if (status != SystemP_SUCCESS)
+    {
+        return status;
+    }
 
     /* Register interrupt */
     HwiP_Params_init(&hwiPrms);
@@ -165,7 +167,10 @@ void mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
     }
     hwiPrms.callback    = &App_mcanIntrISR;
     status              = HwiP_construct(&gMcanRxHwiObject, &hwiPrms);
-    DebugP_assert(status == SystemP_SUCCESS);
+    if (status != SystemP_SUCCESS)
+    {
+        return status;
+    }
 
     /* Assign MCAN instance address */
     gMcanRxBaseAddr = (uint32_t) AddrTranslateP_getLocalAddr(mcanAdd);
@@ -186,7 +191,10 @@ void mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
 
     /* Checking for Rx Errors */
     MCAN_getErrCounters(gMcanRxBaseAddr, &errCounter);
-    DebugP_assert((0U == errCounter.recErrCnt) && (0U == errCounter.canErrLogCnt));
+    if ((0U != errCounter.recErrCnt) || (0U != errCounter.canErrLogCnt))
+    {
+        return SystemP_FAILURE;
+    }
 
     /* Get the new data staus, indicates buffer num which received message */
     MCAN_getNewDataStatus(gMcanRxBaseAddr, &newDataStatus);
@@ -203,7 +211,7 @@ void mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
     }
     else
     {
-        DebugP_assert(FALSE);
+        return SystemP_FAILURE;
     }
 
     /* De-Construct Rx Semaphore objects */
@@ -220,6 +228,7 @@ void mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
     Board_driversClose();
     /* We don't close drivers so that the UART driver remains open and flush any
      * pending messages to console */
+    return status;
 }
 
 static void App_mcanConfig(void)
@@ -317,10 +326,9 @@ static void App_mcanEnableIntr(void)
     return;
 }
 
-static void App_mcanInitMsgRamConfigParams(MCAN_MsgRAMConfigParams
-                                           *msgRAMConfigParams)
+static int32_t App_mcanInitMsgRamConfigParams(MCAN_MsgRAMConfigParams* msgRAMConfigParams)
 {
-    int32_t status;
+    int32_t status = CSL_PASS;
 
     MCAN_initMsgRamConfigParams(msgRAMConfigParams);
 
@@ -339,14 +347,14 @@ static void App_mcanInitMsgRamConfigParams(MCAN_MsgRAMConfigParams
     msgRAMConfigParams->rxFIFO1OpMode = MCAN_RX_FIFO_OPERATION_MODE_BLOCKING;
 
     status = MCAN_calcMsgRamParamsStartAddr(msgRAMConfigParams);
-    DebugP_assert(status == CSL_PASS);
 
-    return;
+    return status;
 }
 
-static void App_mcanCompareMsg(MCAN_RxBufElement *rxMsg)
+static bool App_mcanCompareMsg(MCAN_RxBufElement *rxMsg)
 {
     uint32_t i;
+    bool retVal = true;
 
     if (APP_MCAN_STD_ID == ((rxMsg->id >> APP_MCAN_STD_ID_SHIFT) & APP_MCAN_STD_ID_MASK))
     {
@@ -355,17 +363,17 @@ static void App_mcanCompareMsg(MCAN_RxBufElement *rxMsg)
             if (gMcanRxRecvdData[i] != rxMsg->data[i])
             {
                 DebugP_logError("Data mismatch !!!\r\n");
-                DebugP_assert(FALSE);
+                retVal = false;
             }
         }
     }
     else
     {
         DebugP_logError("Message ID mismatch !!!\r\n");
-        DebugP_assert(FALSE);
+        retVal = false;
     }
 
-    return;
+    return retVal;
 }
 
 /* Data initializated here should be same as TX application */

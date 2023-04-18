@@ -60,7 +60,7 @@ const CLI_Command_Definition_t rs485CommandDef =
  * forward declarations
  ******************************************************************************/
 
-void uart_echo(void *args);
+bool uart_echo(void *args);
 
 /*******************************************************************************
  * local static functions
@@ -82,11 +82,17 @@ void uart_echo(void *args);
  */
 BaseType_t rs485Command(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString)
 {
-    UNUSED_PARAM(pcWriteBuffer);
     UNUSED_PARAM(xWriteBufferLen);
     UNUSED_PARAM(pcCommandString);
 
-    uart_echo(NULL);
+    if (true == uart_echo(NULL))
+    {
+        sprintf(&pcWriteBuffer[0], "[rs485] Echo success\r\n");
+    }
+    else
+    {
+        sprintf(&pcWriteBuffer[0], "[rs485] Echo fail\r\n");
+    }
 
     return pdFALSE;
 }

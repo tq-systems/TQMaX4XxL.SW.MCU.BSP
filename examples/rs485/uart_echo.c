@@ -51,6 +51,7 @@
 #define APP_UART_BUFSIZE              (200U)
 #define APP_UART_RECEIVE_BUFSIZE      (8U)
 #define DELAY_TIME                    (pdMS_TO_TICKS(6))
+#define WAIT_TIME                     (pdMS_TO_TICKS(10000))
 
 uint8_t gUartBuffer[APP_UART_BUFSIZE];
 uint8_t gUartReceiveBuffer[APP_UART_RECEIVE_BUFSIZE];
@@ -70,15 +71,7 @@ typedef struct
 
 gpio_t rs485Rts;
 
-#define APP_UART_ASSERT_ON_FAILURE(transferOK, transaction) \
-    do { \
-        if((SystemP_SUCCESS != (transferOK)) || (UART_TRANSFER_STATUS_SUCCESS != transaction.status)) \
-        { \
-            DebugP_assert(FALSE); /* UART TX/RX failed!! */ \
-        } \
-    } while(0) \
-
-void uart_echo(void *args)
+bool uart_echo(void *args)
 {
     int32_t          transferOK;
     int32_t          status;
@@ -89,10 +82,16 @@ void uart_echo(void *args)
     rs485Rts.direction = RS485_RTS_DIR;
 
     status = SemaphoreP_constructBinary(&gUartWriteDoneSem, 0);
-    DebugP_assert(SystemP_SUCCESS == status);
+    if (SystemP_SUCCESS != status)
+    {
+        return false;
+    }
 
     status = SemaphoreP_constructBinary(&gUartReadDoneSem, 0);
-    DebugP_assert(SystemP_SUCCESS == status);
+    if (SystemP_SUCCESS != status)
+    {
+        return false;
+    }
 
     Board_driversOpen();
 
@@ -109,11 +108,17 @@ void uart_echo(void *args)
 
     GPIO_pinWriteHigh(rs485Rts.baseAdd, rs485Rts.pin);
     transferOK = UART_write(gUartHandle[RS485], &trans);
-    APP_UART_ASSERT_ON_FAILURE(transferOK, trans);
+    if ((SystemP_SUCCESS != (transferOK)) || (UART_TRANSFER_STATUS_SUCCESS != trans.status))
+    {
+        return false;
+    }
 
     /* Wait for write completion */
-    SemaphoreP_pend(&gUartWriteDoneSem, SystemP_WAIT_FOREVER);
-    DebugP_assert(gNumBytesWritten == strlen(trans.buf));
+    SemaphoreP_pend(&gUartWriteDoneSem, WAIT_TIME);
+    if (gNumBytesWritten != strlen(trans.buf))
+    {
+        return false;
+    }
     vTaskDelay(DELAY_TIME);
     GPIO_pinWriteLow(rs485Rts.baseAdd, rs485Rts.pin);
 
@@ -123,11 +128,17 @@ void uart_echo(void *args)
     trans.buf   = &gUartReceiveBuffer[0U];
     trans.count = APP_UART_RECEIVE_BUFSIZE;
     transferOK = UART_read(gUartHandle[RS485], &trans);
-    APP_UART_ASSERT_ON_FAILURE(transferOK, trans);
+    if ((SystemP_SUCCESS != transferOK) || (UART_TRANSFER_STATUS_SUCCESS != trans.status))
+    {
+        return false;
+    }
 
     /* Wait for read completion */
-    SemaphoreP_pend(&gUartReadDoneSem, SystemP_WAIT_FOREVER);
-    DebugP_assert(gNumBytesRead == APP_UART_RECEIVE_BUFSIZE);
+    SemaphoreP_pend(&gUartReadDoneSem, WAIT_TIME);
+    if (gNumBytesRead != APP_UART_RECEIVE_BUFSIZE)
+    {
+        return false;
+    }
 
     /* Echo chars entered */
     gNumBytesWritten = 0U;
@@ -135,11 +146,18 @@ void uart_echo(void *args)
     trans.count = APP_UART_RECEIVE_BUFSIZE;
     GPIO_pinWriteHigh(rs485Rts.baseAdd, rs485Rts.pin);
     transferOK = UART_write(gUartHandle[RS485], &trans);
-    APP_UART_ASSERT_ON_FAILURE(transferOK, trans);
+    if ((SystemP_SUCCESS != (transferOK)) || (UART_TRANSFER_STATUS_SUCCESS != trans.status))
+    {
+        return false;
+    }
 
     /* Wait for write completion */
-    SemaphoreP_pend(&gUartWriteDoneSem, SystemP_WAIT_FOREVER);
-    DebugP_assert(gNumBytesWritten == APP_UART_RECEIVE_BUFSIZE);
+    SemaphoreP_pend(&gUartWriteDoneSem, WAIT_TIME);
+    if (gNumBytesWritten != APP_UART_RECEIVE_BUFSIZE)
+    {
+        return false;
+    }
+
     vTaskDelay(DELAY_TIME);
     GPIO_pinWriteLow(rs485Rts.baseAdd, rs485Rts.pin);
 
@@ -150,11 +168,17 @@ void uart_echo(void *args)
     trans.count = strlen(trans.buf);
     GPIO_pinWriteHigh(rs485Rts.baseAdd, rs485Rts.pin);
     transferOK = UART_write(gUartHandle[RS485], &trans);
-    APP_UART_ASSERT_ON_FAILURE(transferOK, trans);
+    if ((SystemP_SUCCESS != transferOK) || (UART_TRANSFER_STATUS_SUCCESS != trans.status))
+    {
+        return false;
+    }
 
     /* Wait for write completion */
-    SemaphoreP_pend(&gUartWriteDoneSem, SystemP_WAIT_FOREVER);
-    DebugP_assert(gNumBytesWritten == strlen(trans.buf));
+    SemaphoreP_pend(&gUartWriteDoneSem, WAIT_TIME);
+    if (gNumBytesWritten != strlen(trans.buf))
+    {
+        return false;
+    }
     vTaskDelay(DELAY_TIME);
     GPIO_pinWriteLow(rs485Rts.baseAdd, rs485Rts.pin);
 
@@ -165,7 +189,7 @@ void uart_echo(void *args)
 
     Board_driversClose();
 
-    return;
+    return true;
 }
 
 void uart_echo_write_callback(UART_Handle handle, UART_Transaction* trans)

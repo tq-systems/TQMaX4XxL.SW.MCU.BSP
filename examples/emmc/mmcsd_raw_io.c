@@ -54,7 +54,6 @@ bool mmcsd_raw_io_main(void *args)
 
     Drivers_mmcsdOpen();
     status = Board_driversOpen();
-    DebugP_assert(status == SystemP_SUCCESS);
 
     uint32_t blockSize = MMCSD_getBlockSize(gMmcsdHandle[CONFIG_MMCSD0]);
     uint32_t numBlocks = APP_MMCSD_DATA_SIZE / blockSize;
@@ -69,12 +68,16 @@ bool mmcsd_raw_io_main(void *args)
     mmcsd_raw_io_fill_buffers();
 
     /* Write known data */
-    status = MMCSD_write(gMmcsdHandle[CONFIG_MMCSD0], gMmcsdTxBuf, APP_MMCSD_START_BLK, numBlocks);
-    DebugP_assert(status == SystemP_SUCCESS);
+    if (status == SystemP_SUCCESS)
+    {
+        status = MMCSD_write(gMmcsdHandle[CONFIG_MMCSD0], gMmcsdTxBuf, APP_MMCSD_START_BLK, numBlocks);
+    }
 
     /* Read back written data */
-    status = MMCSD_read(gMmcsdHandle[CONFIG_MMCSD0], gMmcsdRxBuf, APP_MMCSD_START_BLK, numBlocks);
-    DebugP_assert(status == SystemP_SUCCESS);
+    if (status == SystemP_SUCCESS)
+    {
+        status = MMCSD_read(gMmcsdHandle[CONFIG_MMCSD0], gMmcsdRxBuf, APP_MMCSD_START_BLK, numBlocks);
+    }
 
     status = memcmp(gMmcsdRxBuf, gMmcsdTxBuf, APP_MMCSD_DATA_SIZE);
 

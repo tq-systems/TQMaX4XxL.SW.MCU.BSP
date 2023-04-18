@@ -73,17 +73,17 @@ static SemaphoreP_Object gAdcSyncSemObject;
 /* Function prototypes */
 static void App_adcISR(void *handle);
 static void App_adcInit(uint32_t baseAddr);
-static void App_adcConfig(uint32_t baseAddr);
+static int32_t App_adcConfig(uint32_t baseAddr);
 static void App_adcStart(uint32_t baseAddr);
 static void App_adcStop(uint32_t baseAddr);
 static void App_adcDeInit(uint32_t baseAddr);
 
-void adc_singleshot_main(void *args)
+int32_t adc_singleshot_main(void* args)
 {
     uint32_t baseAddr = CONFIG_ADC0_BASE_ADDR;
     HwiP_Params hwiPrms;
     uint32_t loopcnt, fifoData, fifoWordCnt, stepID, voltageLvl;
-    int32_t status;
+    int32_t status = SystemP_SUCCESS;
 
     uint32_t* adcVal = args;
 
@@ -93,7 +93,11 @@ void adc_singleshot_main(void *args)
     DebugP_log("ADC Single Shot Test Started ...\r\n");
 
     status = SemaphoreP_constructBinary(&gAdcSyncSemObject, 0);
-    DebugP_assert(SystemP_SUCCESS == status);
+
+    if (SystemP_SUCCESS != status)
+    {
+        return status;
+    }
 
     /* Register & enable interrupt */
     HwiP_Params_init(&hwiPrms);
@@ -101,11 +105,18 @@ void adc_singleshot_main(void *args)
     hwiPrms.callback = &App_adcISR;
     hwiPrms.priority = 1U;
     status = HwiP_construct(&gAdcHwiObject, &hwiPrms);
-    DebugP_assert(SystemP_SUCCESS == status);
+    if (SystemP_SUCCESS != status)
+    {
+        return status;
+    }
 
     /* Initialize, Configure and Start the ADC module */
     App_adcInit(baseAddr);
-    App_adcConfig(baseAddr);
+    status = App_adcConfig(baseAddr);
+    if (SystemP_SUCCESS != status)
+    {
+        return status;
+    }
     App_adcStart(baseAddr);
 
     /* Wait for the interrupt to occur */
@@ -138,6 +149,8 @@ void adc_singleshot_main(void *args)
     DebugP_log("All tests have passed!!\r\n");
 
     Board_driversClose();
+
+    return status;
 }
 
 void App_adcISR(void *handle)
@@ -156,9 +169,9 @@ void App_adcISR(void *handle)
     ADCWriteEOI(baseAddr);
 }
 
-void App_adcConfig(uint32_t baseAddr)
+int32_t App_adcConfig(uint32_t baseAddr)
 {
-    int32_t         configStatus;
+    int32_t         configStatus = SystemP_SUCCESS;
     uint32_t        chCnt, adcStep;
     adcStepConfig_t adcConfig;
 
@@ -184,24 +197,27 @@ void App_adcConfig(uint32_t baseAddr)
     adcConfig.fifoNum          = ADC_FIFO_NUM_0;
 
     /* Configure all required steps - Step 1 to N mapped to Channel 1 to N */
-    for(chCnt = 0U; chCnt < APP_ADC_NUM_CH; chCnt++)
+    for(chCnt = 0U; (chCnt < APP_ADC_NUM_CH) && (configStatus == SystemP_SUCCESS); chCnt++)
     {
         adcConfig.channel = ADC_CHANNEL_1 + chCnt;
         adcStep = ADC_STEP_1 + chCnt;   /* Step -> Channel one to one mapped */
         configStatus = ADCSetStepParams(baseAddr, adcStep, &adcConfig);
-        DebugP_assert(SystemP_SUCCESS == configStatus);
     }
 
-    ADCStepIdTagEnable(baseAddr, TRUE);
-    configStatus = ADCSetCPUFIFOThresholdLevel(baseAddr, ADC_FIFO_NUM_0, 40U);
-    DebugP_assert(SystemP_SUCCESS == configStatus);
+    if (configStatus == SystemP_SUCCESS)
+    {
+        ADCStepIdTagEnable(baseAddr, TRUE);
+        configStatus = ADCSetCPUFIFOThresholdLevel(baseAddr, ADC_FIFO_NUM_0, 40U);
+    }
 
     /* Step enable */
-    for(chCnt = 0U; chCnt < APP_ADC_NUM_CH; chCnt++)
+    for(chCnt = 0U; (chCnt < APP_ADC_NUM_CH) && (configStatus == SystemP_SUCCESS); chCnt++)
     {
         adcStep = ADC_STEP_1 + chCnt;   /* Step -> Channel one to one mapped */
         ADCStepEnable(baseAddr, adcStep, TRUE);
     }
+
+    return configStatus;
 }
 
 static void App_adcInit(uint32_t baseAddr)
@@ -225,8 +241,7 @@ static void App_adcStart(uint32_t baseAddr)
 
     /* Check if FSM is idle */
     ADCGetSequencerStatus(baseAddr, &status);
-    while ((ADC_ADCSTAT_FSM_BUSY_IDLE != status.fsmBusy) &&
-           ADC_ADCSTAT_STEP_ID_IDLE != status.stepId)
+    while ((ADC_ADCSTAT_FSM_BUSY_IDLE != status.fsmBusy) && (ADC_ADCSTAT_STEP_ID_IDLE != status.stepId))
     {
         ADCGetSequencerStatus(baseAddr, &status);
     }
@@ -248,8 +263,7 @@ static void App_adcStop(uint32_t baseAddr)
 
     /* Wait for FSM to go IDLE */
     ADCGetSequencerStatus(baseAddr, &status);
-    while((ADC_ADCSTAT_FSM_BUSY_IDLE != status.fsmBusy) &&
-           ADC_ADCSTAT_STEP_ID_IDLE  != status.stepId)
+    while((ADC_ADCSTAT_FSM_BUSY_IDLE != status.fsmBusy) && (ADC_ADCSTAT_STEP_ID_IDLE  != status.stepId))
     {
         ADCGetSequencerStatus(baseAddr, &status);
     }
@@ -259,8 +273,7 @@ static void App_adcStop(uint32_t baseAddr)
 
     /* Wait for FSM to go IDLE */
     ADCGetSequencerStatus(baseAddr, &status);
-    while ((ADC_ADCSTAT_FSM_BUSY_IDLE != status.fsmBusy) &&
-            ADC_ADCSTAT_STEP_ID_IDLE  != status.stepId)
+    while ((ADC_ADCSTAT_FSM_BUSY_IDLE != status.fsmBusy) && (ADC_ADCSTAT_STEP_ID_IDLE  != status.stepId))
     {
         ADCGetSequencerStatus(baseAddr, &status);
     }

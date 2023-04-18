@@ -56,8 +56,8 @@ const CLI_Command_Definition_t mcanCommandDef =
  * forward declarations
  ******************************************************************************/
 
-extern void mcan_rx_interrupt_main(void *args, uint64_t mcanAdd);
-extern void mcan_tx_interrupt_main(void *args, uint64_t mcanAdd);
+extern int32_t mcan_rx_interrupt_main(void *args, uint64_t mcanAdd);
+extern int32_t mcan_tx_interrupt_main(void *args, uint64_t mcanAdd);
 
 /*******************************************************************************
  * local static functions
@@ -81,6 +81,7 @@ BaseType_t mcanCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char
 {
     uint8_t           i                      = 0;
     int32_t           counter                = 0;
+    int32_t           status                 = SystemP_SUCCESS;
     BaseType_t        xParameterStringLength = 0;
     uint32_t          usedCanAdd             = 0;
     MCAN_RxBufElement rxMsg                  = {0};
@@ -108,26 +109,41 @@ BaseType_t mcanCommand(char *pcWriteBuffer, __size_t xWriteBufferLen, const char
         switch (*pcParameter2)
         {
         case '0':
-            mcan_tx_interrupt_main(&txMsg, usedCanAdd);
+            status = mcan_tx_interrupt_main(&txMsg, usedCanAdd);
 
-            counter = sprintf(pcWriteBuffer, "send: ");
-            for (i = 0; i < txMsg.dlc; i++)
+            if (SystemP_SUCCESS == status)
             {
-                counter += sprintf(&pcWriteBuffer[counter], "%d ", txMsg.data[i]);
-            }
+                counter = sprintf(pcWriteBuffer, "send: ");
+                for (i = 0; i < txMsg.dlc; i++)
+                {
+                    counter += sprintf(&pcWriteBuffer[counter], "%d ", txMsg.data[i]);
+                }
 
-            counter += sprintf(&pcWriteBuffer[counter], "\r\n");
+                counter += sprintf(&pcWriteBuffer[counter], "\r\n");
+            }
+            else
+            {
+                counter += sprintf(&pcWriteBuffer[counter], "[MCAN] Failure %i\r\n", status);
+            }
             break;
 
         case '1':
-            mcan_rx_interrupt_main(&rxMsg, usedCanAdd);
-            counter =  sprintf(pcWriteBuffer, "received: ");
-            for (i = 0; i < rxMsg.dlc; i++)
+            status = mcan_rx_interrupt_main(&rxMsg, usedCanAdd);
+            if (SystemP_SUCCESS == status)
             {
-                counter += sprintf(&pcWriteBuffer[counter], "%d ", rxMsg.data[i]);
+                counter =  sprintf(pcWriteBuffer, "received: ");
+                for (i = 0; i < rxMsg.dlc; i++)
+                {
+                    counter += sprintf(&pcWriteBuffer[counter], "%d ", rxMsg.data[i]);
+                }
+
+                counter += sprintf(&pcWriteBuffer[counter], "\r\n");
+            }
+            else
+            {
+                counter += sprintf(&pcWriteBuffer[counter], "[MCAN] Failure %i\r\n", status);
             }
 
-            counter += sprintf(&pcWriteBuffer[counter], "\r\n");
             break;
 
         default:
