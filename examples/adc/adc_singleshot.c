@@ -78,7 +78,7 @@ static void App_adcStart(uint32_t baseAddr);
 static void App_adcStop(uint32_t baseAddr);
 static void App_adcDeInit(uint32_t baseAddr);
 
-int32_t adc_singleshot_main(void *args)
+int32_t adc_singleshot_main(void* args)
 {
     uint32_t baseAddr = CONFIG_ADC0_BASE_ADDR;
     HwiP_Params hwiPrms;

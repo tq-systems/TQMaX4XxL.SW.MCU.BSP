@@ -168,7 +168,7 @@ bool uart_echo(void *args)
     trans.count = strlen(trans.buf);
     GPIO_pinWriteHigh(rs485Rts.baseAdd, rs485Rts.pin);
     transferOK = UART_write(gUartHandle[RS485], &trans);
-    if ((SystemP_SUCCESS != (transferOK)) || (UART_TRANSFER_STATUS_SUCCESS != trans.status))
+    if ((SystemP_SUCCESS != transferOK) || (UART_TRANSFER_STATUS_SUCCESS != trans.status))
     {
         return false;
     }

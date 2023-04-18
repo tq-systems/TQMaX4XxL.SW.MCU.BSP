@@ -60,7 +60,7 @@ const CLI_Command_Definition_t adcCommandDef =
  * forward declarations
  ******************************************************************************/
 
-int32_t adc_singleshot_main(void *args);
+extern int32_t adc_singleshot_main(void* args);
 
 /*******************************************************************************
  * local static functions
@@ -102,7 +102,6 @@ BaseType_t adcCommand( char *pcWriteBuffer, __size_t xWriteBufferLen, const char
     {
         counter += sprintf(&pcWriteBuffer[counter], "[ADC] Failure %i\r\n", status);
     }
-
 
     return pdFALSE;
 }
