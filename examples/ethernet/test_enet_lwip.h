@@ -90,9 +90,6 @@
 #include "examples/httpd/fs_example/fs_example.h"
 #include "examples/httpd/ssi_example/ssi_example.h"
 
-#include "default_netif.h"
-
-
 #if NO_SYS
 /* ... then we need information about the timer intervals: */
 #include "lwip/ip4_frag.h"

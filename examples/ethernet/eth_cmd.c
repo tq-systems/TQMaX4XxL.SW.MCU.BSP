@@ -23,7 +23,7 @@
 #include "ti_drivers_config.h"
 #include "ti_drivers_open_close.h"
 #include "ti_board_open_close.h"
-#include "lwip/netif.h"
+//#include "lwip/netif.h"
 /* own */
 #include "eth_cmd.h"
 
@@ -84,7 +84,7 @@ const CLI_Command_Definition_t ethCommandDef =
  */
 BaseType_t ethCommand(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString)
 {
-    sprintf(pcWriteBuffer, "IP address %s\r\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
+//    sprintf(pcWriteBuffer, "IP address %s\r\n", ip4addr_ntoa(netif_ip4_addr(netif_list)));
 
     return pdFALSE;
 }

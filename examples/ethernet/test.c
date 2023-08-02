@@ -85,8 +85,7 @@
 #include "examples/httpd/fs_example/fs_example.h"
 #include "examples/httpd/ssi_example/ssi_example.h"
 
-#include "default_netif.h"
-
+#include "ti_enet_config.h"
 
 #if NO_SYS
 /* ... then we need information about the timer intervals: */
@@ -110,6 +109,7 @@
 #include "lwipcfg.h"
 
 #include "test_enet_lwip.h"
+#include "ti_enet_lwipif.h"
 
 #ifndef LWIP_EXAMPLE_APP_ABORT
 #define LWIP_EXAMPLE_APP_ABORT() 0
@@ -152,12 +152,14 @@
 #endif
 
 /* UDP Iperf task should be highest priority task to ensure processed buffers
- * are freed without delay so that we get maximum throughput for 
+ * are freed without delay so that we get maximum throughput for
  * UDP Iperf.
  */
 #define UDP_IPERF_THREAD_PRIO  (14U)
 
-
+/* Handle to the Applciation interface for the LwIPIf Layer
+ */
+LwipifEnetApp_Handle hlwipIfApp = NULL;
 /* ========================================================================== */
 /*                         Structure Declarations                             */
 /* ========================================================================== */
@@ -166,7 +168,7 @@
 #if USE_ETHERNET
 #if LWIP_DHCP
 /* dhcp struct for the ethernet netif */
-struct dhcp netif_dhcp;
+struct dhcp netif_dhcp[ENET_SYSCFG_NETIF_COUNT];
 #endif /* LWIP_DHCP */
 #if LWIP_AUTOIP
 /* autoip struct for the ethernet netif */
@@ -286,12 +288,12 @@ status_callback(struct netif *state_netif)
 {
   if (netif_is_up(state_netif)) {
 #if LWIP_IPV4
-    DebugP_log("status_callback==UP, local interface IP is %s\r\n", ip4addr_ntoa(netif_ip4_addr(state_netif)));
+    DebugP_log("[%d]status_callback==UP, local interface IP is %s\r\n", state_netif->num, ip4addr_ntoa(netif_ip4_addr(state_netif)));
 #else
-    DebugP_log("status_callback==UP\r\n");
+    DebugP_log("[%d]status_callback==UP\r\n",  state_netif->num);
 #endif
   } else {
-    DebugP_log("status_callback==DOWN\r\n");
+    DebugP_log("[%d]status_callback==DOWN\r\n",  state_netif->num);
   }
 }
 #endif /* LWIP_NETIF_STATUS_CALLBACK */
@@ -313,7 +315,9 @@ static void
 test_netif_init(void)
 {
 #if LWIP_IPV4 && USE_ETHERNET
+  struct netif * netif[ENET_SYSCFG_NETIF_COUNT];
   ip4_addr_t ipaddr, netmask, gw;
+  uint32_t i;
 #endif /* LWIP_IPV4 && USE_ETHERNET */
 #if USE_SLIPIF
   u8_t num_slip1 = 0;
@@ -378,7 +382,13 @@ test_netif_init(void)
 #endif /* LWIP_IPV4 */
 
 #if LWIP_IPV4
-  init_default_netif(&ipaddr, &netmask, &gw);
+  hlwipIfApp = LwipifEnetApp_getHandle();
+  /* Open the netif and get it populated*/
+  for (i = 0U; i < ENET_SYSCFG_NETIF_COUNT; i++)
+  {
+      netif[i] = LwipifEnetApp_netifOpen(hlwipIfApp, NETIF_INST_ID0 + i, &ipaddr, &netmask, &gw);
+  }
+  LwipifEnetApp_startSchedule(hlwipIfApp, netif[NETIF_INST_ID0]);
 #else
   init_default_netif();
 #endif
@@ -390,10 +400,16 @@ test_netif_init(void)
   DebugP_log("ip6 linklocal address: %s\r\n", ip6addr_ntoa(netif_ip6_addr(netif_default, 0)));
 #endif /* LWIP_IPV6 */
 #if LWIP_NETIF_STATUS_CALLBACK
-  netif_set_status_callback(netif_default, status_callback);
+  for (i = 0U; i < ENET_SYSCFG_NETIF_COUNT; i++)
+  {
+    netif_set_status_callback(netif[i], status_callback);
+  }
 #endif /* LWIP_NETIF_STATUS_CALLBACK */
 #if LWIP_NETIF_LINK_CALLBACK
-  netif_set_link_callback(netif_default, link_callback);
+  for (i = 0U; i < ENET_SYSCFG_NETIF_COUNT; i++)
+  {
+    netif_set_link_callback(netif[i], link_callback);
+  }
 #endif /* LWIP_NETIF_LINK_CALLBACK */
 
 #if USE_ETHERNET_TCPIP
@@ -401,15 +417,27 @@ test_netif_init(void)
   autoip_set_struct(netif_default, &netif_autoip);
 #endif /* LWIP_AUTOIP */
 #if LWIP_DHCP
-  dhcp_set_struct(netif_default, &netif_dhcp);
+  for (i = 0U; i < ENET_SYSCFG_NETIF_COUNT; i++)
+  {
+    dhcp_set_struct(netif[i], &netif_dhcp[i]);
+  }
 #endif /* LWIP_DHCP */
-  netif_set_up(netif_default);
+  for (i = 0U; i < ENET_SYSCFG_NETIF_COUNT; i++)
+  {
+    netif_set_up(netif[i]);
+  }
 #if USE_DHCP
-  err = dhcp_start(netif_default);
-  LWIP_ASSERT("dhcp_start failed", err == ERR_OK);
+  for (i = 0U; i < ENET_SYSCFG_NETIF_COUNT; i++)
+  {
+    err = dhcp_start(netif[i]);
+    LWIP_ASSERT("dhcp_start failed", err == ERR_OK);
+  }
 #elif USE_AUTOIP
-  err = autoip_start(netif_default);
-  LWIP_ASSERT("autoip_start failed", err == ERR_OK);
+  for (i = 0U; i < ENET_SYSCFG_NETIF_COUNT; i++)
+  {
+    err = autoip_start(netif[i]);
+    LWIP_ASSERT("autoip_start failed", err == ERR_OK);
+  }
 #endif /* USE_DHCP */
 #else /* USE_ETHERNET_TCPIP */
   /* Use ethernet for PPPoE only */
@@ -685,8 +713,12 @@ main_loop(void * a0)
 #endif /* NO_SYS */
 
 #if USE_ETHERNET
-    default_netif_poll();
     sys_msleep(1);
+    { /* implemented in test_enet.c */
+        void print_cpu_load();
+
+        print_cpu_load();
+    }
 #else /* USE_ETHERNET */
     /* try to read characters from serial line and pass them to PPPoS */
     count = sio_read(ppp_sio, (u8_t*)rxbuf, 1024);
@@ -744,9 +776,6 @@ main_loop(void * a0)
       started = sys_now();
       do
       {
-#if USE_ETHERNET
-        default_netif_poll();
-#endif
         /* @todo: need a better check here: only wait until PPP is down */
       } while(sys_now() - started < 5000);
     }
@@ -755,29 +784,11 @@ main_loop(void * a0)
   netconn_thread_cleanup();
 #endif
 #if USE_ETHERNET
-  default_netif_shutdown();
+  /* Close the netif */
+  for (uint32_t i = 0U; i < ENET_SYSCFG_NETIF_COUNT; i++)
+  {
+    LwipifEnetApp_netifClose(hlwipIfApp, NETIF_INST_ID0 + i);
+  }
 #endif /* USE_ETHERNET */
 }
 
-/* Disable main from original lwip contrib test as main is part of TI application */
-#if 0
-#if USE_PPP && PPPOS_SUPPORT
-int main(int argc, char **argv)
-#else /* USE_PPP && PPPOS_SUPPORT */
-int main(void)
-#endif /* USE_PPP && PPPOS_SUPPORT */
-{
-#if USE_PPP && PPPOS_SUPPORT
-  if(argc > 1) {
-    sio_idx = (u8_t)atoi(argv[1]);
-  }
-  printf("Using serial port %d for PPP\r\n", sio_idx);
-#endif /* USE_PPP && PPPOS_SUPPORT */
-  /* no stdio-buffering, please! */
-  //setvbuf(stdout, NULL,_IONBF, 0);
-
-  main_loop();
-
-  return 0;
-}
-#endif

@@ -125,11 +125,11 @@ static bool eepromRead(eeprom_t* p_eepromData)
         I2C_Transaction_init(&i2cTransaction);
 
         /* Override with required transaction parameters */
-        i2cTransaction.writeBuf     = txBuffer;
-        i2cTransaction.writeCount   = ARRAY_SIZE(txBuffer);
-        i2cTransaction.readBuf      = p_eepromData->data;
-        i2cTransaction.readCount    = p_eepromData->length;
-        i2cTransaction.slaveAddress = eepromInstance[p_eepromData->instance];
+        i2cTransaction.writeBuf      = txBuffer;
+        i2cTransaction.writeCount    = ARRAY_SIZE(txBuffer);
+        i2cTransaction.readBuf       = p_eepromData->data;
+        i2cTransaction.readCount     = p_eepromData->length;
+        i2cTransaction.targetAddress = eepromInstance[p_eepromData->instance];
 
         status = I2C_transfer(i2cHandle, &i2cTransaction);
 
@@ -185,14 +185,14 @@ static bool eepromWrite(eeprom_t* p_eepromData)
             /* Override with required transaction parameters */
             i2cTransaction.writeBuf     = txBuffer;
             i2cTransaction.writeCount   = 2 + p_eepromData->length;
-            i2cTransaction.slaveAddress = eepromInstance[p_eepromData->instance];
+            i2cTransaction.targetAddress = eepromInstance[p_eepromData->instance];
 
             status = I2C_transfer(i2cHandle, &i2cTransaction);
         }
 
         if (status != SystemP_SUCCESS)
         {
-            DebugP_logError("[EEPROM] Write failure %d for instance %d !!!\r\n", status, i2cTransaction.slaveAddress);
+            DebugP_logError("[EEPROM] Write failure %d for instance %d !!!\r\n", status, i2cTransaction.targetAddress);
         }
         else
         {

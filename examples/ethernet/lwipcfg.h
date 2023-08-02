@@ -48,7 +48,7 @@
 #define LWIP_CHARGEN_APP              0
 #define LWIP_DNS_APP                  0
 #define LWIP_HTTPD_APP                0
-//#define LWIP_HTTPD_APP_NETCONN		  0
+//#define LWIP_HTTPD_APP_NETCONN          0
 /* Set this to 1 to use the netconn http server,
  * otherwise the raw api server will be used. */
 /*#define LWIP_HTTPD_APP_NETCONN     */
@@ -66,7 +66,7 @@
 
 #define LWIP_SOCKET_EXAMPLES_APP      0
 #define LWIP_TCPECHO_APP              1
-#define LWIP_TCPECHO_APP_NETCONN	  0
+#define LWIP_TCPECHO_APP_NETCONN      0
 /* Set this to 1 to use the netconn tcpecho server,
  * otherwise the raw api server will be used. */
 /*#define LWIP_TCPECHO_APP_NETCONN   */

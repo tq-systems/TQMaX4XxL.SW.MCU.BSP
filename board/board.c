@@ -32,7 +32,8 @@
 
 #include <stdint.h>
 #include <drivers/pinmux.h>
-#include <enet_board_cfg.h>
+//#include <enet_board_cfg.h>
+#include "ti_board_config.h"
 #include <networking/enet/core/include/phy/dp83867.h>
 
 #define TMP100_SOC_ADDR         0x4A
@@ -85,7 +86,8 @@ void Board_cpswMuxSel(void)
  */
 uint32_t Board_getEthType(void)
 {
-    return ENET_CPSW_3G;
+//    return ENET_CPSW_3G;
+    return 1;
 }
 
 /**
@@ -93,20 +95,20 @@ uint32_t Board_getEthType(void)
  *
  * @param boardPhyCfg
  */
-void Board_TxRxDelaySet(const EnetBoard_PhyCfg *boardPhyCfg)
-{
-   Dp83867_Cfg *extendedCfg = (Dp83867_Cfg *)boardPhyCfg->extendedCfg;
-   extendedCfg->txDelayInPs = TX_DELAY;
-   extendedCfg->rxDelayInPs = RX_DELAY;
-   return;
-}
+//void Board_TxRxDelaySet(const EnetBoard_PhyCfg *boardPhyCfg)
+//{
+//   Dp83867_Cfg *extendedCfg = (Dp83867_Cfg *)boardPhyCfg->extendedCfg;
+//   extendedCfg->txDelayInPs = TX_DELAY;
+//   extendedCfg->rxDelayInPs = RX_DELAY;
+//   return;
+//}
 
 /**
  * @brief This function returns the ethernet board id.
  *
  * @return ethernet board id
  */
-uint32_t Board_getEthBoardId(void)
-{
-    return ENETBOARD_AM64X_AM243X_EVM;
-}
+//uint32_t Board_getEthBoardId(void)
+//{
+//    return ENETBOARD_AM64X_AM243X_EVM;
+//}
