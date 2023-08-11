@@ -366,29 +366,7 @@ BaseType_t qspiNorFlashCommand(char* const pcWriteBuffer, __size_t xWriteBufferL
     uint8_t flashStatus = 0;
     const char* pcParameter1 = FreeRTOS_CLIGetParameter(pcCommandString, 1, &xParameter1StringLength);
 
-    switch (*pcParameter1)
-    {
-    case 'r':
-        readFlash(pcWriteBuffer);
-        break;
-
-    case 'w':
-        writeFlash(pcWriteBuffer);
-        break;
-
-    case 'e':
-        eraseflash(pcWriteBuffer);
-        break;
-
-    case 's':
-        readStatusReg(&flashStatus);
-        sprintf(pcWriteBuffer, "Status 0x%02X\r\n", flashStatus);
-        break;
-
-    default:
-        sprintf(pcWriteBuffer, "Wrong parameter\r\n");
-        break;
-    }
+    ospi_flash_io_main();
 
     return retVal;
 }
