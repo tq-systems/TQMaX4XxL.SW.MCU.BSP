@@ -140,7 +140,7 @@ static bool eepromRead(eeprom_t* p_eepromData)
         }
         else
         {
-            DebugP_log("[EEPROM] Read data 0x%02X.\r\n", p_eepromData->data);
+            DebugP_log("[EEPROM] Read data 0x%02X.\r\n", *p_eepromData->data);
             success = true;
         }
 
