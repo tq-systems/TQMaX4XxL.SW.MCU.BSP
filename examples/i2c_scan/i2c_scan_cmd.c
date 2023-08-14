@@ -81,7 +81,6 @@ static bool i2c_busScan(uint8_t i2cAddress)
     bool retVal = false;
 
     Drivers_i2cOpen();
-    Board_driversOpen();
 
     i2cHandle = gI2cHandle[CONFIG_I2C0];
 
@@ -94,7 +93,6 @@ static bool i2c_busScan(uint8_t i2cAddress)
         retVal = false;
     }
 
-    Board_driversClose();
     Drivers_i2cClose();
 
     return retVal;

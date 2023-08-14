@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2021 Texas Instruments Incorporated
  *
- *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ *  Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  *  Author Michael Bernhardt
  *
  *  Redistribution and use in source and binary forms, with or without
