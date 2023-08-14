@@ -88,6 +88,9 @@ extern int32_t ospi_flash_io_main(void *args);
  */
 BaseType_t qspiNorFlashCommand(char* const pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString )
 {
+    UNUSED_PARAM(xWriteBufferLen);
+    UNUSED_PARAM(pcCommandString);
+
     BaseType_t retVal = pdFALSE;
 
     int32_t status = ospi_flash_io_main(NULL);
