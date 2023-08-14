@@ -47,7 +47,7 @@ uint8_t gOspiRxBuf[APP_OSPI_DATA_SIZE] __attribute__((aligned(128U)));
 void ospi_flash_io_fill_buffers(void);
 int32_t ospi_flash_io_compare_buffers(void);
 
-#define DELAY_FLD_ADD  (0x0FC40010)
+#define OSPI_RD_DATA_CAPTURE_REG_ADD  (0x0FC40010)
 
 int32_t ospi_flash_io_main(void *args)
 {
@@ -63,7 +63,11 @@ int32_t ospi_flash_io_main(void *args)
         status = Board_flashOpen();
     }
 
-    *(uint32_t*) DELAY_FLD_ADD = 0x05;
+    /* DELAY_FD = 2 and BYASS_FLD = enable
+     * The default DELAY_FD = 4 does not work with QSPI flash, so DELAY_FD = 2 must be used.
+     * In addition, the "board.am64x.r5f.ti-arm-clang.debug.lib" must be rebuilt with the new "flash_nor_ospi.c" file.
+     * Please see README.md*/
+    *(uint32_t*) OSPI_RD_DATA_CAPTURE_REG_ADD = 0x05;
 
     flashAttrs = Flash_getAttrs(CONFIG_FLASH0);
 
