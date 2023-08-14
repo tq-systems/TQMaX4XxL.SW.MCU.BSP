@@ -92,7 +92,6 @@ flash1.protocol                      = "4s_4d_4d";
 flash1.cmdRd                         = "0xED";
 flash1.strDtr_isAddrReg              = false;
 flash1.peripheralDriver.$name        = "CONFIG_OSPI0";
-flash1.peripheralDriver.dmaEnable    = true;
 flash1.peripheralDriver.baudRateDiv  = 8;
 flash1.peripheralDriver.inputClkFreq = 200000000;
 
@@ -239,8 +238,7 @@ enet_cpsw1.pinmux[0].RGMII2.$assign    = "RGMII2";
 enet_cpsw1.netifInstance.create(1);
 enet_cpsw1.netifInstance[0].$name      = "NETIF_INST_ID0";
 
-flash1.peripheralDriver.udmaDriver = udma1;
-enet_cpsw1.udmaDrv                 = udma1;
+enet_cpsw1.udmaDrv = udma1;
 
 /**
  * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future

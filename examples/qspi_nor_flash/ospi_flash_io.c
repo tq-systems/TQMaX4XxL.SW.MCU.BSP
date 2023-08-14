@@ -1,6 +1,9 @@
 /*
  *  Copyright (C) 2021 Texas Instruments Incorporated
  *
+ *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ *  Author Michael Bernhardt
+ *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions
  *  are met:
@@ -46,24 +49,21 @@ int32_t ospi_flash_io_compare_buffers(void);
 
 #define DELAY_FLD_ADD  (0x0FC40010)
 
-void ospi_flash_io_main(void *args)
+int32_t ospi_flash_io_main(void *args)
 {
     int32_t status = SystemP_SUCCESS;
     uint32_t offset;
     uint32_t sector, blk, page;
     Flash_Attrs *flashAttrs;
 
-    /* Open OSPI Driver, among others */
-//    Drivers_open();
     /* Open Flash drivers with OSPI instance as input */
-//    status = Board_driversOpen();
-//    Drivers_udmaOpen();
-//    Drivers_ospiOpen();
-    status = Board_flashOpen();
+    if (gFlashHandle[CONFIG_FLASH0] == NULL)
+    {
+        Drivers_ospiOpen();
+        status = Board_flashOpen();
+    }
 
     *(uint32_t*) DELAY_FLD_ADD = 0x05;
-
-    DebugP_assert(status==SystemP_SUCCESS);
 
     flashAttrs = Flash_getAttrs(CONFIG_FLASH0);
 
@@ -132,12 +132,7 @@ void ospi_flash_io_main(void *args)
         DebugP_log("Some tests have failed!!\r\n");
     }
 
-    Board_flashClose();
-    Drivers_ospiClose();
-//    Drivers_udmaClose();
-
-//    Board_driversClose();
-//    Drivers_close();
+    return status;
 }
 
 void ospi_flash_io_fill_buffers(void)
