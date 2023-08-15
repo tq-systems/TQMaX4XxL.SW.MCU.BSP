@@ -57,7 +57,7 @@ int32_t ospi_flash_io_main(void *args)
     Flash_Attrs *flashAttrs;
 
     /* Open Flash drivers with OSPI instance as input */
-    if (gFlashHandle[CONFIG_FLASH0] == NULL)
+    if(gFlashHandle[CONFIG_FLASH0] == NULL)
     {
         Drivers_ospiOpen();
         status = Board_flashOpen();
@@ -155,7 +155,7 @@ int32_t ospi_flash_io_compare_buffers(void)
     int32_t status = SystemP_SUCCESS;
     uint32_t i;
 
-    for(i = 1U; i < APP_OSPI_DATA_SIZE; i++)
+    for(i = 0U; i < APP_OSPI_DATA_SIZE; i++)
     {
         if(gOspiTxBuf[i] != gOspiRxBuf[i])
         {

@@ -32,7 +32,6 @@
 
 #include <stdint.h>
 #include <drivers/pinmux.h>
-//#include <enet_board_cfg.h>
 #include "ti_board_config.h"
 #include <networking/enet/core/include/phy/dp83867.h>
 
