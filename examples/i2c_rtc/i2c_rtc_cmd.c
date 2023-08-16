@@ -228,7 +228,7 @@ static bool i2cGetRtcTime(rtcTime_t* p_time)
     i2cTransaction.writeCount   = 1;
     i2cTransaction.readBuf      = rxBuffer;
     i2cTransaction.readCount    = I2C_READ_LEN;
-    i2cTransaction.slaveAddress = I2C_READ_SLAVE_ADDR;
+    i2cTransaction.targetAddress = I2C_READ_SLAVE_ADDR;
     txBuffer[0] =  RTC_REG_SECOND;
 
     status = I2C_transfer(i2cHandle, &i2cTransaction);
@@ -288,7 +288,7 @@ static bool i2cWriteRtcTime(rtcTime_t* p_time, rtcOption_t option)
     i2cTransaction.readBuf      = rxBuffer;
     i2cTransaction.writeCount   = 1;
     i2cTransaction.readCount    = I2C_READ_LEN;
-    i2cTransaction.slaveAddress = I2C_READ_SLAVE_ADDR;
+    i2cTransaction.targetAddress = I2C_READ_SLAVE_ADDR;
 
     Drivers_i2cOpen();
     Board_driversOpen();

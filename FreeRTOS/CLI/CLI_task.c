@@ -39,7 +39,7 @@
 #include "portmacro.h"
 #include "projdefs.h"
 #include "FreeRTOS_CLI.h"
-#include "FreeRTOSConfig.h"
+#include "Config/FreeRTOSConfig.h"
 
 /* commands */
 #include "gpio_led_blink_cmd.h"
@@ -49,7 +49,6 @@
 #include "qspi_nor_flash_cmd.h"
 #include "eeprom_cmd.h"
 #include "mcan_cmd.h"
-#include "eth_cmd.h"
 #include "lpddr4_cmd.h"
 #include "gpio_dig_cmd.h"
 #include "rs485_cmd.h"
@@ -96,7 +95,6 @@ void cliTask( void* pvParameters )
     FreeRTOS_CLIRegisterCommand(&qspiNorFlashCommandDef);
     FreeRTOS_CLIRegisterCommand(&eepromCommandDef);
     FreeRTOS_CLIRegisterCommand(&mcanCommandDef);
-    FreeRTOS_CLIRegisterCommand(&ethCommandDef);
     FreeRTOS_CLIRegisterCommand(&lpddr4CommandDef);
     FreeRTOS_CLIRegisterCommand(&gpioDigCommandDef);
     FreeRTOS_CLIRegisterCommand(&rs485CommandDef);

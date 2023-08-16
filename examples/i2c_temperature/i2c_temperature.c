@@ -79,7 +79,7 @@ float i2cGetTemperature(void *args)
         I2C_Transaction_init(&i2cTransaction);
         i2cTransaction.writeBuf   = txBuffer;
         i2cTransaction.writeCount = 1;
-        i2cTransaction.slaveAddress = deviceAddress;
+        i2cTransaction.targetAddress = deviceAddress;
         txBuffer[0] = TMP10X_RESULT_REG;
         status = I2C_transfer(i2cHandle, &i2cTransaction);
         if(status == SystemP_SUCCESS)
@@ -88,7 +88,7 @@ float i2cGetTemperature(void *args)
             I2C_Transaction_init(&i2cTransaction);
             i2cTransaction.readBuf = rxBuffer;
             i2cTransaction.readCount = 2;
-            i2cTransaction.slaveAddress = deviceAddress;
+            i2cTransaction.targetAddress = deviceAddress;
 
             /* clear RX buffer every time we read, to make sure it does not have stale data */
             rxBuffer[0] = rxBuffer[1] = 0;

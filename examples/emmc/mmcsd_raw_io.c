@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2021 Texas Instruments Incorporated
  *
- *  Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
+ *  Copyright (c) 2023 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
  *  Author Michael Bernhardt
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,6 @@ bool mmcsd_raw_io_main(void *args)
     bool success   = false;
 
     Drivers_mmcsdOpen();
-    status = Board_driversOpen();
 
     uint32_t blockSize = MMCSD_getBlockSize(gMmcsdHandle[CONFIG_MMCSD0]);
     uint32_t numBlocks = APP_MMCSD_DATA_SIZE / blockSize;
@@ -91,7 +90,6 @@ bool mmcsd_raw_io_main(void *args)
         DebugP_log("Some tests have failed!!\r\n");
     }
 
-    Board_driversClose();
     Drivers_mmcsdClose();
 
     return success;
