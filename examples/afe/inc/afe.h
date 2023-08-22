@@ -1,9 +1,8 @@
-
 /* SPDX-License-Identifier: BSD-3-Clause */
 /*
  * @file afe.h
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
- * @author forstner
+ * @author Klaus Forstner
  *
  * @date 2022-02-09
  *

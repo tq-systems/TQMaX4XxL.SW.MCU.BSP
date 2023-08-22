@@ -2,9 +2,9 @@
 /*
  * @file afe_registers.c
  * @copyright Copyright (c) 2022 TQ-Systems GmbH <license@tq-group.com>, D-82229 Seefeld, Germany.
- * @author forstner
+ * @author Klaus Forstner
  *
- * @date 2022-02-09 *
+ * @date 2022-02-09
  * -----------------------------------------------------------------------------
  * @brief This file contains the implementation of the AFE.
  *
