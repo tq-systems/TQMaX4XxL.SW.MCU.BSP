@@ -36,6 +36,8 @@
             -I${PROJECT_LOC}/FreeRTOS
             -I${PROJECT_LOC}/FreeRTOS/CLI
             -I${PROJECT_LOC}/examples/include
+            -I${PROJECT_LOC}/examples/afe/driver/inc
+            -I${PROJECT_LOC}/examples/afe/inc
             -mcpu=cortex-r5
             -mfloat-abi=hard
             -mfpu=vfpv3-d16
@@ -90,58 +92,58 @@
         ></configuration>
         <pathVariable name="MCU_PLUS_SDK_PATH" path="${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}" scope="project" />
 
-        <file path="examples/gpio_led_blink/gpio_led_blink.c"       targetDirectory="examples/gpio_led_blink"  action="copy"></file>
-        <file path="examples/gpio_led_blink/gpio_led_blink_cmd.c"   targetDirectory="examples/gpio_led_blink"  action="copy"></file>
-        <file path="examples/i2c_temperature/i2c_temperature.c"     targetDirectory="examples/i2c_temperature" action="copy"></file>
-        <file path="examples/i2c_temperature/i2c_temperature_cmd.c" targetDirectory="examples/i2c_temperature" action="copy"></file>
-        <file path="examples/i2c_scan/i2c_scan_cmd.c"               targetDirectory="examples/i2c_scan"        action="copy"></file>
-        <file path="examples/i2c_rtc/i2c_rtc_cmd.c"                 targetDirectory="examples/i2c_rtc"         action="copy"></file>
-        <file path="examples/eeprom/eepromm_cmd.c"                  targetDirectory="examples/eeprom"          action="copy"></file>
+        <file path="examples/adc/adc_cmd.c"                         targetDirectory="examples/adc"             action="copy"></file>
+        <file path="examples/adc/adc_singleshot.c"                  targetDirectory="examples/adc"             action="copy"></file>
+        <file path="examples/afe/driver/inc/crcDriver.h"            targetDirectory="examples/afe/driver/inc"  action="copy"></file>
+        <file path="examples/afe/driver/inc/spiDriver.h"            targetDirectory="examples/afe/driver/inc"  action="copy"></file>
+        <file path="examples/afe/driver/src/crcDriver.c"            targetDirectory="examples/afe/driver/src"  action="copy"></file>
+        <file path="examples/afe/driver/src/spiDriver.c"            targetDirectory="examples/afe/driver/src"  action="copy"></file>
+        <file path="examples/afe/inc/afe.h"                         targetDirectory="examples/afe/inc"         action="copy"></file>
+        <file path="examples/afe/inc/afe_cmd.h"                     targetDirectory="examples/afe/inc"         action="copy"></file>
+        <file path="examples/afe/inc/afe_comms.h"                   targetDirectory="examples/afe/inc"         action="copy"></file>
+        <file path="examples/afe/inc/afe_registers.h"               targetDirectory="examples/afe/inc"         action="copy"></file>
+        <file path="examples/afe/src/afe.c"                         targetDirectory="examples/afe/src"         action="copy"></file>
+        <file path="examples/afe/src/afe_cmd.c"                     targetDirectory="examples/afe/src"         action="copy"></file>
+        <file path="examples/afe/src/afe_comms.c"                   targetDirectory="examples/afe/src"         action="copy"></file>
+        <file path="examples/afe/src/afe_registers.c"               targetDirectory="examples/afe/src"         action="copy"></file>
+        <file path="examples/eeprom/eeprom_cmd.c"                   targetDirectory="examples/eeprom"          action="copy"></file>
         <file path="examples/emmc/emmc_cmd.c"                       targetDirectory="examples/emmc"            action="copy"></file>
         <file path="examples/emmc/mmcsd_raw_io.c"                   targetDirectory="examples/mmcsd_raw_io"    action="copy"></file>
-        <file path="examples/i2c_temperature/eepromm_cmd.c"         targetDirectory="examples/eeprom"          action="copy"></file>
+		<file path="examples/gpio_dig/gpio_dig_cmd.c"               targetDirectory="examples/gpio_dig"        action="copy"></file>
+        <file path="examples/gpio_led_blink/gpio_led_blink.c"       targetDirectory="examples/gpio_led_blink"  action="copy"></file>
+        <file path="examples/gpio_led_blink/gpio_led_blink_cmd.c"   targetDirectory="examples/gpio_led_blink"  action="copy"></file>
+        <file path="examples/i2c_rtc/i2c_rtc_cmd.c"                 targetDirectory="examples/i2c_rtc"         action="copy"></file>
+        <file path="examples/i2c_scan/i2c_scan_cmd.c"               targetDirectory="examples/i2c_scan"        action="copy"></file>
+        <file path="examples/i2c_temperature/i2c_temperature.c"     targetDirectory="examples/i2c_temperature" action="copy"></file>
+        <file path="examples/i2c_temperature/i2c_temperature_cmd.c" targetDirectory="examples/i2c_temperature" action="copy"></file>
+        <file path="examples/include/adc_cmd.h"                     targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/eeprom_cmd.h"                  targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/emmc_cmd.h"                    targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/gpio_dig_cmd.h"                targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/gpio_led_blink_cmd.h"          targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/i2c_rtc_cmd.h"                 targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/i2c_scan_cmd.h"                targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/i2c_temperature_cmd.h"         targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/lpddr4_cmd.h"                  targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/mcan_cmd.h"                    targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/qspi_nor_flash_cmd.h"          targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/rs485_cmd.h"                   targetDirectory="examples/include"         action="copy"></file>
+        <file path="examples/include/utilities.h"                   targetDirectory="examples/include"         action="copy"></file>
         <file path="examples/lpddr4/lpddr4_cmd.c"                   targetDirectory="examples/lpddr4"          action="copy"></file>
         <file path="examples/mcan/mcan_cmd.c"                       targetDirectory="examples/mcan"            action="copy"></file>
         <file path="examples/mcan/mcan_rx_only_interrupt.c"         targetDirectory="examples/mcan"            action="copy"></file>
         <file path="examples/mcan/mcan_tx_only_interrupt.c"         targetDirectory="examples/mcan"            action="copy"></file>
-        <file path="examples/afe/src/afe_cmd.c"                     targetDirectory="examples/afe/src"         action="copy"></file>
-        <file path="examples/afe/src/afe.c"                         targetDirectory="examples/afe/src"         action="copy"></file>
-        <file path="examples/afe/src/afe_registers.c"               targetDirectory="examples/afe/src"         action="copy"></file>
-        <file path="examples/afe/src/afe_comms.c"                   targetDirectory="examples/afe/src"         action="copy"></file>
         <file path="examples/qspi_nor_flash/ospi_flash_io.c"        targetDirectory="examples/qspi_nor_flash"  action="copy"></file>
         <file path="examples/qspi_nor_flash/qspi_nor_flash_cmd.c"   targetDirectory="examples/qspi_nor_flash"  action="copy"></file>
-        <file path="examples/adc/adc_cmd.c"                         targetDirectory="examples/adc"             action="copy"></file>
-        <file path="examples/adc/adc_singleshot.c"                  targetDirectory="examples/adc"             action="copy"></file>
-        <file path="examples/eeprom/eeprom_cmd.c"                   targetDirectory="examples/eeprom"          action="copy"></file>
         <file path="examples/rs485/rs485_cmd.c"                     targetDirectory="examples/rs485"           action="copy"></file>
         <file path="examples/rs485/uart_echo.c"                     targetDirectory="examples/rs485"           action="copy"></file>
-        <file path="examples/afe/driver/src/crcDriver.h"            targetDirectory="examples/afe/driver/src"  action="copy"></file>
-        <file path="examples/afe/driver/src/spiDriver.h"            targetDirectory="examples/afe/driver/src"  action="copy"></file>
-        <file path="examples/include/gpio_led_blink_cmd.h"          targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/i2c_temperature_cmd.h"         targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/i2c_scan_cmd.h"                targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/i2c_rtc_cmd.h"                 targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/eepromm_cmd.h"                 targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/emmc_cmd.h"                    targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/lpddr4_cmd.h"                  targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/mcan_cmd.h"                    targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/adc_cmd.h"                     targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/qspi_nor_flash_cmd.h"          targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/eeprom_cmd.h"                  targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/rs485_cmd.h"                   targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/include/utilities.h"                   targetDirectory="examples/include"         action="copy"></file>
-        <file path="examples/afe/inc/afe_cmd.h"                     targetDirectory="examples/afe/inc"         action="copy"></file>
-        <file path="examples/afe/inc/afe.h"                         targetDirectory="examples/afe/inc"         action="copy"></file>
-        <file path="examples/afe/inc/afe_registers.h"               targetDirectory="examples/afe/inc"         action="copy"></file>
-        <file path="examples/afe/inc/afe_comms.h"                   targetDirectory="examples/afe/inc"         action="copy"></file>
-        <file path="examples/afe/driver/inc/crcDriver.h"            targetDirectory="examples/afe/driver/inc"  action="copy"></file>
-        <file path="examples/afe/driver/inc/spiDriver.h"            targetDirectory="examples/afe/driver/inc"  action="copy"></file>
 
-        <file path="FreeRTOS/FreeRTOSConfig.h"   targetDirectory="FreeRTOS"       action="copy"></file>
-        <file path="FreeRTOS/CLI/CLI_task.c"     targetDirectory="FreeRTOS/CLI"   action="copy"></file>
-        <file path="FreeRTOS/CLI/CLI_task.h"     targetDirectory="FreeRTOS/CLI"   action="copy"></file>
-        <file path="FreeRTOS/CLI/FreeRTOS_CLI.c" targetDirectory="FreeRTOS/CLI"   action="copy"></file>
-        <file path="FreeRTOS/CLI/FreeRTOS_CLI.h" targetDirectory="FreeRTOS/CLI"   action="copy"></file>
+        <file path="FreeRTOS/FreeRTOSConfig.h"          targetDirectory="FreeRTOS"              action="copy"></file>
+		<file path="FreeRTOS/Config/FreeRTOSConfig.h"   targetDirectory="FreeRTOS/Config"       action="copy"></file>
+        <file path="FreeRTOS/CLI/CLI_task.c"            targetDirectory="FreeRTOS/CLI"          action="copy"></file>
+        <file path="FreeRTOS/CLI/CLI_task.h"            targetDirectory="FreeRTOS/CLI"          action="copy"></file>
+        <file path="FreeRTOS/CLI/FreeRTOS_CLI.c"        targetDirectory="FreeRTOS/CLI"          action="copy"></file>
+        <file path="FreeRTOS/CLI/FreeRTOS_CLI.h"        targetDirectory="FreeRTOS/CLI"          action="copy"></file>
 
         <file path="board/board.c"               targetDirectory="board"          action="copy"></file>
 
