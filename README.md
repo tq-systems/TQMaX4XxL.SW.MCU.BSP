@@ -1,3 +1,9 @@
+<!---
+SPDX-License-Identifier: CC-BY-4.0
+ 
+Copyright (c) 2024 TQ-Systems GmbH <license@tq-group.com>,
+D-82229 Seefeld, Germany.
+--->
 # TQ-MBaX4XxL
 
 ## Description
@@ -223,11 +229,4 @@ The register is located at `0x0FC40010`. This is already done with the patch in 
 
 ## License
 
-Except where otherwise noted, all files within this repository are licensed under the following terms,
-excluding build system files (such as .cmake), configuration files for development environments
-(such as IDE setup files):
-
-SPDX-License-Identifier: BSD-3-Clause
-
-Copyright (c) 2021 - 2023 TQ-Systems GmbH <license@tq-group.com>,
-D-82229 Seefeld, Germany.
+For license information see the license documentation [LICENSE.md](./LICENSE.md)
