@@ -25,11 +25,13 @@
 /* project */
 #include <string.h>
 /* module */
-#include "gpio_dig_cmd.h"
+#include "SystemP.h"
 #include <afe.h>
 #include <afe_comms.h>
 #include <afe_registers.h>
 #include "math.h"
+#include "ti_drivers_config.h"
+
 
 /*******************************************************************************
  * local defines
@@ -78,16 +80,19 @@ void AFE_Enable(void)
     uint16_t reg_read_value = 0;
 
     /*System Power On Reset*/
-    gpio_writePinOut(ADC_RST, PIN_STATUS_LOW);
+    GPIO_pinWriteLow(ADC_RST_BASE_ADDR, ADC_RST_PIN);
     vTaskDelay(pdMS_TO_TICKS(1));
-    gpio_writePinOut(ADC_RST, PIN_STATUS_HIGH);
+    GPIO_pinWriteHigh(ADC_RST_BASE_ADDR, ADC_RST_PIN);
     vTaskDelay(pdMS_TO_TICKS(20));
 
     /*Read of STATUS0 until Chip is ready*/
     while(reg_read_value != SYS_STATUS0_CHIP_READY_MASK)
     {
-        AFE_SPI_Read(SYS_CONTROL.SYS_STATUS0, reg_16bit);
-
+        if(AFE_SPI_Read(SYS_CONTROL.SYS_STATUS0, reg_16bit) != SystemP_SUCCESS)
+        {
+            DebugP_log("[ ERROR ] \t AFE13388 Initialization failed!\r\n");
+            return;
+        }
         /*Check SPI Transfer Configuration*/
         if (crc_enabled == true)
         {
