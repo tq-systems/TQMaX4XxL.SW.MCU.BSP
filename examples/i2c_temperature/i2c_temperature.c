@@ -56,7 +56,6 @@ float i2cGetTemperature(void *args)
     I2C_Transaction i2cTransaction = {0};
 
     Drivers_i2cOpen();
-    Board_driversOpen();
 
     i2cHandle = gI2cHandle[CONFIG_I2C0];
 
@@ -131,7 +130,6 @@ float i2cGetTemperature(void *args)
         DebugP_log("Some tests have failed!!\r\n");
     }
 
-    Board_driversClose();
     Drivers_i2cClose();
 
     return result;

@@ -118,7 +118,7 @@ static bool eepromRead(eeprom_t* p_eepromData)
         txBuffer[1U] = (p_eepromData->offset & 0x00FFU);
 
         Drivers_i2cOpen();
-        Board_driversOpen();
+
         i2cHandle = I2C_getHandle(CONFIG_I2C0);
 
         /* Set default transaction parameters */
@@ -144,7 +144,6 @@ static bool eepromRead(eeprom_t* p_eepromData)
             success = true;
         }
 
-        Board_driversClose();
         Drivers_i2cClose();
     }
 
@@ -174,7 +173,6 @@ static bool eepromWrite(eeprom_t* p_eepromData)
         memcpy(&txBuffer[2U], p_eepromData->data, p_eepromData->length);
 
         Drivers_i2cOpen();
-        status = Board_driversOpen();
         if (status == SystemP_SUCCESS)
         {
             i2cHandle = I2C_getHandle(CONFIG_I2C0);
@@ -200,7 +198,6 @@ static bool eepromWrite(eeprom_t* p_eepromData)
             success = true;
         }
 
-        Board_driversClose();
         Drivers_i2cClose();
     }
 
