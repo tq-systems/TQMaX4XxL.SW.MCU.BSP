@@ -65,7 +65,6 @@ typedef enum
 
 BaseType_t gpioDigCommand(char* pcWriteBuffer, __size_t xWriteBufferLen, const char* pcCommandString);
 bool gpio_writePinOut(GpioOut_t gpio, pinStatus_t state);
-void gpioInit(void);
 
 /*******************************************************************************
  * global extern data
