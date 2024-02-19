@@ -142,7 +142,7 @@
 
 		<file path="main.c"                     action="copy"></file>
 		<file path="linker.cmd"                 action="copy"></file>
-		<file path="example.syscfg"             action="copy"></file>
+		<file path="TQMaX4XxL_ALV.syscfg"       action="copy"></file>
 		<file path="README.md"                  action="copy"></file>
 		<file path="syscfg_c.rov.xs"            action="copy"></file>
 		<file path="makefile_ccs_bootimage_gen" action="copy"></file>
