@@ -12,6 +12,8 @@ const flash      = scripting.addModule("/board/flash/flash", {}, false);
 const flash1     = flash.addInstance();
 const adc        = scripting.addModule("/drivers/adc/adc", {}, false);
 const adc1       = adc.addInstance();
+const ddr        = scripting.addModule("/drivers/ddr/ddr", {}, false);
+const ddr1       = ddr.addInstance();
 const gpio       = scripting.addModule("/drivers/gpio/gpio", {}, false);
 const gpio1      = gpio.addInstance();
 const gpio2      = gpio.addInstance();
@@ -89,6 +91,8 @@ flash1.peripheralDriver.inputClkFreq = 200000000;
 adc1.$name                  = "CONFIG_ADC0";
 adc1.ADC.EXT_TRIGGER0.$used = false;
 adc1.ADC.EXT_TRIGGER1.$used = false;
+
+ddr1.$name = "CONFIG_DDR0";
 
 gpio1.$name                    = "GPIO_USER_LED_1";
 gpio1.pinDir                   = "OUTPUT";
