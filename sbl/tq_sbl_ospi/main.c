@@ -37,8 +37,6 @@
 #include <drivers/sciclient.h>
 #include <drivers/bootloader.h>
 
-#define OSPI_RD_DATA_CAPTURE_REG_ADD  (0x0FC40010)
-
 void flashFixUpOspiBoot(OSPI_Handle oHandle, Flash_Handle fHandle);
 
 /* call this API to stop the booting process and spin, do that you can connect
@@ -111,12 +109,6 @@ int main(void)
 
     status = Board_driversOpen();
     DebugP_assert(status == SystemP_SUCCESS);
-
-    /* DELAY_FD = 2 and BYASS_FLD = enable
-     * The default DELAY_FD = 4 does not work with QSPI flash, so DELAY_FD = 2 must be used.
-     * In addition, the "board.am64x.r5f.ti-arm-clang.debug.lib" must be rebuilt with the new "flash_nor_ospi.c" file.
-     * Please see README.md*/
-    *(uint32_t*) OSPI_RD_DATA_CAPTURE_REG_ADD = 0x05;
 
     Bootloader_profileAddProfilePoint("Board_driversOpen");
 

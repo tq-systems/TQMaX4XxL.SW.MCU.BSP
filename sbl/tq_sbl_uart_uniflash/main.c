@@ -47,8 +47,6 @@ uint8_t gUniflashFileBuf[BOOTLOADER_UNIFLASH_MAX_FILE_SIZE] __attribute__((align
 #define BOOTLOADER_UNIFLASH_VERIFY_BUF_MAX_SIZE (32*1024)
 uint8_t gUniflashVerifyBuf[BOOTLOADER_UNIFLASH_VERIFY_BUF_MAX_SIZE] __attribute__((aligned(128), section(".bss")));
 
-#define OSPI_RD_DATA_CAPTURE_REG_ADD  (0x0FC40010)
-
 /* call this API to stop the booting process and spin, do that you can connect
  * debugger, load symbols and then make the 'loop' variable as 0 to continue execution
  * with debugger connected.
@@ -79,11 +77,6 @@ int main(void)
 
     status = Board_driversOpen();
     DebugP_assert(status == SystemP_SUCCESS);
-    /* DELAY_FD = 2 and BYASS_FLD = enable
-     * The default DELAY_FD = 4 does not work with QSPI flash, so DELAY_FD = 2 must be used.
-     * In addition, the "board.am64x.r5f.ti-arm-clang.debug.lib" must be rebuilt with the new "flash_nor_ospi.c" file.
-     * Please see README.md*/
-    *(uint32_t*) OSPI_RD_DATA_CAPTURE_REG_ADD = 0x05;
 
     while(!done)
     {
