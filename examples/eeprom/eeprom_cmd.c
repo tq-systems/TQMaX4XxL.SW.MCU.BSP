@@ -25,7 +25,6 @@
 #include <kernel/dpl/DebugP.h>
 #include "ti_drivers_config.h"
 #include "ti_drivers_open_close.h"
-#include "ti_board_open_close.h"
 #include "utilities.h"
 /* own */
 #include "eeprom_cmd.h"
@@ -44,10 +43,14 @@
 #define INDEX_ACCESS       (2U)
 #define INDEX_DATA         (3U)
 
-#define TQ_EEPROM_ADD      (0x50)
-#define CUST_EEPROM_ADD    (0x54)
-
-#define MAX_DATA           (1U)
+#define TQ_EEPROM_ADD         (0x50)
+#define TQ_EEPROM_INSTANCE     (0U)
+#define TQ_EEPROM_ADD_SIZE    (1U)
+#define CUST_EEPROM_ADD       (0x54)
+#define CUST_EEPROM_INSTANCE   (1U)
+#define CUST_EEPROM_ADD_SIZE  (2U)
+#define MAX_ADDR_SIZE         (CUST_EEPROM_ADD_SIZE)
+#define MAX_DATA              (1U)
 
 /*******************************************************************************
  * local macros
@@ -75,6 +78,7 @@ typedef struct
 {
     uint8_t instance;
     uint32_t offset;
+    uint8_t addressSize;
     uint8_t* data;
     uint8_t length;
 } eeprom_t;
@@ -125,8 +129,10 @@ static bool eepromRead(eeprom_t* p_eepromData)
         I2C_Transaction_init(&i2cTransaction);
 
         /* Override with required transaction parameters */
-        i2cTransaction.writeBuf      = txBuffer;
-        i2cTransaction.writeCount    = ARRAY_SIZE(txBuffer);
+
+        i2cTransaction.writeCount    = p_eepromData->addressSize;
+        i2cTransaction.writeBuf      = &txBuffer[MAX_ADDR_SIZE-p_eepromData->addressSize];
+
         i2cTransaction.readBuf       = p_eepromData->data;
         i2cTransaction.readCount     = p_eepromData->length;
         i2cTransaction.targetAddress = eepromInstance[p_eepromData->instance];
@@ -181,9 +187,9 @@ static bool eepromWrite(eeprom_t* p_eepromData)
             I2C_Transaction_init(&i2cTransaction);
 
             /* Override with required transaction parameters */
-            i2cTransaction.writeBuf     = txBuffer;
-            i2cTransaction.writeCount   = 2 + p_eepromData->length;
             i2cTransaction.targetAddress = eepromInstance[p_eepromData->instance];
+            i2cTransaction.writeBuf     = &txBuffer[MAX_ADDR_SIZE-p_eepromData->addressSize];
+            i2cTransaction.writeCount   = p_eepromData->addressSize + p_eepromData->length;
 
             status = I2C_transfer(i2cHandle, &i2cTransaction);
         }
@@ -246,6 +252,18 @@ BaseType_t eepromCommand(char* pcWriteBuffer, __size_t xWriteBufferLen, const ch
     if (pcParameter[INDEX_OFFSET] == pNextNumber)
     {
         err = true;
+    }
+
+    switch(eepromData.instance){
+    case TQ_EEPROM_INSTANCE:
+         eepromData.addressSize = TQ_EEPROM_ADD_SIZE;
+         break;
+    case CUST_EEPROM_INSTANCE:
+        eepromData.addressSize = CUST_EEPROM_ADD_SIZE;
+        break;
+    default:
+        err = true;
+        break;
     }
 
     if (err == false)
