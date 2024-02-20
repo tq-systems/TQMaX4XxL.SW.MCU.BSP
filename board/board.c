@@ -30,38 +30,15 @@
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdint.h>
-#include <drivers/pinmux.h>
 #include "ti_board_config.h"
-#include <networking/enet/core/include/phy/dp83867.h>
+#include <drivers/pinmux.h>
+#include <stdint.h>
 
-#define TMP100_SOC_ADDR         0x4A
-/* The delay values are set based on trial and error and not tuned per port of the evm */
-#define TX_DELAY  250U
-#define RX_DELAY  2000U
-
-static Pinmux_PerCfg_t MDIOPinMuxMainDomainCfg[] = {
-    /* MDIO0 pin config */
-    /* MDIO0_MDC -> PRG0_PRU1_GPO19 (R2) */
-    {
-        PIN_PRG0_PRU1_GPO19,
-        ( PIN_MODE(4) | PIN_PULL_DISABLE )
-    },
-    /* MDIO0_MDIO -> PRG0_PRU1_GPO18 (P5) */
-    {
-        PIN_PRG0_PRU1_GPO18,
-        ( PIN_MODE(4) | PIN_INPUT_ENABLE | PIN_PULL_DISABLE )
-    },
-
-    {PINMUX_END, PINMUX_END}
-};
+#define TMP100_SOC_ADDR 0x4A
 
 /**
  * @brief This function returns the I2C temperatur sensor address.
  *
  * @return temperature sensor address.
  */
-uint8_t Board_getSocTemperatureSensorAddr(void)
-{
-    return (TMP100_SOC_ADDR);
-}
+uint8_t Board_getSocTemperatureSensorAddr(void) { return (TMP100_SOC_ADDR); }
