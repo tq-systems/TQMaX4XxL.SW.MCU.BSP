@@ -1,0 +1,286 @@
+/**
+ * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
+ * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
+ * @cliArgs --device "AM64x_beta" --package "ALV" --part "Default" --context "r5fss0-0" --product "MCU_PLUS_SDK_AM64x@08.06.00"
+ * @versions {"tool":"1.14.0+2667"}
+ */
+
+/**
+ * Import the modules used in this configuration.
+ */
+const eeprom     = scripting.addModule("/board/eeprom/eeprom", {}, false);
+const eeprom1    = eeprom.addInstance();
+const flash      = scripting.addModule("/board/flash/flash", {}, false);
+const flash1     = flash.addInstance();
+const adc        = scripting.addModule("/drivers/adc/adc", {}, false);
+const adc1       = adc.addInstance();
+const gpio       = scripting.addModule("/drivers/gpio/gpio", {}, false);
+const gpio1      = gpio.addInstance();
+const gpio2      = gpio.addInstance();
+const gpio3      = gpio.addInstance();
+const gpio4      = gpio.addInstance();
+const gpio5      = gpio.addInstance();
+const gpio6      = gpio.addInstance();
+const gpio7      = gpio.addInstance();
+const gpio8      = gpio.addInstance();
+const gpio9      = gpio.addInstance();
+const gpio10     = gpio.addInstance();
+const gpio11     = gpio.addInstance();
+const gpio12     = gpio.addInstance();
+const gpio13     = gpio.addInstance();
+const gpio14     = gpio.addInstance();
+const gpio15     = gpio.addInstance();
+const gpio16     = gpio.addInstance();
+const gpio17     = gpio.addInstance();
+const i2c        = scripting.addModule("/drivers/i2c/i2c", {}, false);
+const i2c1       = i2c.addInstance();
+const i2c2       = i2c.addInstance();
+const mcan       = scripting.addModule("/drivers/mcan/mcan", {}, false);
+const mcan1      = mcan.addInstance();
+const mcan2      = mcan.addInstance();
+const mcspi      = scripting.addModule("/drivers/mcspi/mcspi", {}, false);
+const mcspi1     = mcspi.addInstance();
+const mmcsd      = scripting.addModule("/drivers/mmcsd/mmcsd", {}, false);
+const mmcsd1     = mmcsd.addInstance();
+const uart       = scripting.addModule("/drivers/uart/uart", {}, false);
+const uart1      = uart.addInstance();
+const uart2      = uart.addInstance();
+const udma       = scripting.addModule("/drivers/udma/udma", {}, false);
+const udma1      = udma.addInstance();
+const clock      = scripting.addModule("/kernel/dpl/clock");
+const debug_log  = scripting.addModule("/kernel/dpl/debug_log");
+const mpu_armv7  = scripting.addModule("/kernel/dpl/mpu_armv7", {}, false);
+const mpu_armv71 = mpu_armv7.addInstance();
+const mpu_armv72 = mpu_armv7.addInstance();
+const mpu_armv73 = mpu_armv7.addInstance();
+const mpu_armv74 = mpu_armv7.addInstance();
+const mpu_armv75 = mpu_armv7.addInstance();
+
+/**
+ * Write custom configuration values to the imported modules.
+ */
+eeprom1.$name      = "CONFIG_EEPROM0";
+eeprom1.i2cAddress = 0x54;
+
+flash1.$name                         = "CONFIG_FLASH0";
+flash1.flashBlockSize                = 65536;
+flash1.cmdBlockErase3B               = "0xD8";
+flash1.cmdWr                         = "0x02";
+flash1.proto_isAddrReg               = false;
+flash1.xspiWipRdCmd                  = "0x00";
+flash1.xspiWipReg                    = "0x00000000";
+flash1.quirks                        = "NULL";
+flash1.dummyClksCmd                  = 0;
+flash1.cmdSectorErase4B              = "0xDC";
+flash1.cmdSectorErase3B              = "0xD8";
+flash1.device                        = "CUSTOM_FLASH";
+flash1.fname                         = "TQFLASH";
+flash1.enable4BAddr                  = false;
+flash1.dummy_cmdRegRd                = "0x15";
+flash1.dummy_cmdRegWr                = "0x01";
+flash1.dummy_isAddrReg               = false;
+flash1.flashManfId                   = "0xC2";
+flash1.flashDeviceId                 = "0x253A";
+flash1.dummyClksRd                   = 10;
+flash1.dummy_bitP                    = 192;
+flash1.dummy_mask                    = "0xC0";
+flash1.flashQeType                   = "2";
+flash1.flash444Seq                   = "0x04";
+flash1.protocol                      = "4s_4d_4d";
+flash1.cmdRd                         = "0xED";
+flash1.strDtr_isAddrReg              = false;
+flash1.peripheralDriver.$name        = "CONFIG_OSPI0";
+flash1.peripheralDriver.baudRateDiv  = 8;
+flash1.peripheralDriver.inputClkFreq = 200000000;
+
+adc1.$name                  = "CONFIG_ADC0";
+adc1.ADC.EXT_TRIGGER0.$used = false;
+adc1.ADC.EXT_TRIGGER1.$used = false;
+
+gpio1.$name                    = "GPIO_USER_LED_1";
+gpio1.pinDir                   = "OUTPUT";
+gpio1.useMcuDomainPeripherals  = true;
+gpio1.MCU_GPIO.gpioPin.$assign = "ball.C7";
+
+gpio2.$name                    = "GPIO_USER_LED_2";
+gpio2.pinDir                   = "OUTPUT";
+gpio2.useMcuDomainPeripherals  = true;
+gpio2.MCU_GPIO.gpioPin.$assign = "ball.C8";
+
+gpio3.$name                = "DIG_IN_1";
+gpio3.trigType             = "BOTH_EDGE";
+gpio3.GPIO.gpioPin.$assign = "ball.T21";
+
+gpio4.$name                = "DIG_IN_2";
+gpio4.trigType             = "BOTH_EDGE";
+gpio4.GPIO.gpioPin.$assign = "ball.N17";
+
+gpio5.$name                = "DIG_IN_3";
+gpio5.trigType             = "BOTH_EDGE";
+gpio5.GPIO.gpioPin.$assign = "ball.R19";
+
+gpio6.$name                = "DIG_IN_4";
+gpio6.trigType             = "BOTH_EDGE";
+gpio6.GPIO.gpioPin.$assign = "ball.R20";
+
+gpio7.$name                = "EN_DIG_OUT_1";
+gpio7.pinDir               = "OUTPUT";
+gpio7.GPIO.gpioPin.$assign = "ball.W20";
+
+gpio8.$name                = "STATUS_OUT_1";
+gpio8.GPIO.gpioPin.$assign = "ball.W21";
+
+gpio9.$name                = "EN_DIG_OUT_2";
+gpio9.pinDir               = "OUTPUT";
+gpio9.GPIO.gpioPin.$assign = "ball.V18";
+
+gpio10.$name                = "STATUS_OUT_2";
+gpio10.GPIO.gpioPin.$assign = "ball.Y21";
+
+gpio11.$name                = "EN_DIG_OUT_3";
+gpio11.pinDir               = "OUTPUT";
+gpio11.GPIO.gpioPin.$assign = "ball.Y20";
+
+gpio12.$name                = "STATUS_OUT_3";
+gpio12.GPIO.gpioPin.$assign = "ball.N16";
+
+gpio13.$name                = "EN_DIG_OUT_4";
+gpio13.pinDir               = "OUTPUT";
+gpio13.GPIO.gpioPin.$assign = "ball.P17";
+
+gpio14.$name                = "STATUS_OUT_4";
+gpio14.GPIO.gpioPin.$assign = "ball.Y18";
+
+gpio15.$name                    = "USER_BUTTON";
+gpio15.trigType                 = "RISE_EDGE";
+gpio15.useMcuDomainPeripherals  = true;
+gpio15.MCU_GPIO.gpioPin.$assign = "ball.A7";
+
+gpio16.$name                = "RS485_RTS";
+gpio16.pinDir               = "OUTPUT";
+gpio16.GPIO.gpioPin.$assign = "ball.T18";
+
+gpio17.$name                = "ADC_RST";
+gpio17.pinDir               = "OUTPUT";
+gpio17.GPIO.gpioPin.$assign = "ball.D16";
+
+i2c1.$name               = "CONFIG_I2C0";
+eeprom1.peripheralDriver = i2c1;
+i2c1.I2C.$assign         = "I2C0";
+
+i2c2.$name = "CONFIG_I2C1";
+
+mcan1.$name = "CONFIG_MCAN0";
+
+mcan2.$name        = "CONFIG_MCAN1";
+mcan2.MCAN.$assign = "MCAN1";
+
+mcspi1.$name                 = "CONFIG_MCSPI0";
+mcspi1.mcspiChannel[0].$name = "CONFIG_MCSPI_CH0";
+
+mmcsd1.$name        = "CONFIG_MMCSD0";
+mmcsd1.moduleSelect = "MMC0";
+
+uart1.$name            = "RS485";
+uart1.inputClkFreq     = 96000000;
+uart1.readMode         = "CALLBACK";
+uart1.readCallbackFxn  = "uart_echo_read_callback";
+uart1.writeMode        = "CALLBACK";
+uart1.writeCallbackFxn = "uart_echo_write_callback";
+uart1.UART.$assign     = "USART2";
+
+uart2.$name           = "CONFIG_USART0";
+uart2.readMode        = "CALLBACK";
+uart2.readCallbackFxn = "uartCallback";
+
+udma1.instance = "PKTDMA_0";
+udma1.$name    = "CONFIG_UDMA_PKTDMA_0";
+
+mpu_armv71.$name             = "CONFIG_MPU_REGION0";
+mpu_armv71.size              = 31;
+mpu_armv71.attributes        = "Device";
+mpu_armv71.accessPermissions = "Supervisor RD+WR, User RD";
+mpu_armv71.allowExecute      = false;
+
+mpu_armv72.$name             = "CONFIG_MPU_REGION1";
+mpu_armv72.size              = 15;
+mpu_armv72.accessPermissions = "Supervisor RD+WR, User RD";
+
+mpu_armv73.$name             = "CONFIG_MPU_REGION2";
+mpu_armv73.baseAddr          = 0x41010000;
+mpu_armv73.size              = 15;
+mpu_armv73.accessPermissions = "Supervisor RD+WR, User RD";
+
+mpu_armv74.$name             = "CONFIG_MPU_REGION3";
+mpu_armv74.baseAddr          = 0x70000000;
+mpu_armv74.size              = 21;
+mpu_armv74.accessPermissions = "Supervisor RD+WR, User RD";
+
+mpu_armv75.$name    = "CONFIG_MPU_REGION4";
+mpu_armv75.size     = 31;
+mpu_armv75.baseAddr = 0x80000000;
+
+/**
+ * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future
+ * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
+ * re-solve from scratch.
+ */
+flash1.peripheralDriver.OSPI.$suggestSolution      = "OSPI0";
+flash1.peripheralDriver.OSPI.CLK.$suggestSolution  = "ball.N20";
+flash1.peripheralDriver.OSPI.CSn0.$suggestSolution = "ball.L19";
+flash1.peripheralDriver.OSPI.DQS.$suggestSolution  = "ball.N19";
+flash1.peripheralDriver.OSPI.D7.$suggestSolution   = "ball.M17";
+flash1.peripheralDriver.OSPI.D6.$suggestSolution   = "ball.N18";
+flash1.peripheralDriver.OSPI.D5.$suggestSolution   = "ball.P20";
+flash1.peripheralDriver.OSPI.D4.$suggestSolution   = "ball.P21";
+flash1.peripheralDriver.OSPI.D3.$suggestSolution   = "ball.M21";
+flash1.peripheralDriver.OSPI.D2.$suggestSolution   = "ball.M20";
+flash1.peripheralDriver.OSPI.D1.$suggestSolution   = "ball.M18";
+flash1.peripheralDriver.OSPI.D0.$suggestSolution   = "ball.M19";
+adc1.ADC.$suggestSolution                          = "ADC0";
+adc1.ADC.AIN0.$suggestSolution                     = "ball.G20";
+adc1.ADC.AIN1.$suggestSolution                     = "ball.F20";
+adc1.ADC.AIN2.$suggestSolution                     = "ball.E21";
+adc1.ADC.AIN3.$suggestSolution                     = "ball.D20";
+adc1.ADC.AIN4.$suggestSolution                     = "ball.G21";
+adc1.ADC.AIN5.$suggestSolution                     = "ball.F21";
+adc1.ADC.AIN6.$suggestSolution                     = "ball.F19";
+adc1.ADC.AIN7.$suggestSolution                     = "ball.E20";
+gpio1.MCU_GPIO.$suggestSolution                    = "MCU_GPIO0";
+gpio2.MCU_GPIO.$suggestSolution                    = "MCU_GPIO0";
+gpio3.GPIO.$suggestSolution                        = "GPIO0";
+gpio4.GPIO.$suggestSolution                        = "GPIO0";
+gpio5.GPIO.$suggestSolution                        = "GPIO0";
+gpio6.GPIO.$suggestSolution                        = "GPIO0";
+gpio7.GPIO.$suggestSolution                        = "GPIO0";
+gpio8.GPIO.$suggestSolution                        = "GPIO0";
+gpio9.GPIO.$suggestSolution                        = "GPIO0";
+gpio10.GPIO.$suggestSolution                       = "GPIO0";
+gpio11.GPIO.$suggestSolution                       = "GPIO0";
+gpio12.GPIO.$suggestSolution                       = "GPIO0";
+gpio13.GPIO.$suggestSolution                       = "GPIO0";
+gpio14.GPIO.$suggestSolution                       = "GPIO0";
+gpio15.MCU_GPIO.$suggestSolution                   = "MCU_GPIO0";
+gpio16.GPIO.$suggestSolution                       = "GPIO0";
+gpio17.GPIO.$suggestSolution                       = "GPIO1";
+i2c1.I2C.SCL.$suggestSolution                      = "ball.A18";
+i2c1.I2C.SDA.$suggestSolution                      = "ball.B18";
+i2c2.I2C.$suggestSolution                          = "I2C1";
+i2c2.I2C.SCL.$suggestSolution                      = "ball.C18";
+i2c2.I2C.SDA.$suggestSolution                      = "ball.B19";
+mcan1.MCAN.$suggestSolution                        = "MCAN0";
+mcan1.MCAN.RX.$suggestSolution                     = "ball.B17";
+mcan1.MCAN.TX.$suggestSolution                     = "ball.A17";
+mcan2.MCAN.RX.$suggestSolution                     = "ball.D17";
+mcan2.MCAN.TX.$suggestSolution                     = "ball.C17";
+mcspi1.SPI.$suggestSolution                        = "SPI0";
+mcspi1.SPI.CLK.$suggestSolution                    = "ball.D13";
+mcspi1.SPI.D0.$suggestSolution                     = "ball.A13";
+mcspi1.SPI.D1.$suggestSolution                     = "ball.A14";
+mcspi1.mcspiChannel[0].CSn.$suggestSolution        = "ball.D12";
+mmcsd1.MMC0.$suggestSolution                       = "MMC0";
+uart1.UART.RXD.$suggestSolution                    = "ball.T20";
+uart1.UART.TXD.$suggestSolution                    = "ball.U21";
+uart2.UART.$suggestSolution                        = "USART0";
+uart2.UART.RXD.$suggestSolution                    = "ball.D15";
+uart2.UART.TXD.$suggestSolution                    = "ball.C16";
