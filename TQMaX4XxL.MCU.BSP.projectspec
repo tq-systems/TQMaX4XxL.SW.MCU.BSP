@@ -137,9 +137,6 @@
 
 		<file path="board/board.c"               targetDirectory="board"          action="copy"></file>
 
-		<file path="targetConfigs/AM64x.ccxml"   targetDirectory="targetConfigs"  action="copy"></file>
-		<file path="targetConfigs/readme.txt"    targetDirectory="targetConfigs"  action="copy"></file>
-
 		<file path="main.c"                     action="copy"></file>
 		<file path="linker.cmd"                 action="copy"></file>
 		<file path="TQMaX4XxL_ALV.syscfg"       action="copy"></file>
