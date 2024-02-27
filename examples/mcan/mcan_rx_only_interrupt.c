@@ -140,9 +140,6 @@ int32_t mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
     MCAN_ErrCntStatus       errCounter;
     uint32_t                bufNum, fifoNum, bitPos = 0U;
 
-    /* Open drivers to open the UART driver for console */
-    Board_driversOpen();
-
     /* Wait for mcan tx application to be ready */
     IpcNotify_syncAll(SystemP_WAIT_FOREVER);
 
@@ -225,7 +222,6 @@ int32_t mcan_rx_interrupt_main(void *args, uint64_t mcanAdd)
 
     memcpy(args, &rxMsg, sizeof(rxMsg));
 
-    Board_driversClose();
     /* We don't close drivers so that the UART driver remains open and flush any
      * pending messages to console */
     return status;

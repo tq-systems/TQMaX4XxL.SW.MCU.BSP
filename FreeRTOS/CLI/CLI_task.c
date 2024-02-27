@@ -39,7 +39,7 @@
 #include "portmacro.h"
 #include "projdefs.h"
 #include "FreeRTOS_CLI.h"
-#include "Config/FreeRTOSConfig.h"
+#include "FreeRTOSConfig.h"
 
 /* commands */
 #include "gpio_led_blink_cmd.h"

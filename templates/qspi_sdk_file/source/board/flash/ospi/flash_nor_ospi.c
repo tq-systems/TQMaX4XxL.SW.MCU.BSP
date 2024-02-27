@@ -1169,7 +1169,10 @@ static int32_t Flash_norOspiOpen(Flash_Config *config, Flash_Params *params)
         status += Flash_norOspiSetModeDummy(config, obj->ospiHandle);
 
         /* Set RD Capture Delay by reading ID */
-        uint32_t readDataCapDelay = 4U;
+
+        /* DELAY_FD = 2 and BYASS_FLD = enable
+         * The default DELAY_FD = 4 does not work with QSPI flash, so DELAY_FD = 2 must be used. */
+        uint32_t readDataCapDelay = 2U; //changed!!
         OSPI_setRdDataCaptureDelay(obj->ospiHandle, readDataCapDelay);
         status = Flash_norOspiReadId(config);
 

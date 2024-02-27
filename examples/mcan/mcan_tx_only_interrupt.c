@@ -130,9 +130,6 @@ int32_t mcan_tx_interrupt_main(void *args, uint64_t mcanAdd)
     MCAN_ProtocolStatus     protStatus;
     uint32_t                i, bufNum = 0U;
 
-    /* Open drivers to open the UART driver for console */
-    Board_driversOpen();
-
     /* Wait for mcan rx application to be ready */
     IpcNotify_syncAll(SystemP_WAIT_FOREVER);
 
@@ -224,8 +221,6 @@ int32_t mcan_tx_interrupt_main(void *args, uint64_t mcanAdd)
     IpcNotify_syncAll(SystemP_WAIT_FOREVER);
 
     DebugP_log("[MCAN]TX test passed!!\r\n");
-
-    Board_driversClose();
 
     memcpy(args, &txMsg, sizeof(txMsg));
 

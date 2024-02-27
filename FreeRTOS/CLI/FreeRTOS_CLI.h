@@ -32,7 +32,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "Config/FreeRTOSConfig.h"
+#include "FreeRTOSConfig.h"
 /* *INDENT-ON* */
 
 #define configCOMMAND_INT_MAX_OUTPUT_SIZE 250

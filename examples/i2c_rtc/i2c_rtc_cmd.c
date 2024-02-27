@@ -215,7 +215,6 @@ static bool i2cGetRtcTime(rtcTime_t* p_time)
     I2C_Transaction i2cTransaction             = {0};
 
     Drivers_i2cOpen();
-    Board_driversOpen();
     i2cHandle = I2C_getHandle(CONFIG_I2C0);
 
     DebugP_log("[I2C] Read RTC data.\r\n");
@@ -255,7 +254,6 @@ static bool i2cGetRtcTime(rtcTime_t* p_time)
         }
     }
 
-    Board_driversClose();
     Drivers_i2cClose();
 
     return retVal;

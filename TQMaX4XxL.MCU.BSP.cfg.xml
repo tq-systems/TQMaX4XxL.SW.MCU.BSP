@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cdtprojectproperties>
+  <section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.IncludePaths">
+    <language id="com.ti.ccstudio.core.TIGPPLanguage" name="C++ Source File">
+      <includepath>Debug/${SYSCONFIG_TOOL_INCLUDE_PATH}</includepath>
+      <includepath>Debug/${COM_TI_MCU_PLUS_SDK_AM64X_INCLUDE_PATH}</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/usb/tinyusb/config/freertos/am64x_am243x/cdc_config</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/usb/tinyusb/tinyusb-stack/src</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/dpl</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/FreeRTOS-Kernel/include</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/config/am64x/r5f</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/portable/TI_ARM_CLANG/ARM_CR5F</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/networking/lwip/lwip-port/freertos/include</includepath>
+      <includepath>/${CG_TOOL_ROOT}/</includepath>
+      <includepath>/${CG_TOOL_ROOT}/include/c</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/afe/driver/inc</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/include</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/afe/inc</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/FreeRTOS/CLI</includepath>
+    </language>
+    <language id="com.ti.ccstudio.core.TIGCCLanguage" name="C Source File">
+      <includepath>Debug/${SYSCONFIG_TOOL_INCLUDE_PATH}</includepath>
+      <includepath>Debug/${COM_TI_MCU_PLUS_SDK_AM64X_INCLUDE_PATH}</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/usb/tinyusb/config/freertos/am64x_am243x/cdc_config</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/usb/tinyusb/tinyusb-stack/src</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/dpl</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/FreeRTOS-Kernel/include</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/config/am64x/r5f</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/portable/TI_ARM_CLANG/ARM_CR5F</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/networking/lwip/lwip-port/freertos/include</includepath>
+      <includepath>/${CG_TOOL_ROOT}/</includepath>
+      <includepath>/${CG_TOOL_ROOT}/include/c</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/afe/driver/inc</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/include</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/afe/inc</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/FreeRTOS/CLI</includepath>
+    </language>
+    <language id="com.ti.ccstudio.core.TIASMLanguage" name="Assembly Source File">
+      <includepath>Debug/${SYSCONFIG_TOOL_INCLUDE_PATH}</includepath>
+      <includepath>Debug/${COM_TI_MCU_PLUS_SDK_AM64X_INCLUDE_PATH}</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/usb/tinyusb/config/freertos/am64x_am243x/cdc_config</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/usb/tinyusb/tinyusb-stack/src</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/dpl</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/FreeRTOS-Kernel/include</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/config/am64x/r5f</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/portable/TI_ARM_CLANG/ARM_CR5F</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/networking/lwip/lwip-port/freertos/include</includepath>
+      <includepath>/${CG_TOOL_ROOT}/</includepath>
+      <includepath>/${CG_TOOL_ROOT}/include/c</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/afe/driver/inc</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/include</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/afe/inc</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/FreeRTOS/CLI</includepath>
+    </language>
+    <language id="com.ti.ccstudio.core.TIASMLanguage" name="Assembly Source File">
+      <includepath>Debug/${SYSCONFIG_TOOL_INCLUDE_PATH}</includepath>
+      <includepath>Debug/${COM_TI_MCU_PLUS_SDK_AM64X_INCLUDE_PATH}</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/usb/tinyusb/config/freertos/am64x_am243x/cdc_config</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/usb/tinyusb/tinyusb-stack/src</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/dpl</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/FreeRTOS-Kernel/include</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/config/am64x/r5f</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/kernel/freertos/portable/TI_ARM_CLANG/ARM_CR5F</includepath>
+      <includepath>/${COM_TI_MCU_PLUS_SDK_AM64X_INSTALL_DIR}/source/networking/lwip/lwip-port/freertos/include</includepath>
+      <includepath>/${CG_TOOL_ROOT}/</includepath>
+      <includepath>/${CG_TOOL_ROOT}/include/c</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/afe/driver/inc</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/include</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/examples/afe/inc</includepath>
+      <includepath>/${CCS_PROJECT_DIR}/FreeRTOS/CLI</includepath>
+    </language>
+    <language id="com.ti.ccstudio.core.TICMDLanguage" name="Linker Command File"/>
+    <language id="com.ti.ccstudio.core.TICMDLanguage" name="Linker Command File"/>
+    <language id="com.ti.ccstudio.core.TICMDLanguage" name="Linker Command File"/>
+  </section>
+  <section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">
+    <language id="com.ti.ccstudio.core.TIGPPLanguage" name="C++ Source File">
+      <macro>
+        <name>${SYSCONFIG_TOOL_SYMBOLS}</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>${COM_TI_MCU_PLUS_SDK_AM64X_SYMBOLS}</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>SOC_AM64X</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>TINYUSB_INTEGRATION</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>_DEBUG_</name>
+        <value>1</value>
+      </macro>
+    </language>
+    <language id="com.ti.ccstudio.core.TIGCCLanguage" name="C Source File">
+      <macro>
+        <name>${SYSCONFIG_TOOL_SYMBOLS}</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>${COM_TI_MCU_PLUS_SDK_AM64X_SYMBOLS}</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>SOC_AM64X</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>TINYUSB_INTEGRATION</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>_DEBUG_</name>
+        <value>1</value>
+      </macro>
+    </language>
+    <language id="com.ti.ccstudio.core.TIASMLanguage" name="Assembly Source File">
+      <macro>
+        <name>${SYSCONFIG_TOOL_SYMBOLS}</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>${COM_TI_MCU_PLUS_SDK_AM64X_SYMBOLS}</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>SOC_AM64X</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>TINYUSB_INTEGRATION</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>_DEBUG_</name>
+        <value>1</value>
+      </macro>
+    </language>
+    <language id="com.ti.ccstudio.core.TIASMLanguage" name="Assembly Source File">
+      <macro>
+        <name>${SYSCONFIG_TOOL_SYMBOLS}</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>${COM_TI_MCU_PLUS_SDK_AM64X_SYMBOLS}</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>SOC_AM64X</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>TINYUSB_INTEGRATION</name>
+        <value/>
+      </macro>
+      <macro>
+        <name>_DEBUG_</name>
+        <value>1</value>
+      </macro>
+    </language>
+    <language id="com.ti.ccstudio.core.TICMDLanguage" name="Linker Command File">
+      <macro>
+        <name>ENET_ENABLE_PER_ICSSG</name>
+        <value>1</value>
+      </macro>
+    </language>
+    <language id="com.ti.ccstudio.core.TICMDLanguage" name="Linker Command File">
+      <macro>
+        <name>ENET_ENABLE_PER_ICSSG</name>
+        <value>1</value>
+      </macro>
+    </language>
+    <language id="com.ti.ccstudio.core.TICMDLanguage" name="Linker Command File">
+      <macro>
+        <name>ENET_ENABLE_PER_ICSSG</name>
+        <value>1</value>
+      </macro>
+    </language>
+  </section>
+</cdtprojectproperties>

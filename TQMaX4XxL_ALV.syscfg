@@ -8,12 +8,12 @@
 /**
  * Import the modules used in this configuration.
  */
-const eeprom     = scripting.addModule("/board/eeprom/eeprom", {}, false);
-const eeprom1    = eeprom.addInstance();
 const flash      = scripting.addModule("/board/flash/flash", {}, false);
 const flash1     = flash.addInstance();
 const adc        = scripting.addModule("/drivers/adc/adc", {}, false);
 const adc1       = adc.addInstance();
+const ddr        = scripting.addModule("/drivers/ddr/ddr", {}, false);
+const ddr1       = ddr.addInstance();
 const gpio       = scripting.addModule("/drivers/gpio/gpio", {}, false);
 const gpio1      = gpio.addInstance();
 const gpio2      = gpio.addInstance();
@@ -45,8 +45,6 @@ const mmcsd1     = mmcsd.addInstance();
 const uart       = scripting.addModule("/drivers/uart/uart", {}, false);
 const uart1      = uart.addInstance();
 const uart2      = uart.addInstance();
-const udma       = scripting.addModule("/drivers/udma/udma", {}, false);
-const udma1      = udma.addInstance();
 const clock      = scripting.addModule("/kernel/dpl/clock");
 const debug_log  = scripting.addModule("/kernel/dpl/debug_log");
 const mpu_armv7  = scripting.addModule("/kernel/dpl/mpu_armv7", {}, false);
@@ -59,9 +57,6 @@ const mpu_armv75 = mpu_armv7.addInstance();
 /**
  * Write custom configuration values to the imported modules.
  */
-eeprom1.$name      = "CONFIG_EEPROM0";
-eeprom1.i2cAddress = 0x54;
-
 flash1.$name                         = "CONFIG_FLASH0";
 flash1.flashBlockSize                = 65536;
 flash1.cmdBlockErase3B               = "0xD8";
@@ -96,6 +91,8 @@ flash1.peripheralDriver.inputClkFreq = 200000000;
 adc1.$name                  = "CONFIG_ADC0";
 adc1.ADC.EXT_TRIGGER0.$used = false;
 adc1.ADC.EXT_TRIGGER1.$used = false;
+
+ddr1.$name = "CONFIG_DDR0";
 
 gpio1.$name                    = "GPIO_USER_LED_1";
 gpio1.pinDir                   = "OUTPUT";
@@ -164,9 +161,8 @@ gpio17.$name                = "ADC_RST";
 gpio17.pinDir               = "OUTPUT";
 gpio17.GPIO.gpioPin.$assign = "ball.D16";
 
-i2c1.$name               = "CONFIG_I2C0";
-eeprom1.peripheralDriver = i2c1;
-i2c1.I2C.$assign         = "I2C0";
+i2c1.$name       = "CONFIG_I2C0";
+i2c1.I2C.$assign = "I2C0";
 
 i2c2.$name = "CONFIG_I2C1";
 
@@ -192,9 +188,6 @@ uart1.UART.$assign     = "USART2";
 uart2.$name           = "CONFIG_USART0";
 uart2.readMode        = "CALLBACK";
 uart2.readCallbackFxn = "uartCallback";
-
-udma1.instance = "PKTDMA_0";
-udma1.$name    = "CONFIG_UDMA_PKTDMA_0";
 
 mpu_armv71.$name             = "CONFIG_MPU_REGION0";
 mpu_armv71.size              = 31;
